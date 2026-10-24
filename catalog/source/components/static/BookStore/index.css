@@ -1,0 +1,107 @@
+.book-store-page,
+.book-details-page {
+  width: 100%;
+  max-width: 720px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #1f1f1f;
+  color: #ffffff;
+  font-family: "Roboto", sans-serif;
+}
+
+.book-store-content,
+.book-details-content {
+  width: 100%;
+  max-width: 720px;
+}
+
+.book-section-title,
+.book-details-title {
+  color: #ffffff;
+  font-family: "Bree Serif", Georgia, serif;
+}
+
+.popular-book-card {
+  overflow: hidden;
+  background-color: #dff3fc;
+  color: #102a43;
+}
+
+.popular-book-card .row,
+.recommended-book-item {
+  min-width: 0;
+}
+
+.popular-book-image {
+  display: block;
+  height: clamp(150px, 44vw, 220px);
+  object-fit: cover;
+}
+
+.book-title {
+  color: #102a43;
+  font-family: "Bree Serif", Georgia, serif;
+  overflow-wrap: anywhere;
+}
+
+.book-small-text {
+  color: #102a43;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.recommended-book-item {
+  min-height: 120px;
+}
+
+.recommended-book-item > div {
+  min-width: 0;
+}
+
+.recommended-book-image {
+  display: block;
+  height: clamp(100px, 30vw, 150px);
+  object-fit: cover;
+}
+
+.book-details-image {
+  display: block;
+  width: min(190px, 75%);
+  max-height: 360px;
+  aspect-ratio: 2 / 3;
+  margin: 0 auto;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.book-author {
+  color: #b8b8b8;
+  font-size: 0.8125rem;
+}
+
+.book-description {
+  color: #ffffff;
+  font-family: "Bree Serif", Georgia, serif;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.book-details-page .btn {
+  min-width: 64px;
+}
+
+@media (min-width: 768px) {
+  .popular-book-image {
+    height: 240px;
+  }
+
+  .recommended-book-image {
+    height: 160px;
+  }
+
+  .book-details-image {
+    width: 230px;
+  }
+}

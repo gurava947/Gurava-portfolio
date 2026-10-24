@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Caveat:wght@400;700&family=Lobster&family=Monoton&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display+SC:ital,wght@0,400;0,700;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,700&family=Work+Sans:ital,wght@0,400;0,700;1,700&display=swap");
+
+.box-model-buttons-page {
+  font-family: "Roboto", sans-serif;
+}
+
+.box-model-buttons-page .heading {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.box-model-buttons-page .leaf-button {
+  background-color: #007854;
+  height: 10vh;
+  width: 15vh;
+  color: #ffffff;
+  font-family: "Roboto", sans-serif;
+  font-size: 20px;
+  text-align: center;
+  padding: 20px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 120px;
+  border-bottom-right-radius: 120px;
+  border-bottom-left-radius: 10px;
+}
+
+.box-model-buttons-page .heading-1 {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.box-model-buttons-page .Ready {
+  height: 50px;
+  width: 120px;
+  color: #841003;
+  border-style: dashed;
+  border-color: #841003;
+  border-width: 5px;
+  background-color: #ffd0b5;
+  font-family: "Roboto", sans-serif;
+  font-size: 20px;
+}
+
+.box-model-buttons-page .button-set {
+  height: 90px;
+  width: 120px;
+  color: #5c0b33;
+  border-style: dotted;
+  border-color: #841003;
+  border-width: 10px;
+  background-color: #fab8d9;
+  font-family: "Roboto", sans-serif;
+  font-size: 20px;
+}
+
+.box-model-buttons-page .button-go {
+  height: 120px;
+  width: 120px;
+  color: #5c0b33;
+  border-style: solid;
+  border-color: #0c6b58;
+  border-width: 5px;
+  font-family: "Roboto", sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 60px;
+}
+
+@media screen and (max-width: 576px) {
+  .box-model-buttons-page .heading,
+  .box-model-buttons-page .heading-1 {
+    font-size: 26px;
+  }
+
+  .box-model-buttons-page .leaf-button {
+    width: 100px;
+    height: 70px;
+  }
+
+  .box-model-buttons-page .Ready,
+  .box-model-buttons-page .button-set,
+  .box-model-buttons-page .button-go {
+    flex-shrink: 0;
+  }
+}

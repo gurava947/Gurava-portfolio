@@ -1,0 +1,180 @@
+.my-projects-page,
+.my-project-detail,
+.diwali-detail-page {
+  width: 100%;
+  max-width: 900px;
+  min-height: 100vh;
+  margin: 0 auto;
+  font-family: "Bree Serif", Georgia, serif;
+  overflow-wrap: anywhere;
+}
+
+.home-section {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.my-projects-content {
+  max-width: 760px;
+}
+
+.developer-image {
+  display: block;
+  width: min(100%, 260px);
+  height: 260px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.projects-title {
+  color: #1f2933;
+  font-size: clamp(1.75rem, 5vw, 2rem);
+}
+
+.projects-description {
+  max-width: 420px;
+  margin: 0 auto;
+  color: #52606d;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.project-thumbnail-button {
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.project-thumbnail-button:hover,
+.project-thumbnail-button:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.project-thumbnail {
+  display: block;
+  height: clamp(92px, 24vw, 180px);
+  object-fit: cover;
+}
+
+.advanced-project-background,
+.newspaper-background {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.advanced-project-background {
+  background-color: #5b5b8e;
+  background-image: url("/assets/media/91d347d0-advanced-technologies-img.webp");
+}
+
+.project-bottom-card,
+.newspaper-card {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.project-bottom-card {
+  font-family: "Roboto", sans-serif;
+}
+
+.detail-heading {
+  color: #5752ab;
+  font-family: "Bree Serif", Georgia, serif;
+  font-size: 1.5rem;
+}
+
+.detail-description {
+  color: #323f4b;
+  line-height: 1.55;
+}
+
+.diwali-detail-page {
+  color: #52606d;
+  background-color: #e6f6ff;
+}
+
+.diwali-banner {
+  display: flex;
+  min-height: 250px;
+  align-items: flex-start;
+  padding: 28px 24px;
+  background-color: #7a3556;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.diwali-heading {
+  width: 100%;
+  max-width: 280px;
+  color: #ffffff;
+  font-size: clamp(1.75rem, 5vw, 2rem);
+  line-height: 1.35;
+}
+
+.diwali-products-section {
+  max-width: 760px;
+  min-height: calc(100vh - 250px);
+}
+
+.diwali-product-card {
+  min-height: 155px;
+  color: #52606d;
+  font-family: "Roboto", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.diwali-product-icon {
+  min-height: 65px;
+  font-size: 2.75rem;
+}
+
+
+.newspaper-background {
+  background-color: #37414e;
+  background-image: url("/assets/media/32ca319c-news-paper-img.webp");
+}
+
+.newspaper-card {
+  font-family: "Roboto", sans-serif;
+}
+
+.news-category {
+  color: #596773;
+  font-size: 0.8125rem;
+}
+
+.news-heading {
+  color: #323f4b;
+}
+
+.news-description {
+  color: #596773;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+@media (min-width: 576px) {
+  .developer-image {
+    width: 320px;
+    height: 300px;
+  }
+
+  .diwali-banner {
+    min-height: 340px;
+  }
+
+  .diwali-products-section {
+    min-height: calc(100vh - 340px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-thumbnail-button {
+    transition: none;
+  }
+}

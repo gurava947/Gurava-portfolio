@@ -1,0 +1,47 @@
+.flexbox-properties-2-page {
+  min-height: 100vh;
+  padding: 0;
+  background: #ffffff;
+}
+
+.flexbox-properties-2-page > .container {
+  min-height: 100vh;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem;
+  align-items: flex-start;
+}
+
+.flexbox-properties-2-page > .container > .container {
+  min-height: 100%;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  align-items: flex-start;
+}
+
+.flexbox-properties-2-page p {
+  display: flex;
+  width: clamp(7rem, 28vw, 12rem);
+  min-height: 5rem;
+  margin: 0;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  font-weight: 700;
+}
+
+.flexbox-properties-2-page .box1 {
+  background: #dff0d8;
+  color: #31572c;
+}
+
+.flexbox-properties-2-page .box2 {
+  background: #a78bfa;
+  color: #1f1b5c;
+  border: 0.25rem solid #7b4ae1;
+}

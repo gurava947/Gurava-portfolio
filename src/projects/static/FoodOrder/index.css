@@ -1,0 +1,35 @@
+
+.food-background-section {
+  background-image: url("/assets/media/e78cd9ea-foodbg.webp" );
+  background-color: #3f2117;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 100svh;
+  border-radius: 10px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(0.75rem, 3vw, 1.5rem);
+  box-sizing: border-box;
+}
+
+.food-order-container {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.food-card-content {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.food-order-copy {
+  max-width: 38rem;
+  margin-inline: auto;
+}
+
+.card-styles {
+  background-color: #ffffff !important;
+}

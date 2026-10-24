@@ -1,0 +1,16 @@
+.news-background {
+  min-height: 100vh;
+  min-height: 100svh;
+  background-image: url("/assets/media/66d4ed13-newsbg.webp" );
+  background-color: #443527;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.news-content-shell {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 0;
+}

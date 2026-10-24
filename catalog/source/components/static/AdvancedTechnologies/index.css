@@ -1,0 +1,16 @@
+.advanced-background {
+  min-height: 100vh;
+  min-height: 100svh;
+  background-image: url("https://d2clawv67efefq.cloudfront.net/ccbp-static-website/arvrbg.png" );
+  background-color: #15172c;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.advanced-content-shell {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;  
+  padding-inline: clamp(0.75rem, 3vw, 1.5rem);
+}

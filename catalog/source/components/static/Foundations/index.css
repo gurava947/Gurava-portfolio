@@ -1,0 +1,79 @@
+.foundations-page {
+  width: 100%;
+  max-width: 760px;
+  min-height: 100vh;
+  margin: 0 auto;
+  color: #323f4b;
+  background-color: #ffffff;
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+.foundations-hero {
+  width: 100%;
+  height: clamp(230px, 64vw, 330px);
+  background-color: #23282b;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.foundations-content {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin-top: -24px;
+  padding-top: 36px !important;
+  border-radius: 24px 24px 0 0;
+  background-color: #ffffff;
+}
+
+.foundations-title {
+  color: #323f4b;
+}
+
+.foundations-description {
+  max-width: 420px;
+  color: #596773;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.foundation-technology-card {
+  min-height: 104px;
+  padding: 12px 8px;
+  border: 1px solid #cbd2d9;
+  border-radius: 9px;
+  background-color: #ffffff;
+}
+
+.foundation-technology-image {
+  width: auto;
+  height: 42px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.foundation-technology-name {
+  margin-top: 8px;
+  color: #323f4b;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+@media (min-width: 576px) {
+  .foundations-hero {
+    height: 320px;
+  }
+
+  .foundations-content {
+    padding: 40px 36px !important;
+  }
+
+  .foundation-technology-card {
+    min-height: 130px;
+  }
+
+  .foundation-technology-image {
+    height: 50px;
+  }
+}

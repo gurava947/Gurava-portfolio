@@ -1,0 +1,72 @@
+{
+  "id": "python-playground",
+  "title": "Python Playground",
+  "category": "Python",
+  "category_label": "Python",
+  "description": "A responsive browser playground for Python 3.10 and JavaScript with editable test cases, autosave, and submission history.",
+  "image": "",
+  "component_key": "python-playground",
+  "display_order": 1,
+  "active": 1,
+  "technologies": ["Python 3.10", "JavaScript", "Pyodide", "Test cases"],
+  "data": {
+    "kind": "python-playground",
+    "language": "Python 3.10",
+    "runtime": "Python 3.10 · Pyodide",
+    "languageLocked": true,
+    "initialCode": "text = input()\nprint(text)\n",
+    "brief": {
+      "kicker": "Supplied playground",
+      "summary": "A browser playground for Python 3.10 and JavaScript with editable test cases, autosave, and submission history.",
+      "sections": [
+        {
+          "heading": "Browser-side execution",
+          "body": "Python 3.10 runs through Pyodide in a Web Worker. JavaScript runs in a sandboxed iframe, and each test case gets its own run."
+        },
+        {
+          "heading": "Test cases",
+          "body": "Run executes the selected test case; Submit executes every test case. Output comparison preserves spaces, tabs, commas, and punctuation, normalizes CRLF/CR line endings to LF, and ignores one final newline."
+        },
+        {
+          "heading": "Saved work",
+          "body": "Code and test cases autosave after a 700 ms pause and are restored later. The 50 most recent submissions are kept newest first."
+        }
+      ],
+      "sampleInput": "Hello World",
+      "expectedOutput": "Hello World",
+      "note": "The description, sample code, and test case come from the supplied playground README and its default configuration."
+    },
+    "tests": {
+      "note": "This test case is supplied by the playground's default configuration. The program reads one line and prints it back.",
+      "cases": [
+        {
+          "id": "case-1",
+          "name": "Case 1",
+          "input": "Hello World",
+          "inputPlaceholder": "Sample input for this problem",
+          "expectedOutput": "Hello World"
+        }
+      ]
+    },
+    "instructions": [
+      "Open the workspace; the supplied default program is already in the editor.",
+      "Run the default test case to execute the code with Hello World as input and see the real browser output.",
+      "Edit the code or the test case to explore other values. Edits autosave for this project in this browser.",
+      "Use the Back link to return to the project shelf."
+    ],
+    "facts": [
+      { "label": "Language", "value": "Python 3.10" },
+      { "label": "Input", "value": "input()" },
+      { "label": "Output", "value": "Prints the input" },
+      { "label": "Test source", "value": "Default playground case" }
+    ],
+    "preview": {
+      "kind": "mobile-terminal",
+      "description": "Runs the supplied default program with the default test case and shows the real browser output."
+    },
+    "card": {
+      "mediaLabel": "Project code",
+      "note": "Supplied playground · default case"
+    }
+  }
+}

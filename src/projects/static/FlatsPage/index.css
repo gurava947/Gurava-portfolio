@@ -1,0 +1,204 @@
+.sunrise-page {
+  width: 100%;
+  max-width: 760px;
+  min-height: 100vh;
+  margin: 0 auto;
+  color: #ffffff;
+  background-color: #222222;
+  font-family: "Bree Serif", Georgia, serif;
+  overflow-wrap: anywhere;
+}
+
+.sunrise-home-page {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.sunrise-home-card {
+  padding: 28px 20px 36px;
+  border-radius: 18px 18px 0 0;
+  color: #0f0e46;
+  background-color: #ffffff;
+}
+
+.sunrise-home-title {
+  color: #9a4d00;
+  font-size: 2rem;
+}
+
+.sunrise-home-description {
+  color: #596773;
+  font-size: 1.05rem;
+}
+
+.sunrise-button {
+  color: #1e1608;
+  background-color: #f19116;
+  border: 1px solid #f19116;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.sunrise-button:hover,
+.sunrise-button:focus-visible {
+  color: #231700;
+  background-color: #d97b08;
+  transform: translateY(-1px);
+}
+
+.sunrise-list-content {
+  max-width: 700px;
+}
+
+.sunrise-list-title {
+  color: #f19116;
+}
+
+.flat-list-card {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 8px;
+  color: inherit;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.flat-list-card:hover,
+.flat-list-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+.flat-list-image {
+  flex: 0 0 25%;
+  width: 25%;
+  min-height: 132px;
+  object-fit: cover;
+}
+
+.flat-list-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+}
+
+.flat-list-name {
+  color: #0f0e46;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.flat-list-description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #6c6b70;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.sunrise-details-page {
+  background-color: #222222;
+}
+
+.flat-detail-image {
+  display: block;
+  height: clamp(240px, 68vw, 420px);
+  object-fit: cover;
+  background-color: #393939;
+}
+
+.flat-detail-content {
+  max-width: 700px;
+}
+
+.flat-detail-title {
+  color: #f19116;
+}
+
+.flat-detail-description,
+.flat-location {
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.flat-location-icon {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.sunrise-button-secondary {
+  background-color: transparent;
+  border-color: #f19116;
+}
+
+.sunrise-button-secondary:hover,
+.sunrise-button-secondary:focus-visible {
+  background-color: #f19116;
+  color: #1e1608;
+}
+
+@media (max-width: 359.98px) {
+  .sunrise-home-card {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .flat-list-image {
+    flex-basis: 28%;
+    width: 28%;
+    min-height: 124px;
+  }
+
+  .flat-list-copy {
+    padding: 10px;
+  }
+
+  .flat-list-name {
+    font-size: 1.05rem;
+  }
+
+  .flat-list-description {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 576px) {
+  .sunrise-home-card {
+    padding: 36px 32px 44px;
+  }
+
+  .flat-list-image {
+    flex-basis: 22%;
+    width: 22%;
+    min-height: 150px;
+  }
+
+  .flat-list-copy {
+    padding: 18px;
+  }
+
+  .flat-list-name {
+    font-size: 1.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sunrise-button,
+  .flat-list-card {
+    transition: none;
+  }
+}

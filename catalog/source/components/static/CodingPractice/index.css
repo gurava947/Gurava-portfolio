@@ -1,0 +1,15 @@
+.coding-background-section {
+  background-image: url("https://d2clawv67efefq.cloudfront.net/ccbp-static-website/codingbg.png" );
+  background-color: #12201a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.coding-practice-content {
+  max-width: 800px;
+}

@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.hobbies-lists-page {
+  min-height: 100vh;
+  width: min(100%, 52rem);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 4rem) clamp(1rem, 5vw, 3rem);
+  background: #ffffff;
+  color: #1f2937;
+  font-family: "Roboto", sans-serif;
+}
+
+.hobbies-lists-page .Hobbies-heading {
+  margin: 1.5rem 0 0.5rem;
+  color: #12344d;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+}
+
+.hobbies-lists-page .Hobbies-heading:first-child {
+  margin-top: 0;
+}
+
+.hobbies-lists-page ul,
+.hobbies-lists-page ol {
+  margin: 0 0 1.25rem;
+  padding-left: 2rem;
+  line-height: 1.8;
+}
+
+.hobbies-lists-page .Hobbies-unorderlist {
+  list-style-type: square;
+}
+
+.hobbies-lists-page .Games-unorderlist {
+  list-style-type: circle;
+}
+
+.hobbies-lists-page .Subjects-olrderlist {
+  list-style-type: lower-roman;
+}
+
+.hobbies-lists-page .Engineering-olrderlist {
+  list-style-type: upper-roman;
+}
+
+.hobbies-lists-page .Mobiles-olrderlist {
+  list-style-type: lower-alpha;
+}
+
+.hobbies-lists-page .Stationeries-olrderlist {
+  list-style-type: upper-alpha;
+}
+
+.hobbies-lists-page .Technologies-olrderlist {
+  list-style-type: decimal;
+}

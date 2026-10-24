@@ -1,0 +1,16 @@
+.hotel-background {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  background-image: url("https://d2clawv67efefq.cloudfront.net/ccbp-static-website/hotelbg.png" );
+  background-color: #28333a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hotel-content-shell {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+}

@@ -1,0 +1,285 @@
+{
+  "brand": {
+    "prefix": "Practice",
+    "separator": ".",
+    "suffix": "folio"
+  },
+  "navigation": {
+    "profileInitial": "G",
+    "profileAria": "G for Guravva",
+    "certificateLabel": "Certificates",
+    "projectsLabel": "Projects",
+    "contactLabel": "Contact",
+    "certificateAria": "View all certificates",
+    "certificateTitle": "View all certificates",
+    "projectsAria": "Browse the project catalog",
+    "switchTheme": "Switch to {theme} mode",
+    "themeNames": {
+      "light": "light",
+      "dark": "dark"
+    },
+    "modeLabels": {
+      "light": "Light mode",
+      "dark": "Dark mode"
+    }
+  },
+  "imageFallback": {
+    "title": "Project image",
+    "category": "Project preview",
+    "caption": "A project in practice"
+  },
+  "status": {
+    "loadingLabel": "Loading portfolio content",
+    "retry": "Retry",
+    "back": "Back",
+    "dataUnavailable": "Portfolio settings or certificate data is missing."
+  },
+  "profile": {
+    "defaultValues": {
+      "name": "K Guravaiah",
+      "age": "24",
+      "mobile": "7702310461",
+      "email": "guravak947@gmail.com",
+      "linkedin": "https://www.linkedin.com/in/guravaiah-mern-stack-developer",
+      "github": "https://github.com/gurava947",
+      "links": []
+    },
+    "eyebrow": "Profile",
+    "tabs": {
+      "profile": "Profile",
+      "cards": "Card studio"
+    },
+    "cardStudio": {
+      "eyebrow": "Card studio",
+      "title": "Design your cards",
+      "description": "Choose a curated look, preview it on a real project card, then fine-tune every detail. Changes apply everywhere and save automatically.",
+      "presetsLabel": "Curated looks",
+      "presetsHint": "Complete styles you can adjust",
+      "previewLabel": "Live preview",
+      "previewHint": "Hover to test the motion",
+      "quickLabel": "Quick style",
+      "quickHint": "Common adjustments, one tap away",
+      "reset": "Reset all",
+      "applied": "{name} style applied",
+      "resetAnnouncement": "Card styles reset to the default look."
+    },
+    "editTitle": "Edit profile",
+    "edit": "Edit",
+    "close": "Close Guravva profile",
+    "labels": {
+      "age": "Age",
+      "mobile": "Mobile",
+      "email": "Email",
+      "linkedin": "LinkedIn",
+      "github": "GitHub"
+    },
+    "placeholders": {
+      "age": "[age]",
+      "mobile": "[mobile number]",
+      "email": "guravak947@gmail.com",
+      "linkedin": "[LinkedIn URL]",
+      "github": "[GitHub URL]"
+    },
+    "formLabels": {
+      "name": "Full name",
+      "age": "Age",
+      "mobile": "Mobile",
+      "email": "Email",
+      "linkedin": "LinkedIn URL",
+      "github": "GitHub URL"
+    },
+    "customLinks": "Additional custom links",
+    "linkLabel": "Link label",
+    "linkUrl": "Link URL",
+    "removeLink": "Remove link {number}",
+    "noLinks": "No additional links yet.",
+    "emptyLinks": "No additional links. Add one if you’d like.",
+    "addLink": "Add link",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Profile saved",
+    "invalidEmail": "Enter a valid email address.",
+    "invalidUrl": "Enter a valid HTTP or HTTPS URL.",
+    "linkPairRequired": "Provide both a link label and URL.",
+    "correctFields": "Please correct the highlighted fields.",
+    "saveFailed": "Unable to save profile in this browser session."
+  },
+  "home": {
+    "projectCount": {
+      "single": "project",
+      "plural": "projects"
+    },
+    "hero": {
+      "eyebrow": "Three shelves, one practice",
+      "title": "Built, refined,",
+      "titleAccent": "kept in practice.",
+      "description": "A unified catalog of supplied builds across Python, static web, and responsive design — with every project one click from its live preview.",
+      "action": "Explore the catalog",
+      "secondaryAction": "See the certificates",
+      "stats": {
+        "builds": "builds in practice",
+        "collections": "collections",
+        "certificates": "certificates"
+      },
+      "countAria": "{count} {label} across three collections",
+      "backCard": "PRACTICE",
+      "kicker": "THE PRACTICE FILES",
+      "caption": "three shelves, one catalog",
+      "note": "Curiosity, captured.",
+      "footnote": "PYTHON · STATIC · RESPONSIVE"
+    },
+    "collections": {
+      "eyebrow": "Collections",
+      "title": "Three ways of building",
+      "note": "Jump into the shelf that matches the work you want to see.",
+      "action": "Browse the shelf"
+    },
+    "projects": {
+      "eyebrow": "Selected builds · {count}",
+      "title": "A first look",
+      "note": "A small cross-section of the catalog. Open any card to explore the live implementation.",
+      "action": "Browse all {count} builds"
+    },
+    "certificates": {
+      "eyebrow": "Proof of practice",
+      "title": "Certificates",
+      "note": "Every certificate record below comes directly from the supplied course results.",
+      "action": "View all certificates"
+    },
+    "achievement": {
+      "ariaLabel": "Certificate results",
+      "kicker": "CERTIFICATION RECORDS",
+      "title": "Completed courses,",
+      "titleAccent": "measured in detail.",
+      "countDescription": "course certificates",
+      "performanceLabel": "COURSE PERFORMANCE",
+      "certificateAction": "Open certificate"
+    },
+    "filters": {
+      "all": "All builds",
+      "searchLabel": "Search projects",
+      "searchPlaceholder": "Search projects, technologies, categories...",
+      "categoryLabel": "Filter by category"
+    },
+    "empty": {
+      "title": "No matching projects",
+      "description": "Try another title, technology, category, or collection."
+    },
+    "footer": {
+      "note": "Made with curiosity and a little bit of code.",
+      "backToTop": "Back to top ↑"
+    }
+  },
+  "catalog": {
+    "eyebrow": "The complete shelf",
+    "title": "Projects",
+    "titleAccent": "in practice.",
+    "backHome": "Back to home",
+    "description": "Search, filter, and page through every supplied build. Only the visible cards are rendered; full previews load when you open a project.",
+    "searchLabel": "Search projects",
+    "searchPlaceholder": "Search titles, descriptions, technologies...",
+    "collectionLabel": "Collection",
+    "categoryLabel": "Category",
+    "technologyLabel": "Technology",
+    "sortLabel": "Sort by",
+    "allCollections": "All builds",
+    "allCategories": "All categories",
+    "allTechnologies": "All technologies",
+    "sortOptions": {
+      "curated": "Curated order",
+      "titleAsc": "Title A–Z",
+      "titleDesc": "Title Z–A"
+    },
+    "resultsLabel": "{count} matching {label}",
+    "pageLabel": "Page {page} of {pages}",
+    "resultSingle": "project",
+    "resultPlural": "projects",
+    "clear": "Clear filters",
+    "emptyTitle": "No projects match these filters",
+    "emptyDescription": "Clear one or more filters to return to the shelf.",
+    "previous": "Previous",
+    "next": "Next",
+    "loading": "Loading the catalog",
+    "errorTitle": "The catalog could not load",
+    "retry": "Try again"
+  },
+  "collectionsPage": {
+    "python": {
+      "label": "Python",
+      "description": "A real Python 3.10 playground running in your browser through Pyodide."
+    },
+    "static": {
+      "label": "Static Web",
+      "description": "39 supplied static-site builds covering HTML, CSS, Bootstrap, layouts, and page composition."
+    },
+    "responsive": {
+      "label": "Responsive Web",
+      "description": "35 supplied responsive sections and full-page builds using Bootstrap grids, flex layouts, and breakpoints."
+    }
+  },
+  "detail": {
+    "backToProjects": "Back to projects",
+    "backToCatalog": "Back to the catalog",
+    "previewEyebrow": "Live build",
+    "previewTitle": "The supplied implementation, running live",
+    "previewNote": "This preview runs the original React component in an isolated frame so each project keeps its own styles.",
+    "aboutEyebrow": "About this project",
+    "aboutTitle": "How this build is put together",
+    "factsLabel": "Project facts",
+    "collection": "Collection",
+    "category": "Category",
+    "previewType": "Preview",
+    "previewReact": "React component",
+    "previewPython": "Python · Pyodide",
+    "technologies": "Technologies",
+    "loadingPreview": "Starting the preview",
+    "previewError": "The preview could not start.",
+    "openInNewTab": "Open preview",
+    "notFoundTitle": "Project not found",
+    "notFoundDescription": "This project is not in the local catalog. It may have been renamed or removed.",
+    "previousProject": "Previous project",
+    "nextProject": "Next project",
+    "sourceNote": "Preview content and project data come from the supplied portfolio sources."
+  },
+  "certificatesPage": {
+    "eyebrow": "Records",
+    "title": "Certificates",
+    "titleAccent": "earned in practice.",
+    "backHome": "Back to home",
+    "description": "Course results, scores, and topics exactly as supplied.",
+    "countLabel": "certificates",
+    "openLabel": "Open certificate"
+  },
+  "certificate": {
+    "back": "Back to certificates",
+    "awardedTo": "Awarded to",
+    "issuedBy": "Issued by",
+    "issuedOn": "Issued on",
+    "certificateId": "Certificate ID",
+    "actionsAria": "Certificate actions",
+    "download": "Download Certificate",
+    "share": "Share",
+    "shareOnTwitter": "Share certificate on Twitter",
+    "twitter": "Twitter",
+    "shareAria": "Share certificate",
+    "copy": "Copy",
+    "copyAria": "Copy certificate link",
+    "copied": "Copied",
+    "viewOnProvider": "View Certificate on NxtWave",
+    "openCertificate": "Open {title} certificate",
+    "performanceEyebrow": "Assessment performance",
+    "attemptDate": "Date",
+    "attemptDuration": "Duration",
+    "trainersEyebrow": "About the trainers",
+    "overviewEyebrow": "Course overview",
+    "topicsTitle": "Key Topics Covered",
+    "clipboardUnavailable": "Clipboard access is unavailable in this browser.",
+    "copyDenied": "The browser did not allow copying the link.",
+    "copyFailed": "Could not copy the certificate link: {error}"
+  },
+  "loading": {
+    "catalog": "Loading the project catalog",
+    "project": "Loading project details",
+    "certificates": "Loading certificate records"
+  }
+}

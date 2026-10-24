@@ -1,0 +1,35 @@
+.conference-page {
+  width: 100%;
+  max-width: 900px;
+  min-width: 0;
+  margin: 0 auto;
+  font-family: "Roboto", sans-serif;
+}
+
+.conference-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.conference-title {
+  color: #193b50;
+  font-size: 30px;
+  line-height: 1.25;
+}
+
+.statistic-item {
+  min-height: 80px;
+}
+
+.conference-page .container {
+  width: 100%;
+  max-width: 720px;
+}
+
+.conference-page iframe {
+  max-width: 100%;
+}

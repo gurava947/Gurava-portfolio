@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.css-box-model-margin-page {
+  min-height: 100vh;
+  padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+  background: #ffffff;
+  color: #343a40;
+  font-family: "Roboto", sans-serif;
+}
+
+.css-box-model-margin-page .heading {
+  margin: 0 auto 1.5rem;
+  text-align: center;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  line-height: 1.2;
+}
+
+.css-box-model-margin-page .backgroundcolor {
+  width: min(100%, 42rem);
+  margin: 0 auto;
+  padding: 1.25rem;
+  background: #6c757d;
+  border: 2px solid #000000;
+}
+
+.css-box-model-margin-page .backgroundcolor > div {
+  width: 100%;
+  padding: 0.75rem;
+  background: #343a40;
+  border: 2px solid #000000;
+}
+
+.css-box-model-margin-page .backgroundcolor p {
+  width: min(100%, 16rem);
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  background: #6c757d;
+  border: 2px solid #000000;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 700;
+}
+
+.css-box-model-margin-page .backgroundcolor > div:last-child p {
+  margin-bottom: 0;
+}
+
+.css-box-model-margin-page .box1 {
+  margin-left: 0;
+}
+
+.css-box-model-margin-page .box2 {
+  margin-left: 3rem;
+}
+
+.css-box-model-margin-page .box3 {
+  margin-left: 6rem;
+}
+
+@media (max-width: 575.98px) {
+  .css-box-model-margin-page .backgroundcolor {
+    padding: 0.75rem;
+  }
+
+  .css-box-model-margin-page .box2 {
+    margin-left: 1.5rem;
+  }
+
+  .css-box-model-margin-page .box3 {
+    margin-left: min(3rem, 8vw);
+  }
+}

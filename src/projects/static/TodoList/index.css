@@ -1,0 +1,14 @@
+.bg-container{
+    background-color: #1b2735;
+    background-image: url('/assets/media/9a9df760-todolistbg.webp');
+    background-position: center;
+    background-size: cover;
+    min-height: 100vh;
+    min-height: 100svh;
+    width: 100%;
+}
+
+.bg-container .card,
+.bg-container .card-body {
+    min-width: 0;
+}

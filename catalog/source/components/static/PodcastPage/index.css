@@ -1,0 +1,117 @@
+.podcast-project {
+  width: 100%;
+  min-height: 100%;
+  color: #17221d;
+  background-color: #ffffff;
+  font-family: "Roboto", sans-serif;
+}
+
+.podcast-home-page,
+.podcast-details-page {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.podcast-home-background {
+  min-height: 210px;
+  padding: 24px 0;
+  background-color: #202d62;
+  background-image: url("https://d2clawv67efefq.cloudfront.net/ccbp-static-website/podcasts-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.podcast-home-card {
+  color: inherit;
+  cursor: pointer;
+  transition: transform 220ms ease, filter 220ms ease;
+}
+
+.podcast-home-card:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.04);
+}
+
+.podcast-home-card:focus-visible {
+  outline: 3px solid #5771c8;
+  outline-offset: 4px;
+}
+
+.podcast-cover {
+  aspect-ratio: 1;
+  object-fit: cover;
+  background-color: #e8eaf0;
+}
+
+.podcast-details-header {
+  background-color: #151b63;
+}
+
+.podcast-details-image,
+.episode-image {
+  display: block;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background-color: #e8eaf0;
+}
+
+.episode-item {
+  min-width: 0;
+  padding: 0.25rem 0;
+}
+
+.episode-item > div {
+  min-width: 0;
+}
+
+.episode-description {
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.episode-duration {
+  font-weight: 600;
+}
+
+.podcast-back-button {
+  min-width: 75px;
+  background-color: #151b63;
+  border: none;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.podcast-back-button:hover,
+.podcast-back-button:focus-visible {
+  background-color: #0e1249;
+  color: #ffffff;
+}
+
+.podcast-back-button:active {
+  transform: scale(0.98);
+}
+
+@media (min-width: 576px) {
+  .podcast-home-background {
+    min-height: 250px;
+  }
+}
+
+@media (min-width: 768px) {
+  .podcast-home-background {
+    min-height: 300px;
+  }
+
+  .podcast-details-image,
+  .episode-image {
+    aspect-ratio: 1.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .podcast-home-card,
+  .podcast-back-button {
+    transition: none;
+  }
+}

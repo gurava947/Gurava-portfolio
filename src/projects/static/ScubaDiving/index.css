@@ -1,0 +1,25 @@
+.scuba-diving-page {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  color: #ffffff;
+  background-color: #063954;
+  background-image: url("/assets/media/18a0c881-scuba-diving-bg.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: "Roboto", Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.scuba-title {
+  font-size: clamp(2rem, 5vw, 2.625rem);
+  line-height: 1.2;
+}
+
+.scuba-description {
+  width: 100%;
+  max-width: 720px;
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  line-height: 1.45;
+}

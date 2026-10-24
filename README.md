@@ -1,0 +1,56 @@
+# Practice.folio
+
+A single, unified portfolio combining three supplied project sets into one catalog:
+
+| Collection | Projects | Source |
+| --- | --- | --- |
+| Python | 1 | The Practice.folio Python playground (real Pyodide execution) |
+| Responsive | 35 | Responsive design and ecommerce practice builds |
+| Static | 39 | Static web development practice builds |
+
+The catalog also carries the supplied Python certificate (3 normalized certificate records). All project titles, descriptions, technologies, images, and certificate facts come from the supplied portfolios.
+
+## Architecture
+
+- **Frontend** — React 19 + Vite 8 + Bootstrap 5, with custom History API routing, scroll restoration, theme switching, a responsive catalog, and an isolated preview runtime.
+- **Catalog data** — `scripts/build-catalog.mjs` reads `catalog/source/` (site copy, projects, certificates, components, assets) plus `backend/db/projects/python-playground.json`, and generates:
+  - `public/data/catalog.json` — compact per-project summaries, filter options, and counts.
+  - `public/data/projects/<id>.json` — full detail for one project, loaded on demand.
+- **Previews** — React projects render one component at a time in `/preview.html?id=…`; the Python project runs real Pyodide in `/playground/index.html`.
+- **Backend** — Express 5 + `node:sqlite` is retained for the local API and data checks; the website itself reads the static generated catalog and needs no remote data service or database credentials.
+
+The catalog is designed for growth: only compact summaries are loaded for the list, detail is fetched per project, filters and pagination are computed client-side over summaries, and preview components are code-split per project. A few thousand projects fit this model without rendering or downloading everything at once.
+
+## Run locally
+
+Requirements: Node.js 22.5+ and npm.
+
+```bash
+npm install
+npm run dev
+```
+
+`npm run dev` starts the API at `http://127.0.0.1:3001` and the website at `http://127.0.0.1:3000`. Override the ports with `FRONTEND_PORT` and `API_PORT`.
+
+Other scripts:
+
+```bash
+npm run catalog:build   # regenerate public/data from catalog/source
+npm run build           # catalog build + production frontend build
+npm run build:vercel    # Vercel-mode production build
+npm test                # Vitest unit tests + backend API tests
+npm start               # build and serve the production app with Express
+```
+
+## Data sources
+
+- `catalog/source/site.json` — navigation, hero copy, section copy, certificate labels.
+- `catalog/source/projects-responsive.json`, `catalog/source/projects-static.json` — project records and metadata.
+- `backend/db/projects/python-playground.json` — Python playground definition and exercises.
+- `catalog/source/certificates.json` — certificate records; facts mirror the supplied certificate assets.
+- `catalog/source/components/` — imported React project components used by the isolated preview.
+- `catalog/source/assets/` — local project imagery and certificate files. Source images are optimized to WebP thumbnails during the catalog build.
+
+## Original materials
+
+The uploaded source archives and the pre-merge responsive app are preserved in `../_backups/2026-10-24-premerge/`. Generated catalog JSON is build output and can be regenerated at any time.

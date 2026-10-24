@@ -1,0 +1,236 @@
+.music-page {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  color: #ffe7bf;
+  background-color: #03174c;
+  font-family: "Bree Serif", Georgia, serif;
+  overflow-wrap: anywhere;
+  animation: music-page-enter 320ms ease both;
+}
+
+.music-home-page,
+.music-details-page {
+  width: 100%;
+  max-width: 760px;
+}
+
+.music-home-page {
+  background-image: var(--music-stars), var(--music-background);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat;
+}
+
+.music-home-content {
+  min-height: min(770px, 100vh);
+}
+
+.music-title {
+  color: #ffe7bf;
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
+}
+
+.music-description {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  color: #ffe7bf;
+  line-height: 1.55;
+}
+
+.music-feature-card {
+  width: 100%;
+  max-width: 520px;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: #8e97fd;
+  color: #10254f;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.music-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.24) !important;
+}
+
+.music-feature-image {
+  width: 100%;
+  min-height: clamp(170px, 42vw, 300px);
+  padding: 2rem 1rem;
+  background-color: #283d79;
+  background-image: var(--music-background);
+  background-size: cover;
+  background-position: center;
+}
+
+.music-feature-title {
+  color: #10254f;
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
+}
+
+.music-feature-description {
+  color: #10254f;
+  line-height: 1.5;
+}
+
+.music-primary-button {
+  max-width: 100%;
+  background-color: #6d5ce8;
+  color: #ffffff;
+  border: none;
+  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.music-primary-button:hover,
+.music-primary-button:focus-visible {
+  background-color: #5946d2;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.music-primary-button:active {
+  transform: scale(0.98);
+}
+
+.music-main-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: clamp(220px, 48vw, 360px);
+  object-fit: cover;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  background-color: #182b5b;
+}
+
+.music-details-content {
+  width: 100%;
+  max-width: 760px;
+}
+
+.music-details-title,
+.music-related-title,
+.related-music-card h3 {
+  color: #ffe7bf;
+}
+
+.music-details-description,
+.music-duration,
+.related-music-card p {
+  color: #b3bdd8;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.music-duration {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+
+.music-related-grid > [class*="col-"] {
+  min-width: 0;
+}
+
+.related-music-card {
+  height: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  transition: transform 200ms ease;
+}
+
+.related-music-card:hover {
+  transform: translateY(-3px);
+}
+
+.related-music-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 1.5;
+  object-fit: cover;
+  background-color: #182b5b;
+  transition: filter 200ms ease;
+}
+
+.related-music-card:hover .related-music-image {
+  filter: brightness(1.08);
+}
+
+@keyframes music-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 359.98px) {
+  .music-home-content {
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+  }
+
+  .music-related-grid > [class*="col-"] {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+  .music-home-page,
+  .music-details-page {
+    max-width: 680px;
+  }
+
+  .music-feature-image {
+    min-height: 240px;
+  }
+
+  .related-music-image {
+    aspect-ratio: 1.6;
+  }
+}
+
+@media (min-width: 768px) {
+  .music-home-page,
+  .music-details-page {
+    max-width: 760px;
+  }
+
+  .music-home-content {
+    min-height: min(850px, 100vh);
+  }
+
+  .music-feature-image {
+    min-height: 280px;
+  }
+
+  .music-main-image {
+    height: clamp(320px, 32vw, 420px);
+  }
+
+  .related-music-image {
+    aspect-ratio: 1.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-page {
+    animation: none;
+  }
+
+  .music-page *,
+  .music-page *::before,
+  .music-page *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

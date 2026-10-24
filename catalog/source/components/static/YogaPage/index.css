@@ -1,0 +1,162 @@
+.yoga-page {
+  width: 100%;
+  max-width: 760px;
+  min-height: 100vh;
+  margin: 0 auto;
+  color: #253263;
+  background-color: #ffedcb;
+  font-family: "Roboto", Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.yoga-home-page {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.yoga-home-content {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.yoga-home-title {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 20px;
+  color: #132d84;
+  font-size: clamp(1.35rem, 5vw, 1.75rem);
+  line-height: 1.3;
+}
+
+.yoga-home-image {
+  width: min(72%, 270px);
+  max-height: 330px;
+  object-fit: contain;
+}
+
+.yoga-home-description {
+  max-width: 360px;
+  color: #323f4b;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.yoga-button {
+  color: #ffffff;
+  background-color: #132d84;
+  border: 1px solid #132d84;
+  border-radius: 5px;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.yoga-button:hover,
+.yoga-button:focus-visible {
+  color: #ffffff;
+  background-color: #0e246e;
+  transform: translateY(-1px);
+}
+
+.yoga-types-page {
+  background-color: #ffedcb;
+}
+
+.yoga-types-content {
+  max-width: 700px;
+}
+
+.yoga-types-image {
+  width: min(72%, 250px);
+  max-height: 215px;
+  margin-bottom: 12px;
+  object-fit: contain;
+}
+
+.yoga-types-title {
+  color: #132d84;
+}
+
+.yoga-pose-card {
+  min-height: 104px;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  background-color: #ffe2ab;
+}
+
+.yoga-pose-image {
+  flex: 0 0 68px;
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+}
+
+.yoga-pose-copy {
+  min-width: 0;
+}
+
+.yoga-pose-title {
+  color: #253263;
+}
+
+.yoga-pose-description {
+  color: #323f4b;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 359.98px) {
+  .yoga-home-title {
+    margin-top: 8px;
+  }
+
+  .yoga-pose-card {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .yoga-pose-image {
+    flex-basis: 56px;
+    width: 56px;
+    height: 60px;
+  }
+}
+
+@media (min-width: 576px) {
+  .yoga-home-content {
+    min-height: min(760px, 100vh);
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+
+  .yoga-home-image {
+    width: min(60%, 300px);
+    max-height: 370px;
+  }
+
+  .yoga-types-image {
+    max-height: 250px;
+  }
+
+  .yoga-pose-card {
+    min-height: 116px;
+    gap: 22px;
+    padding: 18px 24px;
+  }
+
+  .yoga-pose-image {
+    flex-basis: 80px;
+    width: 80px;
+    height: 76px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yoga-button {
+    transition: none;
+  }
+}

@@ -1,0 +1,63 @@
+.html-css-exam-page {
+  width: 100%;
+  max-width: 100%;
+  color: #172b35;
+  background-color: lightblue;
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+.html-css-exam-panel {
+  width: 100%;
+  max-width: 720px;
+  border: 1px solid rgba(23, 43, 53, 0.16);
+  background-color: rgba(255, 255, 255, 0.24);
+}
+
+.html-css-exam-title {
+  color: #172b35;
+  font-size: clamp(1.7rem, 5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.html-css-exam-description {
+  color: #263943;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.html-css-exam-button {
+  max-width: 100%;
+  color: #172b35;
+  background-color: #ffffff;
+  border: 1px solid #263943;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.html-css-exam-button:hover,
+.html-css-exam-button:focus-visible {
+  color: #ffffff;
+  background-color: #263943;
+  transform: translateY(-1px);
+}
+
+.html-css-exam-button:focus-visible {
+  outline: 3px solid #0b3f5c;
+  outline-offset: 3px;
+}
+
+@media (max-width: 359.98px) {
+  .html-css-exam-panel {
+    padding: 1.25rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .html-css-exam-button {
+    transition: none;
+  }
+}

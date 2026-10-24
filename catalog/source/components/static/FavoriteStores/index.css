@@ -1,0 +1,158 @@
+.favorite-stores-page {
+  width: 100%;
+  max-width: 760px;
+  min-height: 100vh;
+  margin: 0 auto;
+  color: #ffffff;
+  background-color: #894bca;
+  font-family: "Bree Serif", Georgia, serif;
+  overflow-wrap: anywhere;
+}
+
+.favorite-stores-hero {
+  position: relative;
+  min-height: 200px;
+  padding: 24px 24px 32px;
+  background-color: #894bca;
+}
+
+.favorite-stores-title {
+  position: relative;
+  z-index: 1;
+  width: 50%;
+  max-width: 200px;
+  color: #ffffff;
+  font-size: clamp(1.45rem, 5vw, 1.75rem);
+  line-height: 1.25;
+}
+
+.favorite-stores-hero-image {
+  position: absolute;
+  right: 4%;
+  bottom: 8px;
+  width: min(46%, 210px);
+  max-height: 185px;
+  object-fit: contain;
+}
+
+.favorite-stores-panel {
+  position: relative;
+  min-height: calc(100vh - 180px);
+  padding: 36px 20px 40px;
+  border-radius: 24px 24px 0 0;
+  background-color: #ffffff;
+}
+
+.favorite-stores-section-title {
+  margin-bottom: 28px;
+  color: #a61e65;
+  font-size: 1.05rem;
+}
+
+.favorite-stores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.favorite-store-item {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 20px;
+  min-width: 0;
+}
+
+.favorite-store-logo {
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 7px;
+  object-fit: contain;
+  background-color: #ffffff;
+}
+
+.favorite-store-copy {
+  min-width: 0;
+}
+
+.favorite-store-name {
+  color: #323f4b;
+  line-height: 1.25;
+}
+
+.favorite-store-description {
+  color: #596773;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 359.98px) {
+  .favorite-stores-hero {
+    min-height: 184px;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .favorite-stores-title {
+    width: 52%;
+    font-size: 1.35rem;
+  }
+
+  .favorite-stores-panel {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .favorite-store-item {
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 14px;
+  }
+
+  .favorite-store-logo {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (min-width: 576px) {
+  .favorite-stores-hero {
+    min-height: 250px;
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+
+  .favorite-stores-hero-image {
+    right: 6%;
+    width: min(42%, 250px);
+    max-height: 225px;
+  }
+
+  .favorite-stores-panel {
+    padding: 42px 40px 48px;
+  }
+
+  .favorite-stores-list {
+    gap: 28px;
+  }
+
+  .favorite-store-item {
+    grid-template-columns: 58px minmax(0, 1fr);
+    column-gap: 22px;
+  }
+
+  .favorite-store-logo {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .favorite-stores-page *,
+  .favorite-stores-page *::before,
+  .favorite-stores-page *::after {
+    scroll-behavior: auto !important;
+  }
+}

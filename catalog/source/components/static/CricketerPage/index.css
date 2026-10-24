@@ -1,0 +1,57 @@
+.cricketer-page {
+  font-family: "Roboto", sans-serif;
+  background-color: #e6f6ff;
+}
+
+.player-section {
+  background-color: #c6284e;
+}
+
+.content-section {
+  background-color: #e6f6ff;
+}
+
+.player-image {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: 135px;
+  max-height: 30vw;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.record-card {
+  min-height: 130px;
+}
+
+.record-image {
+  display: block;
+  height: 130px;
+  object-fit: cover;
+}
+
+.video-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.25;
+  object-fit: cover;
+}
+
+.video-title {
+  line-height: 1.2;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  .player-image {
+    height: 120px;
+    max-height: none;
+  }
+
+  .record-image {
+    height: 100%;
+    min-height: 130px;
+  }
+}

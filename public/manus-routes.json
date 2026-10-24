@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "path": "/", "title": "Practicefolio portfolio" },
+    { "path": "/projects/python-playground", "title": "Python Playground project details" },
+    { "path": "/projects/python-playground/playground", "title": "Python Playground full application" },
+    { "path": "/projects/python-playground/preview", "title": "Python Playground mobile preview" },
+    { "path": "/certificates/programming-foundations-with-python", "title": "Programming Foundations with Python certificate" }
+  ]
+}

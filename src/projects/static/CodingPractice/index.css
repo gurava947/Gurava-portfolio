@@ -1,0 +1,15 @@
+.coding-background-section {
+  background-image: url("/assets/media/c71c08fa-codingbg.webp" );
+  background-color: #12201a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.coding-practice-content {
+  max-width: 800px;
+}

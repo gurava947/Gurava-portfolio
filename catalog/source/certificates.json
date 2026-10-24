@@ -1,0 +1,273 @@
+[
+  {
+    "slug": "programming-foundations-with-python",
+    "route": "/certificates/programming-foundations-with-python",
+    "courseTitle": "Programming Foundations with Python",
+    "certificateId": "EIZVZKKIMS",
+    "certificateUrl": "https://certificates.ccbp.in/intensive/programming-foundations?id=EIZVZKKIMS",
+    "certificatePdfUrl": "/programming-foundations-with-python-certificate.pdf",
+    "shareMessage": "I've completed the Programming Foundations with Python course.",
+    "eyebrow": "Course",
+    "issuer": "NxtWave Intensive",
+    "issueDate": "April 29, 2026",
+    "recipient": "K. Guravaiah",
+    "performanceTitle": "Assessment Attempts",
+    "performanceAria": "Attempt 1: Excellent; 26 Apr 2026; 56 minutes 41 seconds; Grade A; 206 out of 210; 10 grade points; percentage 98.1",
+    "trainersTitle": "Your Trainers are Alumni of",
+    "trainersSubheading": "Learn from best alumni",
+    "trainersDescription": "Trainer and alumni recognition from CCBP Intensive.",
+    "attempts": [
+      {
+        "label": "Attempt 1",
+        "result": "Excellent",
+        "date": "26 Apr 2026",
+        "duration": "56m 41s"
+      }
+    ],
+    "performance": [
+      {
+        "key": "grade",
+        "label": "Grade",
+        "value": "A",
+        "icon": "grade"
+      },
+      {
+        "key": "gradePoints",
+        "label": "Grade Points",
+        "value": "10",
+        "icon": "points"
+      },
+      {
+        "key": "score",
+        "label": "Score",
+        "value": "206/210",
+        "icon": "score"
+      },
+      {
+        "key": "percentage",
+        "label": "Percentage",
+        "value": "98.1%",
+        "icon": "percentage"
+      }
+    ],
+    "topics": [
+      {
+        "label": "Loops & Conditionals",
+        "icon": "repeat"
+      },
+      {
+        "label": "Lists, Tuples & Sets",
+        "icon": "list"
+      },
+      {
+        "label": "Dictionaries",
+        "icon": "dictionary"
+      },
+      {
+        "label": "Functions & Recursion",
+        "icon": "function"
+      },
+      {
+        "label": "OOP Concepts",
+        "icon": "object"
+      }
+    ],
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/programming-foundations-with-python-certificate.png",
+        "alt_text": "Programming Foundations with Python certificate issued by NxtWave Intensive"
+      },
+      {
+        "role": "alumni",
+        "url": "/assets/certificates/alumni.webp",
+        "alt_text": "Official NxtWave Intensive alumni branding"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
+  },
+  {
+    "slug": "static-website",
+    "route": "/certificates/static-website",
+    "courseTitle": "Build Your Own Static Website",
+    "certificateId": "EIZVZKKIMS",
+    "certificateUrl": "https://certificates.ccbp.in/intensive/static-website?id=WRNJZMEOAK",
+    "certificatePdfUrl": "/assets/certificates/static-website-certificate.pdf",
+    "shareMessage": "I've completed the Build Your Own Static Website course.",
+    "eyebrow": "Course",
+    "issuer": "NxtWave Intensive",
+    "issueDate": "April 29, 2026",
+    "recipient": "K. Guravaiah",
+    "examTitle": "Build Your Own Static Website Course Exam",
+    "performanceTitle": "Assessment Attempts",
+    "performanceAria": "Build Your Own Static Website Course Exam; Assessment Attempts; Attempt 1: Excellent; 03 Nov 2025; 1 hour 47 minutes 9 seconds; Grade A; 276 out of 280; 10 grade points; percentage 98.57",
+    "attempts": [
+      {
+        "label": "Attempt 1",
+        "result": "Excellent",
+        "date": "03 Nov 2025",
+        "duration": "1hr47mins9sec"
+      }
+    ],
+    "performance": [
+      {
+        "key": "grade",
+        "label": "Grade",
+        "value": "A",
+        "icon": "grade"
+      },
+      {
+        "key": "gradePoints",
+        "label": "Grade Points",
+        "value": "10",
+        "icon": "points"
+      },
+      {
+        "key": "score",
+        "label": "Score",
+        "value": "276/280",
+        "icon": "score"
+      },
+      {
+        "key": "percentage",
+        "label": "Percentage",
+        "value": "98.57%",
+        "icon": "percentage"
+      }
+    ],
+    "topics": [
+      {
+        "label": "Basics of HTML5, CSS3",
+        "icon": "code"
+      },
+      {
+        "label": "CSS Box Model",
+        "icon": "box"
+      },
+      {
+        "label": "Introduction of Bootstrap and Flex Layout",
+        "icon": "layout"
+      },
+      {
+        "label": "Bootstrap Utility Classes and Components",
+        "icon": "components"
+      },
+      {
+        "label": "Website Layout Development",
+        "icon": "window"
+      },
+      {
+        "label": "IoT",
+        "icon": "network"
+      },
+      {
+        "label": "Blockchain",
+        "icon": "chain"
+      }
+    ],
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/static-website-certificate.webp",
+        "alt_text": "Build Your Own Static Website certificate issued by CCBP"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
+  },
+  {
+    "slug": "responsive-website",
+    "route": "/certificates/responsive-website",
+    "courseTitle": "Build Your Own Responsive Website",
+    "certificateId": "EIZVZKKIMS",
+    "certificateUrl": "https://certificates.ccbp.in/intensive/responsive-website?id=RAGAIXEQCX",
+    "certificatePdfUrl": "/assets/certificates/responsive-website-certificate.pdf",
+    "shareMessage": "I've completed the Build Your Own Responsive Website course.",
+    "eyebrow": "Course",
+    "issuer": "NxtWave Intensive",
+    "issueDate": "April 29, 2026",
+    "recipient": "K. Guravaiah",
+    "examTitle": "Build Your Own Responsive Website Course Exam",
+    "performanceTitle": "Assessment Attempts",
+    "performanceAria": "Build Your Own Responsive Website Course Exam; Assessment Attempts; Attempt 1: Excellent; 04 Nov 2025; 1 hour 45 minutes 11 seconds; Grade A; 270 out of 280; 10 grade points; percentage 96.43",
+    "attempts": [
+      {
+        "label": "Attempt 1",
+        "result": "Excellent",
+        "date": "04 Nov 2025",
+        "duration": "1hr45mins11secs"
+      }
+    ],
+    "trainersTitle": "Your Trainers are Alumni of",
+    "trainersSubheading": "Learn from best alumni",
+    "trainersDescription": "Trainer and alumni recognition from CCBP Intensive.",
+    "performance": [
+      {
+        "key": "grade",
+        "label": "Grade",
+        "value": "A",
+        "icon": "grade"
+      },
+      {
+        "key": "gradePoints",
+        "label": "Grade Points",
+        "value": "10",
+        "icon": "points"
+      },
+      {
+        "key": "score",
+        "label": "Score",
+        "value": "270/280",
+        "icon": "score"
+      },
+      {
+        "key": "percentage",
+        "label": "Percentage",
+        "value": "96.43%",
+        "icon": "percentage"
+      }
+    ],
+    "topics": [
+      {
+        "label": "Bootstrap Grid System",
+        "icon": "layout"
+      },
+      {
+        "label": "CSS Specificity",
+        "icon": "code"
+      },
+      {
+        "label": "CSS Cascading and Inheritance",
+        "icon": "components"
+      },
+      {
+        "label": "Bootstrap Flex Utilities",
+        "icon": "box"
+      }
+    ],
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/responsive-website-certificate.webp",
+        "alt_text": "Build Your Own Responsive Website certificate issued by CCBP"
+      },
+      {
+        "role": "alumni",
+        "url": "/assets/certificates/alumni.webp",
+        "alt_text": "Official NxtWave Intensive alumni branding"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
+  }
+]

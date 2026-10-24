@@ -1,0 +1,62 @@
+.covid-page {
+  min-height: 100vh;
+  width: 100%;
+  min-width: 0;
+  background-color: #e6f6ff;
+  font-family: "Roboto", sans-serif;
+}
+
+.covid-page .container,
+.covid-page .row > * {
+  min-width: 0;
+}
+
+.hero-image {
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 6 / 5;
+  object-fit: contain;
+}
+
+.test-image {
+  width: 110px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1.1;
+  object-fit: contain;
+}
+
+.symptom-card {
+  background-color: #ffffff;
+}
+
+.symptom-image {
+  width: 80px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.doctor-image {
+  width: 150px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .hero-image {
+    width: 240px;
+  }
+
+  .symptom-image {
+    width: 110px;
+  }
+
+  .doctor-image {
+    width: 200px;
+  }
+}

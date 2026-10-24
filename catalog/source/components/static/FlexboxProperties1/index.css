@@ -1,0 +1,72 @@
+.flexbox-properties-page {
+  min-height: 100vh;
+  padding: clamp(1.25rem, 5vw, 4rem);
+  background: #ffffff;
+}
+
+.flexbox-properties-page > div {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+  gap: 1.25rem;
+}
+
+.flexbox-properties-page > div > div {
+  min-height: 7.5rem;
+  gap: 1rem;
+}
+
+.flexbox-properties-page p {
+  display: flex;
+  min-width: 5.5rem;
+  min-height: 5.5rem;
+  margin: 0;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.flexbox-properties-page .box1 {
+  background: #fdba74;
+  color: #7c2d12;
+}
+
+.flexbox-properties-page .box2 {
+  background: #b83d00;
+  color: #ffffff;
+}
+
+.flexbox-properties-page .box3 {
+  background: #a5b4fc;
+  color: #312e81;
+}
+
+.flexbox-properties-page .box4 {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.flexbox-properties-page .box5 {
+  background: #5eead4;
+  color: #134e4a;
+}
+
+.flexbox-properties-page .box6 {
+  background: #087266;
+  color: #ffffff;
+}
+
+@media (max-width: 575.98px) {
+  .flexbox-properties-page > div > div {
+    gap: 0.5rem;
+  }
+
+  .flexbox-properties-page p {
+    min-width: 4.25rem;
+    min-height: 4.25rem;
+    padding: 0.5rem;
+  }
+}

@@ -1,0 +1,1535 @@
+[
+  {
+    "id": "daily-todo",
+    "title": "Daily Todo",
+    "category": "Productivity",
+    "category_label": "Practice 01 · Productivity",
+    "description": "A focused daily planner that turns a long to-do list into one clear next step.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/todolistbg.png",
+    "component_key": "TodoList",
+    "display_order": 0,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "title": "Todolist",
+      "description": "Each day I will accomplish one thing on my todo list.",
+      "backgroundImage": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/todolistbg.png",
+      "profiles": [
+        {
+          "cardTitle": "Read a Book",
+          "cardText": "I don't think the human race will survive the next thousand years, unless we spread into space. There are too many accidents that can befall life on a single planet. But I'm an optimist...",
+          "buttonText": "Start",
+          "footerText": "Don't skip introduction"
+        }
+      ]
+    }
+  },
+  {
+    "id": "chat-room",
+    "title": "Chat Room",
+    "category": "Messaging",
+    "category_label": "Practice 02 · Messaging",
+    "description": "A playful conversation layout with distinct message bubbles and a bold chat header.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/chatbg.png",
+    "component_key": "ChatData",
+    "display_order": 1,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Flexbox"
+    ],
+    "data": {
+      "heading": "Gurava",
+      "messages": [
+        {
+          "id": 1,
+          "text": "Hello Gurava, how are you?",
+          "type": "right"
+        },
+        {
+          "id": 2,
+          "text": "Hello Gurava, how are you?",
+          "type": "left"
+        },
+        {
+          "id": 3,
+          "text": "Hello Gurava, how are you?",
+          "type": "right"
+        },
+        {
+          "id": 4,
+          "text": "Hello Gurava, how are you?",
+          "type": "left"
+        },
+        {
+          "id": 5,
+          "text": "Hello Gurava, how are you?",
+          "type": "right"
+        },
+        {
+          "id": 6,
+          "text": "Hello Gurava, how are you?",
+          "type": "left"
+        },
+        {
+          "id": 7,
+          "text": "Hello Gurava, how are you?",
+          "type": "right"
+        }
+      ]
+    }
+  },
+  {
+    "id": "code-is-more",
+    "title": "Code Is More",
+    "category": "CSS",
+    "category_label": "Practice 03 · CSS",
+    "description": "A minimal, high-contrast coding practice landing page built around a single statement.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/codingbg.png",
+    "component_key": "CodingPractice",
+    "display_order": 2,
+    "active": true,
+    "technologies": [
+      "React",
+      "CSS",
+      "Responsive design"
+    ],
+    "data": {
+      "title": "Code is more Than some Bytes in file"
+    }
+  },
+  {
+    "id": "happy-meals",
+    "title": "Happy Meals",
+    "category": "Food & Dining",
+    "category_label": "Practice 04 · Food & Dining",
+    "description": "A warm restaurant landing page that puts the food, mood, and booking action first.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/foodbg.png",
+    "component_key": "FoodOrder",
+    "display_order": 3,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "heading": "Happy Meals",
+      "description": "Discover great food from over 1,000 restaurants.",
+      "buttonText": "Book Now"
+    }
+  },
+  {
+    "id": "bootstrap-background-buttons",
+    "title": "Bootstrap Backgrounds and Buttons",
+    "category": "Bootstrap",
+    "category_label": "Practice 04 · Bootstrap",
+    "description": "A focused Bootstrap exercise demonstrating contextual backgrounds and button variants.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/bootstrap-bg-btn-output.png",
+    "component_key": "BootstrapBackgroundButtons",
+    "display_order": 4,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Roboto"
+    ],
+    "data": {}
+  },
+  {
+    "id": "future-tech",
+    "title": "Future Technologies",
+    "category": "Technology",
+    "category_label": "Practice 05 · Technology",
+    "description": "An immersive introduction to emerging technology with a crisp, layered content card.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/arvrbg.png",
+    "component_key": "AdvancedTechnologies",
+    "display_order": 5,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "heading": "Advanced Technologies",
+      "description": "Machinery and equipment developed from the application of scientific knowledge.",
+      "primaryButtonText": "Learn More",
+      "secondaryButtonText": "Save Draft"
+    }
+  },
+  {
+    "id": "daily-news",
+    "title": "The Daily Brief",
+    "category": "Editorial",
+    "category_label": "Practice 06 · Editorial",
+    "description": "A compact editorial layout that gives a major cricket story a clear reading hierarchy.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/newsbg.png",
+    "component_key": "NewsPage",
+    "display_order": 6,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "category": "NEWS OF THE DAY",
+      "heading": "iB Cricket announces world's first Virtual Reality cricket League",
+      "description": "iB Cricket and Viu together have announced the world's first Virtual Reality cricket league featuring 12 international cricketers, who will be competing against each other for the iB Cricket Super Over League title in Mumbai. Iconic cricketers like Virender Sehwag, Suresh Raina, and Brendon McCullum will be competing in the league.",
+      "buttonText": "Read More"
+    }
+  },
+  {
+    "id": "royal-grand",
+    "title": "Royal Grand Hotel",
+    "category": "Hospitality",
+    "category_label": "Practice 07 · Hospitality",
+    "description": "A destination-led hotel booking page with an atmospheric full-screen backdrop.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/hotelbg.png",
+    "component_key": "HotelBooking",
+    "display_order": 7,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "hotelName": "Royal Grand Hotel",
+      "location": "R.K Beach, Visakhapatnam",
+      "price": "1200 /-",
+      "buttonText": "Book Now"
+    }
+  },
+  {
+    "id": "kl-rahul",
+    "title": "KL Rahul — In Play",
+    "category": "Sports",
+    "category_label": "Practice 08 · Sports",
+    "description": "A player profile celebrating match records, memorable innings, and career highlights.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/klrahul-img1.png",
+    "component_key": "CricketerPage",
+    "display_order": 8,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "player": {
+        "name": "K.L. Rahul",
+        "description": "Kannur Lokesh Rahul (born 18 April 1992), commonly known as KL Rahul, is an Indian international cricketer who plays...more",
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/klrahul-img1.png"
+      },
+      "recordsTitle": "IPL Records",
+      "record": {
+        "title": "KXIP vs RCB",
+        "description": "He scored an unbeaten 132 off just 69 balls against Royal Challengers Bangalore... more",
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/klrahul-img2.png"
+      },
+      "videosTitle": "Videos",
+      "videos": [
+        {
+          "id": 1,
+          "title": "KL Rahul hits 337",
+          "subtitle": "for Karnataka",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/klrahul-img3.png"
+        },
+        {
+          "id": 2,
+          "title": "Incredible Innings",
+          "subtitle": "by KL Rahul",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/klrahul-img4.png"
+        },
+        {
+          "id": 3,
+          "title": "Single-handed",
+          "subtitle": "win by KL Rahul",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/klrahul-img5.png"
+        }
+      ],
+      "buttonText": "View more"
+    }
+  },
+  {
+    "id": "covid-care",
+    "title": "COVID-19 Care",
+    "category": "Health",
+    "category_label": "Practice 09 · Health",
+    "description": "A friendly health information hub covering symptoms, testing, and prevention.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/medicalcare-img.png",
+    "component_key": "CovidCare",
+    "display_order": 9,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Responsive design"
+    ],
+    "data": {
+      "pageTitle": "COVID-19 Care",
+      "hero": {
+        "title": "All you need to know about COVID-19",
+        "buttonText": "Know More",
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/medicalcare-img.png"
+      },
+      "test": {
+        "title": "COVID-19 Test",
+        "description": "If you think you have been exposed to novel coronavirus (COVID-19 ), get tested immediately.",
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/coronavirus-img.png"
+      },
+      "symptomsTitle": "Symptoms",
+      "symptoms": [
+        {
+          "id": 1,
+          "title": "Dry Cough",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/cough-img.png"
+        },
+        {
+          "id": 2,
+          "title": "High Fever",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/fever-img.png"
+        },
+        {
+          "id": 3,
+          "title": "Headache",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/headache-img.png"
+        }
+      ],
+      "videosTitle": "Videos",
+      "video": {
+        "title": "To prevent the spread of COVID-19",
+        "description": "If you think you have been exposed to novel coronavirus (COVID-19 ), watch the video to know more.",
+        "buttonText": "Watch Video",
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/doctor-img.png"
+      }
+    }
+  },
+  {
+    "id": "discover-goa",
+    "title": "Discover Goa",
+    "category": "Travel",
+    "category_label": "Practice 10 · Travel",
+    "description": "A sun-soaked travel guide with a photo carousel, local highlights, and video picks.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-c1-img.png",
+    "component_key": "GoaPage",
+    "display_order": 10,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap Carousel",
+      "Bootstrap"
+    ],
+    "data": {
+      "carouselImages": [
+        {
+          "id": 1,
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-c1-img.png",
+          "alt": "Goa beach cottages"
+        },
+        {
+          "id": 2,
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-c2-img.png",
+          "alt": "Goa beach"
+        },
+        {
+          "id": 3,
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-c3-img.png",
+          "alt": "Goa sunset"
+        }
+      ],
+      "aboutTitle": "About",
+      "aboutText": "Goa known for its striking landscape, famous beaches in India, astounding monuments and churches and bustling Goa nightlife. Goa is one of the most visited tourist places in India, especially on weekends, as it is not very far from Mumbai and having Panaji as its capital and Vasco da Gama as the largest city. It attracts a large number of tourists from all over the world, round the year.",
+      "morePicturesTitle": "More Pictures",
+      "morePictures": [
+        {
+          "id": 1,
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-more1-img.png",
+          "alt": "Goa beach celebration"
+        },
+        {
+          "id": 2,
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-more2-img.png",
+          "alt": "Goa beach"
+        },
+        {
+          "id": 3,
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/goa-more3-img.png",
+          "alt": "Goa resort"
+        }
+      ],
+      "videosTitle": "Videos",
+      "videos": [
+        {
+          "id": 1,
+          "videoUrl": "https://www.youtube.com/watch?v=NFalCkZAClY&ab_channel=GoaTourism",
+          "thumbnail": "https://img.youtube.com/vi/NFalCkZAClY/hqdefault.jpg"
+        },
+        {
+          "id": 2,
+          "videoUrl": "https://www.youtube.com/watch?v=4irzfMfTmM8&ab_channel=EntrepreneursBeachFestivalIndia",
+          "thumbnail": "https://img.youtube.com/vi/4irzfMfTmM8/hqdefault.jpg"
+        },
+        {
+          "id": 3,
+          "videoUrl": "https://www.youtube.com/watch?v=OJu0gjzsvQE&ab_channel=SoulandFuel",
+          "thumbnail": "https://img.youtube.com/vi/OJu0gjzsvQE/hqdefault.jpg"
+        }
+      ]
+    }
+  },
+  {
+    "id": "iphone-x",
+    "title": "iPhone X Specs",
+    "category": "Product",
+    "category_label": "Practice 11 · Product",
+    "description": "A product spotlight that pairs a dramatic device image with easy-to-scan specs.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/iphoneX-bg.png",
+    "component_key": "MobileSpecifications",
+    "display_order": 11,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/iphoneX-bg.png",
+      "title": "Specifications:",
+      "specifications": [
+        "3 GB RAM",
+        "5.80 Super Retina HD OLED Display",
+        "Front Camera 7MP",
+        "Rear Camera 12MP + 12MP",
+        "Apple A11 Bionic Processor",
+        "Battery Capacity 2716mAH"
+      ],
+      "buttonText": "Buy Now"
+    }
+  },
+  {
+    "id": "things-conference",
+    "title": "The Things Conference",
+    "category": "Events",
+    "category_label": "Practice 12 · Events",
+    "description": "An event landing page for the LoRaWAN community, with speaker stats and a video.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/conference-img.png",
+    "component_key": "ConferencePage",
+    "display_order": 12,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "YouTube embed"
+    ],
+    "data": {
+      "title": "The Things Conference",
+      "description": "Redefining the future of IoT with LoRaWAN",
+      "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/conference-img.png",
+      "buttonText": "Know more",
+      "details": {
+        "videoUrl": "https://www.youtube.com/embed/W_2hCKnzWj0",
+        "title": "The Things Conference",
+        "description": "Join Asia’s Largest Conference on LoRaWAN",
+        "statistics": [
+          {
+            "id": 1,
+            "number": "1400+",
+            "label": "Attendees"
+          },
+          {
+            "id": 2,
+            "number": "100+",
+            "label": "Workshops"
+          },
+          {
+            "id": 3,
+            "number": "120+",
+            "label": "Speakers"
+          },
+          {
+            "id": 4,
+            "number": "10+",
+            "label": "Countries"
+          }
+        ],
+        "backButtonText": "Back"
+      }
+    }
+  },
+  {
+    "id": "quick-quiz",
+    "title": "Quick Quiz",
+    "category": "Learning",
+    "category_label": "Practice 13 · Learning",
+    "description": "An interactive multiple-choice question card for a quick HTML knowledge check.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/coding-question-img.png",
+    "component_key": "QuizQuestion",
+    "display_order": 13,
+    "active": true,
+    "technologies": [
+      "React",
+      "State",
+      "Bootstrap"
+    ],
+    "data": {
+      "scoreLabel": "Score: 25/45",
+      "questionNumber": "Question 10",
+      "question": "Which of the following is the content of the HTML paragraph element?",
+      "questionImage": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/coding-question-img.png",
+      "options": [
+        {
+          "id": "A",
+          "text": "HTML heading element"
+        },
+        {
+          "id": "B",
+          "text": "HTML paragraph element"
+        },
+        {
+          "id": "C",
+          "text": "This is paragraph..."
+        },
+        {
+          "id": "D",
+          "text": "None of the given options"
+        }
+      ],
+      "selectedOption": "C",
+      "submitText": "Submit",
+      "correctOption": "C",
+      "correctFeedback": "Correct!",
+      "incorrectFeedback": "Try again."
+    }
+  },
+  {
+    "id": "podcasts",
+    "title": "Podcast Home Page",
+    "category": "Audio",
+    "category_label": "Practice 14 · Audio",
+    "description": "A podcast discovery page with four shows and dedicated episode-list pages.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/podcasts-bg.png",
+    "component_key": "PodcastPage",
+    "display_order": 14,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Responsive design"
+    ],
+    "data": {
+      "home": {
+        "title": "Podcasts",
+        "podcasts": [
+          {
+            "id": "puri-jagannadh",
+            "title": "Puri Jagannadh",
+            "episodes": "24 Episodes",
+            "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/puri-jagannadh-img.png"
+          },
+          {
+            "id": "tedx",
+            "title": "Tedx Talks",
+            "episodes": "12 Episodes",
+            "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/tedx-img.png"
+          },
+          {
+            "id": "sadhguru",
+            "title": "Sadhguru",
+            "episodes": "49 Episodes",
+            "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/sadhguru-img.png"
+          },
+          {
+            "id": "on-purpose",
+            "title": "On Purpose",
+            "episodes": "49 Episodes",
+            "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/on-purpose-img.png"
+          }
+        ]
+      },
+      "details": {
+        "puri-jagannadh": {
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/puri-jagannadh-img.png",
+          "category": "Podcast",
+          "title": "Puri Jagannadh Podcast",
+          "description": "The Puri Jagannadh Podcast",
+          "episodes": [
+            {
+              "id": 1,
+              "title": "Molecular Gastronomy",
+              "description": "Anything happens there it will not cook, ...",
+              "duration": "15 min"
+            },
+            {
+              "id": 2,
+              "title": "Mysterious book",
+              "description": "The Voynich manuscript is the 15th century book...",
+              "duration": "12 min"
+            },
+            {
+              "id": 3,
+              "title": "Predator Drone",
+              "description": "The most powerful drone. It is 10 feet height...",
+              "duration": "10 min"
+            },
+            {
+              "id": 4,
+              "title": "Paella",
+              "description": "The national dish of Spain. It was first star...",
+              "duration": "6 min"
+            }
+          ]
+        },
+        "tedx": {
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/tedx-img.png",
+          "category": "Podcast",
+          "title": "The Tedx podcast",
+          "description": "The Tedx podcast",
+          "episodes": [
+            {
+              "id": 1,
+              "title": "The science of friction",
+              "description": "Tribology. It's a funny sounding word you might...",
+              "duration": "12 min"
+            },
+            {
+              "id": 2,
+              "title": "Unleash you",
+              "description": "What can we learn from the world's most enduringly...",
+              "duration": "8 min"
+            },
+            {
+              "id": 3,
+              "title": "3 psychological tricks",
+              "description": "We all want to save more money -- but overall, ...",
+              "duration": "10 min"
+            },
+            {
+              "id": 4,
+              "title": "The case for stubborn",
+              "description": "This decade is a moment of choice unlike any we ...",
+              "duration": "12 min"
+            }
+          ]
+        },
+        "sadhguru": {
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/sadhguru-img.png",
+          "category": "Podcast",
+          "title": "The Sadhguru podcast",
+          "description": "The Sadhguru podcast",
+          "episodes": [
+            {
+              "id": 1,
+              "title": "Head or heart",
+              "description": "Sadhguru shares his wisdom on how to make...",
+              "duration": "16 min"
+            },
+            {
+              "id": 2,
+              "title": "How to equip yourself",
+              "description": "Society and human interactions are going...",
+              "duration": "13 min"
+            },
+            {
+              "id": 3,
+              "title": "How not to get irritated",
+              "description": "How do you see an unpleasant spouse the...",
+              "duration": "15 min"
+            },
+            {
+              "id": 4,
+              "title": "Isha Kriya",
+              "description": "Rooted in the timeless wisdom of the yogic...",
+              "duration": "16 min"
+            }
+          ]
+        },
+        "on-purpose": {
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/on-purpose-img.png",
+          "category": "Podcast",
+          "title": "On Purpose with Jay",
+          "description": "The Jay Shetty podcast",
+          "episodes": [
+            {
+              "id": 1,
+              "title": "Patrick Bet David",
+              "description": "Are you an entrepreneur or have dreams of mental...",
+              "duration": "10 min"
+            },
+            {
+              "id": 2,
+              "title": "5 Techniques to cope",
+              "description": "Does anxiety loom around every corner of your...",
+              "duration": "4 min"
+            },
+            {
+              "id": 3,
+              "title": "Radhanath Swami ON",
+              "description": "World-renowned spiritual leader and philanthropist...",
+              "duration": "12 min"
+            },
+            {
+              "id": 4,
+              "title": "3 Ways to let go",
+              "description": "Do the opinions of others veer you from the core...",
+              "duration": "13 min"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "sleep-music",
+    "title": "Sleep Music",
+    "category": "Audio",
+    "category_label": "Practice 15 · Audio",
+    "description": "A calm bedtime music experience featuring Night Island and related sleep mixes.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/moon-bg.png",
+    "component_key": "MusicPage",
+    "display_order": 15,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Responsive design"
+    ],
+    "data": {
+      "home": {
+        "title": "Sleep Music",
+        "description": "Soothing bedtime music to help you fall into a deep and natural sleep",
+        "featureTitle": "Night Island",
+        "featureDescription": "Non-stop 8-hour mixes of our most popular sleep audio",
+        "buttonText": "Get Started",
+        "backgroundImage": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/moon-bg.png",
+        "starsImage": "https://new-assets.ccbp.in/frontend/static-website/moon-stars-bg.png"
+      },
+      "details": {
+        "title": "Night Island",
+        "description": "Ease the mind into a restful night’s sleep with these deep, ambient tones.",
+        "duration": "45 MIN SLEEP MUSIC",
+        "mainImage": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/clouds-img.png",
+        "relatedTitle": "Related",
+        "relatedMusic": [
+          {
+            "id": 1,
+            "title": "Moon Clouds",
+            "duration": "55 MIN SLEEP MUSIC",
+            "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/moon-clouds-img.png"
+          },
+          {
+            "id": 2,
+            "title": "Sweet Sleep",
+            "duration": "60 MIN SLEEP MUSIC",
+            "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/sweet-sleep-img.png"
+          }
+        ],
+        "backButtonText": "Back"
+      }
+    }
+  },
+  {
+    "id": "book-store",
+    "title": "Book Store",
+    "category": "Reading",
+    "category_label": "Practice 16 · Reading",
+    "description": "A curated book shelf featuring a popular autobiography and recommended reads.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/book-apj-img.png",
+    "component_key": "BookStore",
+    "display_order": 16,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Responsive design"
+    ],
+    "data": {
+      "popularTitle": "Popular Book",
+      "recommendedTitle": "Recommended Books",
+      "popularBook": {
+        "id": "wings-of-fire",
+        "title": "Wings of Fire",
+        "subtitle": "An Autobiography of Abdul Kalam",
+        "author": "by Arun Tiwari",
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/book-apj-img.png",
+        "description": "Every common man who by his sheer grit and hard work achieves success should share his story with the rest for they may find inspiration and strength to go on, in his story. The Wings of Fire is one such autobiography by visionary scientist Dr. APJ Abdul Kalam, who from very humble beginnings rose to be the President of India. The book is full of insights, personal moments and life experiences of Dr. Kalam. It gives us an understanding on his journey of success."
+      },
+      "recommendedBooks": [
+        {
+          "id": "three-mistakes",
+          "title": "The 3 mistakes of my life",
+          "subtitle": "Indian author",
+          "author": "by Chetan Bhagat",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/book-chetan-bhagat-img.png",
+          "description": "The 3 Mistakes of my life is the third novel written by eminent Indian Author Chetan Bhagat. Based on cricket, business and religion, the novel is set against the backdrop of a boutique city Ahmedabad. Revolving around three young Indian boys Omi, Ishaan and Govind, the book goes on to narrate how the three are trying their best to make ends meet in the city. Based on real events, the book starts with a dramatic twist, where Bhagat is reading an e-mail sent by some young person Govind."
+        },
+        {
+          "id": "harry-potter",
+          "title": "Harry Potter",
+          "subtitle": "and the Sorcerer's Stone",
+          "author": "by J.K.Rowling",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/harrypotter-img.png",
+          "description": "Harry Potter's life is miserable. His parents are dead and he's stuck with his heartless relatives, who force him to live in a tiny closet under the stairs. But his fortune changes when he receives a letter that tells him the truth about himself: he's a wizard. A mysterious visitor rescues him from his relatives and takes him to his new home, Hogwarts School of Witchcraft and Wizardry. After a lifetime of bottling up his magical powers, Harry finally feels like a normal kid."
+        }
+      ],
+      "readButtonText": "Read Now",
+      "backButtonText": "Back",
+      "buyButtonText": "Buy Now"
+    }
+  },
+  {
+    "id": "my-projects",
+    "title": "My Projects",
+    "category": "Showcase",
+    "category_label": "Practice 17 · Showcase",
+    "description": "A compact project showcase with technology, festival, food, and news experiences.",
+    "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/software-developer-img.png",
+    "component_key": "MyProjects",
+    "display_order": 17,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "hero": {
+        "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/software-developer-img.png",
+        "title": "My Projects",
+        "description": "These are a few of my Static Website projects that I have developed using HTML, CSS and Bootstrap."
+      },
+      "projects": [
+        {
+          "id": "advanced-technologies",
+          "title": "Advanced Technologies",
+          "description": "Machinery and equipment developed from the application of scientific knowledge.",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/advanced-technologies-img.png",
+          "buttonText": "Learn more",
+          "backgroundClass": "advanced-project-background"
+        },
+        {
+          "id": "diwali",
+          "title": "Celebrate Diwali with your friends",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/diwali-img.png",
+          "products": [
+            {
+              "name": "Diwali Air Balloon",
+              "price": "Rs 369",
+              "emoji": "🏮"
+            },
+            {
+              "name": "Diwali - Lamp",
+              "price": "Rs 50",
+              "emoji": "🪔"
+            },
+            {
+              "name": "Sparklers",
+              "price": "Rs 150",
+              "emoji": "🎇"
+            },
+            {
+              "name": "Fire Cracker",
+              "price": "Rs 560",
+              "emoji": "🎆"
+            }
+          ]
+        },
+        {
+          "id": "happy-meals",
+          "title": "happy Meals",
+          "description": "discover the best foods",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/food-img.png"
+        },
+        {
+          "id": "newspaper",
+          "title": "All educational institutions in Assam to reopen from November 2",
+          "category": "NEWS OF THE DAY",
+          "description": "Uttar Pradesh's Gautam Buddh Nagar recorded 107 new Covid-19 cases on Saturday, pushing the district's infection tally to 15,803, official data showed. The number of active cases came down further to 1,384 from 1,477 on Friday and 1,523 on Thursday, according to the data released by the UP Health Department for a 24-hour period.",
+          "image": "https://d2clawv67efefq.cloudfront.net/ccbp-static-website/news-paper-img.png",
+          "buttonText": "Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "favorite-stores",
+    "title": "Favorite Stores",
+    "category": "Shopping",
+    "category_label": "Practice 18 · Shopping",
+    "description": "A quick guide to favorite online stores, from Amazon and IKEA to Flipkart.",
+    "image": "https://assets.ccbp.in/frontend/static-website/stores-img.png",
+    "component_key": "FavoriteStores",
+    "display_order": 18,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "title": "Shop in your favorite stores",
+      "sectionTitle": "Select your store with one click",
+      "heroImage": "https://assets.ccbp.in/frontend/static-website/stores-img.png",
+      "stores": [
+        {
+          "id": "amazon",
+          "name": "Amazon",
+          "image": "https://assets.ccbp.in/frontend/static-website/amazon-logo-img.png",
+          "description": "Online Shopping Free Shipping & Cash on Delivery ..."
+        },
+        {
+          "id": "ikea",
+          "name": "IKEA",
+          "image": "https://assets.ccbp.in/frontend/static-website/ikea-logo-img.png",
+          "description": "Explore our furniture & home furnishing range. IKEA is a global leader..."
+        },
+        {
+          "id": "bewakoof",
+          "name": "Bewakoof",
+          "image": "https://assets.ccbp.in/frontend/static-website/bewakoof-logo-img.png",
+          "description": "A Lifestyle Fashion Brand That Offers Creative and Distinctive Fashion..."
+        },
+        {
+          "id": "flipkart",
+          "name": "Flipkart",
+          "image": "https://assets.ccbp.in/frontend/static-website/flipkart-logo-img.png",
+          "description": "Wide Range of Genuine Products, Easy Returns, Cash on Delivery, Browse Now..."
+        }
+      ]
+    }
+  },
+  {
+    "id": "foundations",
+    "title": "Foundations",
+    "category": "Learning",
+    "category_label": "Practice 19 · Learning",
+    "description": "A simple foundations course page introducing Python, Javascript, HTML5, and Java.",
+    "image": "https://assets.ccbp.in/frontend/static-website/foundations-bg.png",
+    "component_key": "Foundations",
+    "display_order": 19,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "title": "Foundations",
+      "description": "Learn courses that will help you move forward in your career",
+      "backgroundImage": "https://assets.ccbp.in/frontend/static-website/foundations-bg.png",
+      "technologies": [
+        {
+          "id": "python",
+          "name": "Python",
+          "image": "https://assets.ccbp.in/frontend/static-website/foundations-python-img.png"
+        },
+        {
+          "id": "javascript",
+          "name": "Javascript",
+          "image": "https://assets.ccbp.in/frontend/static-website/foundations-javascript-img.png"
+        },
+        {
+          "id": "html5",
+          "name": "HTML5",
+          "image": "https://assets.ccbp.in/frontend/static-website/foundations-html5-img.png"
+        },
+        {
+          "id": "java",
+          "name": "Java",
+          "image": "https://assets.ccbp.in/frontend/static-website/foundations-java-img.png"
+        }
+      ]
+    }
+  },
+  {
+    "id": "yoga",
+    "title": "Yoga",
+    "category": "Wellness",
+    "category_label": "Practice 20 · Wellness",
+    "description": "Explore a welcoming yoga experience with an introduction and four yoga styles.",
+    "image": "https://assets.ccbp.in/frontend/static-website/yoga-girl-with-headphones-img.png",
+    "component_key": "YogaPage",
+    "display_order": 20,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Responsive design"
+    ],
+    "data": {
+      "home": {
+        "title": "Discover the yogi life on the Yoga Experience Platform",
+        "description": "Yoga poses strengthen and open tight areas of the body.",
+        "backgroundImage": "https://assets.ccbp.in/frontend/static-website/yoga-bg.png",
+        "image": "https://assets.ccbp.in/frontend/static-website/yoga-girl-with-headphones-img.png",
+        "buttonText": "Get Started"
+      },
+      "types": {
+        "title": "Types Of Yoga",
+        "image": "https://assets.ccbp.in/frontend/static-website/yoga-girl-without-headphones-img.png",
+        "backButtonText": "Back",
+        "poses": [
+          {
+            "id": "acro",
+            "title": "Acro yoga",
+            "description": "It stretches and relaxes your body, improves stamina and memory.",
+            "image": "https://assets.ccbp.in/frontend/static-website/yoga-card1-img.png"
+          },
+          {
+            "id": "vinyasa",
+            "title": "Vinyasa yoga",
+            "description": "It serves as a training to increase strength and helps to build lean muscle mass throughout the body.",
+            "image": "https://assets.ccbp.in/frontend/static-website/yoga-card2-img.png"
+          },
+          {
+            "id": "hatha",
+            "title": "Hatha yoga",
+            "description": "It introduces beginners to the main relaxation techniques and asanas.",
+            "image": "https://assets.ccbp.in/frontend/static-website/yoga-card3-img.png"
+          },
+          {
+            "id": "kundalini",
+            "title": "Kundalini yoga",
+            "description": "It helps relax and restore the mind and the body, improving strength, flexibility, and endurance.",
+            "image": "https://assets.ccbp.in/frontend/static-website/yoga-card4-img.png"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "sunrise-avenue",
+    "title": "Sunrise Avenue",
+    "category": "Real Estate",
+    "category_label": "Practice 21 · Real Estate",
+    "description": "Browse furnished 2BHK, 3BHK, and 4BHK flats and explore each property.",
+    "image": "https://assets.ccbp.in/frontend/static-website/flats-list-bg.png",
+    "component_key": "FlatsPage",
+    "display_order": 21,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Responsive design"
+    ],
+    "data": {
+      "title": "Sunrise Avenue",
+      "homeDescription": "A new apartment in the city",
+      "bookButtonText": "Book Flat",
+      "backButtonText": "Back",
+      "confirmButtonText": "Confirm",
+      "locationImage": "https://assets.ccbp.in/frontend/static-website/flats-list-location-icon-img.png",
+      "flats": [
+        {
+          "id": "3bhk",
+          "title": "3BHK Flat",
+          "cardImage": "https://assets.ccbp.in/frontend/static-website/flats-list-card1-img.png",
+          "detailImage": "https://assets.ccbp.in/frontend/static-website/flats-list-d1-img.png",
+          "description": "This is a fully furnished house with handmade furniture including a luxury en-suite facilities pack. Its built-up area is about 1600sq.ft. A spacious home for you to live in.",
+          "address": "Sunrise Avenue"
+        },
+        {
+          "id": "2bhk",
+          "title": "2BHK Flat",
+          "cardImage": "https://assets.ccbp.in/frontend/static-website/flats-list-card2-img.png",
+          "detailImage": "https://assets.ccbp.in/frontend/static-website/flats-list-d2-img.png",
+          "description": "A minimalist house made for modern-day families. It is fully furnished with trending furniture. Its built-up area is about 1200sq.ft.",
+          "address": "Sunrise Avenue"
+        },
+        {
+          "id": "4bhk",
+          "title": "4BHK Flat",
+          "cardImage": "https://assets.ccbp.in/frontend/static-website/flats-list-card3-img.png",
+          "detailImage": "https://assets.ccbp.in/frontend/static-website/flats-list-d3-img.png",
+          "description": "A contemporary home with more color and vibrancy. It is fully furnished with elegant furniture. Its built-up area is about 3600sq.ft.",
+          "address": "Sunrise Avenue"
+        }
+      ]
+    }
+  },
+  {
+    "id": "articles",
+    "title": "Articles",
+    "category": "Learning",
+    "category_label": "Practice 22 · Learning",
+    "description": "Explore visual topic collections across technology, science, health care, and business.",
+    "image": "https://assets.ccbp.in/frontend/static-website/articles-technology-c1-img.png",
+    "component_key": "ArticlesPage",
+    "display_order": 22,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Carousel"
+    ],
+    "data": {
+      "title": "Empower yourself",
+      "description": "By learning new courses from worlds leading experts",
+      "categories": [
+        {
+          "id": "technology",
+          "name": "Technology",
+          "icon": "https://assets.ccbp.in/frontend/static-website/articles-technology-icon-img.png",
+          "images": [
+            "https://assets.ccbp.in/frontend/static-website/articles-technology-c1-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-technology-c2-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-technology-c3-img.png"
+          ],
+          "topics": [
+            "Artificial Intelligence",
+            "Data Science",
+            "Machine Learning",
+            "Internet Of Things",
+            "Blockchain",
+            "Virtual Reality",
+            "Robotic Process Automation (RPA)"
+          ]
+        },
+        {
+          "id": "science",
+          "name": "Science",
+          "icon": "https://assets.ccbp.in/frontend/static-website/articles-science-icon-img.png",
+          "images": [
+            "https://assets.ccbp.in/frontend/static-website/articles-science-c1-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-science-c2-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-science-c3-img.png"
+          ],
+          "topics": [
+            "Biology",
+            "Zoology",
+            "Cardiology",
+            "Chemistry",
+            "Bio Chemistry",
+            "Nano Science",
+            "Astronomy"
+          ]
+        },
+        {
+          "id": "health-care",
+          "name": "Health Care",
+          "icon": "https://assets.ccbp.in/frontend/static-website/articles-healthcare-icon-img.png",
+          "images": [
+            "https://assets.ccbp.in/frontend/static-website/articles-healthcare-c1-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-healthcare-c2-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-healthcare-c3-img.png"
+          ],
+          "topics": [
+            "Infrastructure Management",
+            "Latest in Health Care",
+            "Pharmaceuticals",
+            "COVID-19"
+          ]
+        },
+        {
+          "id": "business",
+          "name": "Business",
+          "icon": "https://assets.ccbp.in/frontend/static-website/articles-business-icon-img.png",
+          "images": [
+            "https://assets.ccbp.in/frontend/static-website/articles-business-c1-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-business-c2-img.png",
+            "https://assets.ccbp.in/frontend/static-website/articles-business-c3-img.png"
+          ],
+          "topics": [
+            "Business Models",
+            "21st Century Business Skills",
+            "Traditional Business Approaches",
+            "How to go from 0 to 1? The startup 101"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "html-css-exam",
+    "title": "Introduction to HTML and CSS",
+    "category": "Coding Exam",
+    "category_label": "Practice 23 · Coding Exam",
+    "description": "A clean, beginner-friendly introduction to the basic concepts of HTML and CSS.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/ce-1-intro-to-html-css-v1.png",
+    "component_key": "IntroductionHtmlCss",
+    "display_order": 23,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "title": "Introduction to HTML and CSS",
+      "description": "Learn the basics of HTML and CSS.",
+      "buttonText": "Start Exam"
+    }
+  },
+  {
+    "id": "css-box-model",
+    "title": "CSS Box Model — Sea",
+    "category": "CSS",
+    "category_label": "Practice 24 · CSS",
+    "description": "A visual CSS box-model exercise with three sea images in progressive dimensions.",
+    "image": "https://assets.ccbp.in/frontend/static-website/beach-3-img.png",
+    "component_key": "CssBoxModel",
+    "display_order": 24,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS Box Model"
+    ],
+    "data": {
+      "title": "Sea",
+      "beaches": [
+        {
+          "id": 1,
+          "image": "https://assets.ccbp.in/frontend/static-website/beach-1-img.png",
+          "width": 200,
+          "height": 200
+        },
+        {
+          "id": 2,
+          "image": "https://assets.ccbp.in/frontend/static-website/beach-2-img.png",
+          "width": 250,
+          "height": 250
+        },
+        {
+          "id": 3,
+          "image": "https://assets.ccbp.in/frontend/static-website/beach-3-img.png",
+          "width": 300,
+          "height": 300
+        }
+      ]
+    }
+  },
+  {
+    "id": "scuba-diving",
+    "title": "Scuba Diving",
+    "category": "Adventure",
+    "category_label": "Practice 25 · Adventure",
+    "description": "A responsive introduction to scuba diving over an underwater scene.",
+    "image": "https://assets.ccbp.in/frontend/static-website/scuba-diving-bg.png",
+    "component_key": "ScubaDiving",
+    "display_order": 25,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS"
+    ],
+    "data": {
+      "title": "Scuba Diving",
+      "description": "Scuba diving is a mode of underwater diving where the diver uses a self-contained underwater breathing apparatus (scuba)."
+    }
+  },
+  {
+    "id": "viewport-width",
+    "title": "Viewport Width",
+    "category": "CSS",
+    "category_label": "Practice 26 · CSS",
+    "description": "Four full-width color bands demonstrate viewport-based section heights.",
+    "image": "/viewport-width-preview.svg",
+    "component_key": "ViewportWidth",
+    "display_order": 26,
+    "active": true,
+    "technologies": [
+      "React",
+      "CSS",
+      "Viewport Units"
+    ],
+    "data": {
+      "sections": [
+        {
+          "id": 1,
+          "text": "Width25vw",
+          "colorClass": "band-green"
+        },
+        {
+          "id": 2,
+          "text": "Width50vw",
+          "colorClass": "band-blue"
+        },
+        {
+          "id": 3,
+          "text": "Width75vw",
+          "colorClass": "band-orange"
+        },
+        {
+          "id": 4,
+          "text": "Width100vw",
+          "colorClass": "band-red"
+        }
+      ]
+    }
+  },
+  {
+    "id": "viewport-height",
+    "title": "Viewport Height",
+    "category": "CSS",
+    "category_label": "Practice 27 · CSS",
+    "description": "Four side-by-side columns demonstrate heights from 25vh through 100vh.",
+    "image": "/viewport-height-preview.svg",
+    "component_key": "ViewportHeight",
+    "display_order": 27,
+    "active": true,
+    "technologies": [
+      "React",
+      "CSS",
+      "Viewport Units"
+    ],
+    "data": {
+      "sections": [
+        {
+          "id": 1,
+          "text": "Height 25vh",
+          "className": "height-25vh column-green"
+        },
+        {
+          "id": 2,
+          "text": "Height 50vh",
+          "className": "height-50vh column-blue"
+        },
+        {
+          "id": 3,
+          "text": "Height 75vh",
+          "className": "height-75vh column-orange"
+        },
+        {
+          "id": 4,
+          "text": "Height 100vh",
+          "className": "height-100vh column-red"
+        }
+      ]
+    }
+  },
+  {
+    "id": "box-model-buttons",
+    "title": "CSS Box Model Buttons",
+    "category": "CSS",
+    "category_label": "Practice 28 · CSS",
+    "description": "Explore margins, padding, borders, and rounded shapes through six styled buttons.",
+    "image": "/box-model-buttons-preview.svg",
+    "component_key": "BoxModelButtons",
+    "display_order": 28,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "CSS Box Model"
+    ],
+    "data": {
+      "leafHeading": "Leaf",
+      "leafLabel": "Leaf",
+      "stylesHeading": "Button Styles",
+      "readyLabel": "Ready",
+      "setLabel": "Set",
+      "goLabel": "Go"
+    }
+  },
+  {
+    "id": "viewport-width-scale",
+    "title": "Viewport Width Scale",
+    "category": "CSS",
+    "category_label": "Practice 29 · CSS",
+    "description": "Four stacked bands show exact 25vw, 50vw, 75vw, and 100vw widths.",
+    "image": "/viewport-width-scale-preview.svg",
+    "component_key": "ViewportWidthScale",
+    "display_order": 29,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Viewport Units"
+    ],
+    "data": {
+      "items": [
+        {
+          "id": 1,
+          "text": "Width25vw",
+          "className": "Width25vw"
+        },
+        {
+          "id": 2,
+          "text": "Width50vw",
+          "className": "Width50vw"
+        },
+        {
+          "id": 3,
+          "text": "Width75vw",
+          "className": "Width75vw"
+        },
+        {
+          "id": 4,
+          "text": "Width100vw",
+          "className": "Width100vw"
+        }
+      ]
+    }
+  },
+  {
+    "id": "flexbox-properties-1",
+    "title": "Flexbox Properties-1",
+    "category": "Flexbox",
+    "category_label": "Practice 31 · Flexbox",
+    "description": "Three flex-row alignments demonstrate start, center, and end justification with six colored boxes.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/ce-3-2-1-flex-row-v1.png",
+    "component_key": "FlexboxProperties1",
+    "display_order": 30,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Flexbox",
+      "CSS"
+    ],
+    "data": {}
+  },
+  {
+    "id": "flexbox-properties-2",
+    "title": "Flexbox Properties-2",
+    "category": "Flexbox",
+    "category_label": "Practice 32 · Flexbox",
+    "description": "A column flexbox container places two items at the bottom-left of the viewport.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/ce-3-2-2-flexbox-column-v1.png",
+    "component_key": "FlexboxProperties2",
+    "display_order": 31,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Flexbox",
+      "CSS"
+    ],
+    "data": {}
+  },
+  {
+    "id": "html-images",
+    "title": "HTML Images",
+    "category": "HTML",
+    "category_label": "Practice 33 · HTML",
+    "description": "Three centered HTML images rendered at the required 200px width and height.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/images-output.png",
+    "component_key": "HtmlImages",
+    "display_order": 32,
+    "active": true,
+    "technologies": [
+      "React",
+      "HTML",
+      "CSS",
+      "Roboto"
+    ],
+    "data": {}
+  },
+  {
+    "id": "css-box-model-margin",
+    "title": "CSS Box Model Property - Margin",
+    "category": "CSS",
+    "category_label": "Practice 34 · CSS",
+    "description": "A margin-left exercise showing three stacked boxes with increasing horizontal offsets.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/margin-output.png",
+    "component_key": "CssBoxModelMargin",
+    "display_order": 33,
+    "active": true,
+    "technologies": [
+      "React",
+      "CSS",
+      "Box Model",
+      "Roboto"
+    ],
+    "data": {}
+  },
+  {
+    "id": "bootstrap-carousels",
+    "title": "Bootstrap Carousels",
+    "category": "Bootstrap",
+    "category_label": "Practice 35 · Bootstrap",
+    "description": "An interactive Bootstrap carousel featuring football, cricket, and tennis imagery.",
+    "image": "/bootstrap-carousels-preview.webp",
+    "component_key": "BootstrapCarousels",
+    "display_order": 34,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Carousel",
+      "Roboto"
+    ],
+    "data": {}
+  },
+  {
+    "id": "bootstrap-embed",
+    "title": "Bootstrap Embed",
+    "category": "Bootstrap",
+    "category_label": "Practice 36 · Bootstrap",
+    "description": "A responsive 16:9 Bootstrap embed containing the supplied YouTube video.",
+    "image": "https://assets.ccbp.in/frontend/content/static-website/ce-4-3-2-embed-v1.gif",
+    "component_key": "BootstrapEmbed",
+    "display_order": 35,
+    "active": true,
+    "technologies": [
+      "React",
+      "Bootstrap",
+      "Embed",
+      "YouTube"
+    ],
+    "data": {}
+  },
+  {
+    "id": "animals-website-integration",
+    "title": "Animals Website Integration",
+    "category": "CCBP UI Kit",
+    "category_label": "Practice 37 · CCBP UI Kit",
+    "description": "A responsive animals home page with connected turtle, raccoon, kangaroo, and lion detail views.",
+    "image": "https://assets.ccbp.in/frontend/static-website/animals-turtle-bg.png",
+    "component_key": "AnimalsIntegration",
+    "display_order": 36,
+    "active": true,
+    "technologies": [
+      "React",
+      "CCBP UI Kit",
+      "Bootstrap",
+      "Responsive UI"
+    ],
+    "data": {}
+  },
+  {
+    "id": "hobbies-lists",
+    "title": "Hobbies and List Styles",
+    "category": "HTML & CSS",
+    "category_label": "Practice 38 · HTML & CSS",
+    "description": "A semantic lists exercise using custom ordered and unordered marker styles with Roboto typography.",
+    "image": "/hobbies-lists-preview.webp",
+    "component_key": "HobbiesLists",
+    "display_order": 37,
+    "active": true,
+    "technologies": [
+      "React",
+      "HTML",
+      "CSS",
+      "Roboto"
+    ],
+    "data": {}
+  },
+  {
+    "id": "html-hyperlinks",
+    "title": "HTML Hyperlinks",
+    "category": "HTML",
+    "category_label": "Practice 39 · HTML",
+    "description": "A profile page demonstrating an external Google link and an in-page bio anchor.",
+    "image": "https://assets.ccbp.in/frontend/static-website/profile-img.png",
+    "component_key": "HtmlHyperlinks",
+    "display_order": 38,
+    "active": true,
+    "technologies": [
+      "React",
+      "HTML",
+      "Hyperlinks",
+      "Responsive UI"
+    ],
+    "data": {}
+  }
+]

@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.viewport-width-scale-page {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: "Roboto", sans-serif;
+}
+
+.viewport-width-scale-container {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.viewport-width-scale-container p {
+  height: 25vh;
+  padding: 20px 24px;
+  color: #ffffff;
+  font-family: "Roboto", sans-serif;
+  font-size: 28px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.Width25vw {
+  width: 25vw;
+  background-color: #5cb85c;
+}
+
+.Width50vw {
+  width: 50vw;
+  background-color: #5bc0de;
+}
+
+.Width75vw {
+  width: 75vw;
+  background-color: #f0ad4e;
+}
+
+.Width100vw {
+  width: 100vw;
+  background-color: #d9534f;
+}
+
+@media screen and (max-width: 576px) {
+  .viewport-width-scale-container p {
+    padding: 16px;
+    font-size: 20px;
+  }
+}

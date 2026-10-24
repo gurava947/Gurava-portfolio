@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.viewport-height-page {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: "Roboto", sans-serif;
+}
+
+.viewport-height-columns {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.viewport-height-column {
+  flex: 0 0 25vw;
+  width: 25vw;
+  padding: 16px;
+  text-align: center;
+}
+
+.viewport-height-text {
+  color: #ffffff;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.height-25vh {
+  height: 25vh;
+}
+
+.height-50vh {
+  height: 50vh;
+}
+
+.height-75vh {
+  height: 75vh;
+}
+
+.height-100vh {
+  height: 100vh;
+}
+
+.column-green {
+  background-color: #5cb85c;
+}
+
+.column-blue {
+  background-color: #5bc0de;
+}
+
+.column-orange {
+  background-color: #f0ad4e;
+}
+
+.column-red {
+  background-color: #d9534f;
+}
+
+@media screen and (max-width: 768px) {
+  .viewport-height-columns {
+    overflow-x: auto;
+  }
+
+  .viewport-height-column {
+    min-width: 25vw;
+  }
+
+  .viewport-height-text {
+    font-size: 18px;
+  }
+}

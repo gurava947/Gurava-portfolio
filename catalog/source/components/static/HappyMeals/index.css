@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap");
+
+.happy-meals-page {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.happy-meals-preview {
+  min-height: 100vh;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.happy-meals-preview h1,
+.happy-meals-preview p {
+  overflow-wrap: anywhere;
+}
+
+.happy-meals-preview h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2.75rem, 10vw, 5.5rem);
+  line-height: 1;
+}
+
+.happy-meals-preview p {
+  margin: 0;
+  font-size: clamp(1.75rem, 6vw, 3rem);
+  line-height: 1.2;
+}
+
+.text {
+  font-family: "Caveat", cursive;
+}

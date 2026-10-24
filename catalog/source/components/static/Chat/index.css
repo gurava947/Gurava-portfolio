@@ -1,0 +1,38 @@
+.background-image-section {
+  background-image: url("https://d2clawv67efefq.cloudfront.net/ccbp-static-website/chatbg.png" );
+  background-color: #182d3f;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0 auto;
+  width: min(100%, 700px);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.background-content-card {
+  background-color: #52606d;
+  padding: 20px;
+  text-align: center;
+}
+
+.background-image-section .chat-message-list {
+  padding: 8px;
+}
+
+.chat-message {
+  width: fit-content;
+  max-width: 85%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  color: #ffffff;
+  background-color: #145da0;
+  padding: 10px 14px;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
