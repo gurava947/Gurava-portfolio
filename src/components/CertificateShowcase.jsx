@@ -204,18 +204,47 @@ function PerformanceReport({ data, copy }) {
         <div className="certificate-scoreboard-attempts">
           {data.attempts?.length > 0 && (
             <ul className="certificate-attempts">
-              {data.attempts.map((attempt) => (
-                <li className="certificate-attempt" key={attempt.label}>
-                  <div className="certificate-attempt-heading">
-                    <strong>{attempt.label}</strong>
-                    {attempt.result && <span className="certificate-attempt-result">{attempt.result}</span>}
-                  </div>
-                  <dl className="certificate-attempt-facts">
-                    {attempt.date && <div><dt>{copy.attemptDate}</dt><dd>{attempt.date}</dd></div>}
-                    {attempt.duration && <div><dt>{copy.attemptDuration}</dt><dd>{attempt.duration}</dd></div>}
-                  </dl>
-                </li>
-              ))}
+              {data.attempts.map((attempt) => {
+                const counts = [
+                  { key: "correct", value: attempt.correct, label: copy.attemptCorrect, tone: "is-correct" },
+                  { key: "incorrect", value: attempt.incorrect, label: copy.attemptIncorrect, tone: "is-incorrect" },
+                  { key: "unanswered", value: attempt.unanswered, label: copy.attemptUnanswered, tone: "is-unanswered" },
+                ].filter(({ value }) => Number.isFinite(value));
+                const showScore = attempt.grade || attempt.score || attempt.gradePoints;
+
+                return (
+                  <li className="certificate-attempt" key={attempt.label}>
+                    <div className="certificate-attempt-heading">
+                      <strong>{attempt.label}</strong>
+                      {attempt.result && <span className="certificate-attempt-result">{attempt.result}</span>}
+                    </div>
+                    <dl className="certificate-attempt-facts">
+                      {attempt.date && <div><dt className="visually-hidden">{copy.attemptDate}</dt><dd>{attempt.date}</dd></div>}
+                      {attempt.duration && <div><dt className="visually-hidden">{copy.attemptDuration}</dt><dd>{attempt.duration}</dd></div>}
+                    </dl>
+                    {showScore && (
+                      <div className="certificate-attempt-score">
+                        {attempt.grade && <span className="certificate-attempt-grade">{attempt.grade}</span>}
+                        <span className="certificate-attempt-score-copy">
+                          {attempt.score && <strong className="certificate-attempt-score-value">{attempt.score}</strong>}
+                          {attempt.gradePoints && <span className="certificate-attempt-points">{attempt.gradePoints} {copy.attemptGradePoints}</span>}
+                        </span>
+                      </div>
+                    )}
+                    {counts.length > 0 && (
+                      <div className="certificate-attempt-counts">
+                        {counts.map(({ key, value, label, tone }) => (
+                          <div className={`certificate-attempt-count ${tone}`} key={key}>
+                            <span className="certificate-attempt-dot" aria-hidden="true" />
+                            <strong>{value}</strong>
+                            <span className="certificate-attempt-count-label">{label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

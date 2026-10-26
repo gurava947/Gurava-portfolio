@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { applyCardStyleVariables, CARD_LAYOUTS } from "../utils/cardStyle";
 
 export const THEME_STORAGE_KEY = "portfolio-theme-settings";
 export const THEME_MODES = ["dark", "light"];
@@ -52,6 +53,9 @@ export const DEFAULT_CARD_UI_SETTINGS = {
   textColor: "theme",
   hoverScale: 1.02,
   hoverHighlight: "subtle",
+  shadowDepth: "raised",
+  cardGap: "cozy",
+  tiltIntensity: 7,
   transitionDuration: 250,
   transitionEasing: "smooth",
   entranceIntensity: "none",
@@ -66,7 +70,8 @@ const CARD_HIGHLIGHTS = ["none", "subtle", "medium"];
 const CARD_EASINGS = ["smooth", "standard"];
 const CARD_ENTRANCE_INTENSITIES = ["none", "subtle", "medium"];
 const CARD_IMAGE_FITS = ["contain", "cover"];
-const CARD_LAYOUTS = ["grid", "rail", "depth"];
+const CARD_SHADOW_DEPTHS = ["none", "soft", "raised", "floating"];
+const CARD_GAPS = ["compact", "cozy", "spacious"];
 const CARD_NUMBER_RANGES = {
   radius: [0, 40],
   topLeftRadius: [0, 40],
@@ -82,6 +87,7 @@ const CARD_NUMBER_RANGES = {
   fontSize: [12, 24],
   fontWeight: [300, 800],
   hoverScale: [1, 1.04],
+  tiltIntensity: [0, 14],
   transitionDuration: [0, 600],
 };
 const CARD_IMAGE_HEIGHT_RANGES = {
@@ -122,6 +128,8 @@ export function normalizeCardUISettings(value = {}) {
   if (CARD_ENTRANCE_INTENSITIES.includes(source.entranceIntensity)) normalized.entranceIntensity = source.entranceIntensity;
   if (CARD_IMAGE_FITS.includes(source.imageFit)) normalized.imageFit = source.imageFit;
   if (CARD_LAYOUTS.includes(source.cardLayout)) normalized.cardLayout = source.cardLayout;
+  if (CARD_SHADOW_DEPTHS.includes(source.shadowDepth)) normalized.shadowDepth = source.shadowDepth;
+  if (CARD_GAPS.includes(source.cardGap)) normalized.cardGap = source.cardGap;
   ["scrollReveal", "pressFeedback", "deviceSwitchTransition"].forEach((key) => {
     if (typeof source[key] === "boolean") normalized[key] = source[key];
   });
@@ -241,62 +249,7 @@ export function useTheme() {
     root.style.setProperty("--theme-radius", `${settings.radius}px`);
     root.style.setProperty("--theme-transition", "240ms ease");
     const cardUI = ensureCardTextContrast(normalizeCardUISettings(settings.cardUI), mode);
-    root.style.setProperty("--portfolio-card-radius", `${cardUI.radius}px`);
-    root.style.setProperty("--portfolio-card-radius-top-left", `${cardUI.topLeftRadius}px`);
-    root.style.setProperty("--portfolio-card-radius-top-right", `${cardUI.topRightRadius}px`);
-    root.style.setProperty("--portfolio-card-radius-bottom-right", `${cardUI.bottomRightRadius}px`);
-    root.style.setProperty("--portfolio-card-radius-bottom-left", `${cardUI.bottomLeftRadius}px`);
-    root.style.setProperty("--portfolio-card-image-radius-top-left", `${cardUI.topLeftRadius * 0.8}px`);
-    root.style.setProperty("--portfolio-card-image-radius-top-right", `${cardUI.topRightRadius * 0.8}px`);
-    ["top", "right", "bottom", "left"].forEach((side) => {
-      const title = side[0].toUpperCase() + side.slice(1);
-      root.style.setProperty(`--portfolio-card-border-${side}-width`, `${cardUI[`border${title}Width`]}px`);
-      root.style.setProperty(
-        `--portfolio-card-border-${side}-color`,
-        cardUI[`border${title}Color`] === "theme"
-          ? "var(--portfolio-card-border-color, var(--theme-card-border))"
-          : cardUI[`border${title}Color`]
-      );
-    });
-    root.style.setProperty("--portfolio-card-background", cardUI.backgroundColor === "theme" ? "var(--theme-card-bg)" : cardUI.backgroundColor);
-    root.style.setProperty("--portfolio-card-border-color", cardUI.borderColor === "theme" ? "var(--theme-card-border)" : cardUI.borderColor);
-    root.style.setProperty("--portfolio-card-max-width", `${cardUI.maxWidth}px`);
-    root.style.setProperty("--portfolio-card-min-height", `${cardUI.minHeight}px`);
-    root.style.setProperty("--portfolio-card-image-height-mobile", `${cardUI.mobileImageHeight}px`);
-    root.style.setProperty("--portfolio-card-image-height-tablet", `${cardUI.tabletImageHeight}px`);
-    root.style.setProperty("--portfolio-card-image-height-desktop", `${cardUI.desktopImageHeight}px`);
-    root.style.setProperty("--portfolio-card-font-family", {
-      theme: "inherit",
-      system: "system-ui, sans-serif",
-      arial: "Arial, sans-serif",
-      georgia: "Georgia, serif",
-      monospace: "ui-monospace, SFMono-Regular, Consolas, monospace",
-    }[cardUI.fontFamily]);
-    root.style.setProperty("--portfolio-card-title-font-family", cardUI.fontFamily === "theme"
-      ? "'Space Grotesk', sans-serif"
-      : {
-        system: "system-ui, sans-serif",
-        arial: "Arial, sans-serif",
-        georgia: "Georgia, serif",
-        monospace: "ui-monospace, SFMono-Regular, Consolas, monospace",
-      }[cardUI.fontFamily]);
-    root.style.setProperty("--portfolio-card-font-size", `${cardUI.fontSize}px`);
-    root.style.setProperty("--portfolio-card-font-scale", String(cardUI.fontSize / 16));
-    root.style.setProperty("--portfolio-card-font-weight", String(cardUI.fontWeight));
-    if (cardUI.textColor === "theme") root.style.removeProperty("--portfolio-card-custom-text-color");
-    else root.style.setProperty("--portfolio-card-custom-text-color", cardUI.textColor);
-    root.style.setProperty("--portfolio-card-hover-scale", String(cardUI.hoverScale));
-    root.style.setProperty("--portfolio-card-hover-shadow", {
-      none: "0 10px 26px rgb(24 35 29 / 9%)",
-      subtle: "0 14px 30px rgb(24 35 29 / 13%)",
-      medium: "0 18px 36px rgb(24 35 29 / 18%)",
-    }[cardUI.hoverHighlight]);
-    root.style.setProperty("--portfolio-card-transition-duration", `${cardUI.transitionDuration}ms`);
-    root.style.setProperty("--portfolio-card-transition-easing", cardUI.transitionEasing === "standard" ? "cubic-bezier(0.4, 0, 0.2, 1)" : "cubic-bezier(0.2, 0.75, 0.3, 1)");
-    root.style.setProperty("--portfolio-card-entrance-duration", cardUI.entranceIntensity === "medium" ? "420ms" : "280ms");
-    root.style.setProperty("--portfolio-card-entrance-offset", cardUI.entranceIntensity === "medium" ? "14px" : "7px");
-    root.style.setProperty("--portfolio-card-press-scale", cardUI.pressFeedback ? "0.985" : "1");
-    root.style.setProperty("--portfolio-device-transition-duration", cardUI.deviceSwitchTransition ? "360ms" : "0ms");
+    applyCardStyleVariables(root, cardUI);
 
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode, cardUI, loader }));
@@ -322,6 +275,9 @@ export function useTheme() {
     const apiCardUI = { ...cardUI };
     delete apiCardUI.imageFit;
     delete apiCardUI.cardLayout;
+    delete apiCardUI.shadowDepth;
+    delete apiCardUI.cardGap;
+    delete apiCardUI.tiltIntensity;
 
     const currentSettingsPatch = {
       theme: {

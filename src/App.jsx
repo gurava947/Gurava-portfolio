@@ -5,10 +5,12 @@ import "./App.css";
 import "./styles/portfolio-effects.css";
 import "./styles/project-lab.css";
 import "./styles/unified.css";
-import { DEFAULT_LOADER_SETTINGS, useTheme } from "./hooks/useTheme";
+import "./styles/card-layouts.css";
+import { DEFAULT_CARD_UI_SETTINGS, DEFAULT_LOADER_SETTINGS, normalizeCardUISettings, normalizeLoaderSettings, useTheme } from "./hooks/useTheme";
 import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
 import { attachImageFallbacks } from "./utils/imageFallback";
+import CardPreviewDialog from "./components/CardPreviewDialog";
 import CertificateCard from "./components/CertificateCard";
 import CertificateShowcase from "./components/CertificateShowcase";
 import CertificatesIndex from "./components/CertificatesIndex";
@@ -16,7 +18,9 @@ import { LoadSpinner } from "./components/LoadSpinner";
 import ProjectCard from "./components/ProjectCard";
 import ProjectDetail from "./components/ProjectDetail";
 import ProjectsCatalog from "./components/ProjectsCatalog";
+import GlassFolderCard from "./components/ui/GlassFolderCard";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
+import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
 const PROFILE_STORAGE_KEY = "myapp.guravva.profile.v1";
 
@@ -69,6 +73,8 @@ function ProfileIcon({ name }) {
   if (name === "sliders") return <svg {...common}><path d="M4 7h8m4 0h4M4 17h4m4 0h8" /><circle cx="14" cy="7" r="2.2" /><circle cx="10" cy="17" r="2.2" /></svg>;
   if (name === "refresh") return <svg {...common}><path d="M4 12a8 8 0 1 0 2.4-5.7" /><path d="M4 4.5V10h5.4" /></svg>;
   if (name === "check") return <svg {...common}><path d="m5 12.5 4.2 4L19 6.5" /></svg>;
+  if (name === "eye") return <svg {...common}><path d="M2.8 12S6.3 5.8 12 5.8 21.2 12 21.2 12 17.7 18.2 12 18.2 2.8 12 2.8 12Z" /><circle cx="12" cy="12" r="2.9" /></svg>;
+  if (name === "close") return <svg {...common}><path d="M6 6l12 12M18 6 6 18" /></svg>;
   return <svg {...common}><path d="M14 3h7v7m-1-6-9 9M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" /></svg>;
 }
 
@@ -135,6 +141,7 @@ const CARD_UI_NUMBER_CONTROLS = {
   ],
   Motion: [
     ["hoverScale", "Hover scale", 1, 1.04, 0.01, "×"],
+    ["tiltIntensity", "3D tilt intensity", 0, 14, 1, "°"],
     ["transitionDuration", "Transition duration", 0, 600, 25, "ms"],
   ],
 };
@@ -170,9 +177,21 @@ const CARD_UI_LAYOUT_CONTROLS = [
     ["cover", "Fill · crop the edges"],
   ]],
   ["cardLayout", "Card layout", [
-    ["grid", "Grid"],
+    ["grid", "Studio grid"],
+    ["mosaic", "Bento mosaic"],
+    ["editorial", "Editorial index"],
+    ["poster", "Poster overlay"],
     ["rail", "Side-scroll rail"],
     ["depth", "3D side-scroll rail"],
+  ]],
+];
+
+const CARD_UI_SURFACE_CONTROLS = [
+  ["shadowDepth", "Shadow depth", [
+    ["none", "None"], ["soft", "Soft"], ["raised", "Raised"], ["floating", "Floating"],
+  ]],
+  ["cardGap", "Card spacing", [
+    ["compact", "Compact"], ["cozy", "Cozy"], ["spacious", "Spacious"],
   ]],
 ];
 
@@ -255,12 +274,13 @@ function CardUISettings({ settings, onChange, themeMode }) {
   return (
     <fieldset className="card-ui-settings">
       <legend>Fine-tune</legend>
-      <p className="card-ui-hint">Every change applies to all project cards and saves automatically. Low-contrast custom colors return to theme colors.</p>
+      <p className="card-ui-hint">Preview any change here, then choose Apply to keep it. These settings are global: every project card shares them. Low-contrast custom colors return to theme colors.</p>
 
       <details className="card-ui-details">
-        <summary><span>Layout &amp; media</span><small>Grid, rail, 3D</small></summary>
+        <summary><span>Layout &amp; media</span><small>Bento, editorial, poster, rail</small></summary>
         <div className="card-ui-settings-grid">
           {CARD_UI_LAYOUT_CONTROLS.map(selectControl)}
+          {CARD_UI_SURFACE_CONTROLS.map(selectControl)}
         </div>
       </details>
 
@@ -315,8 +335,8 @@ function CardUISettings({ settings, onChange, themeMode }) {
       <details className="card-ui-details">
         <summary><span>Motion</span><small>Hover, entrance, feedback</small></summary>
         <div className="card-ui-settings-grid">
+          {CARD_UI_SELECT_CONTROLS.slice(1).map(selectControl)}
           {CARD_UI_NUMBER_CONTROLS.Motion.map(rangeControl)}
-          {CARD_UI_SELECT_CONTROLS.slice(2).map(selectControl)}
           <div className="card-ui-toggles">
             {[
               ["scrollReveal", "Scroll reveal"],
@@ -337,40 +357,97 @@ function CardUISettings({ settings, onChange, themeMode }) {
 
 function CardStudio({
   settings,
-  onChange,
-  onReset,
+  onApply,
   themeMode,
   previewProject,
+  previewProjects = [],
   copy = {},
   loaderSettings,
-  onLoaderChange,
-  onLoaderReset,
 }) {
+  const appliedLoader = loaderSettings || DEFAULT_LOADER_SETTINGS;
+  const [draftCardUI, setDraftCardUI] = useState(settings);
+  const [draftLoader, setDraftLoader] = useState(appliedLoader);
   const [announcement, setAnnouncement] = useState("");
-  const activePresetId = getActiveCardPresetId(settings);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const appliedCardRef = useRef(settings);
+  const appliedLoaderRef = useRef(appliedLoader);
+  const cardDirty = !sameCardSettings(draftCardUI, settings);
+  const loaderDirty = !sameCardSettings(draftLoader, appliedLoader);
+  const dirty = cardDirty || loaderDirty;
+  const activePresetId = getActiveCardPresetId(draftCardUI);
+  const activePreset = CARD_STYLE_PRESETS.find((preset) => preset.id === activePresetId) || null;
   const appliedCopy = copy.applied || "{name} style applied";
-  const loader = loaderSettings || DEFAULT_LOADER_SETTINGS;
+  const loader = draftLoader;
+  const dialogProjects = previewProjects.length
+    ? previewProjects
+    : previewProject
+      ? [previewProject]
+      : [];
 
+  useEffect(() => {
+    const cardChanged = !sameCardSettings(appliedCardRef.current, settings);
+    const loaderChanged = !sameCardSettings(appliedLoaderRef.current, appliedLoader);
+    if (!cardChanged && !loaderChanged) return;
+    if (sameCardSettings(draftCardUI, appliedCardRef.current)) setDraftCardUI(settings);
+    if (sameCardSettings(draftLoader, appliedLoaderRef.current)) setDraftLoader(appliedLoader);
+    appliedCardRef.current = settings;
+    appliedLoaderRef.current = appliedLoader;
+  }, [settings, appliedLoader, draftCardUI, draftLoader]);
+
+  const updateDraftCardUI = (patch) => {
+    setDraftCardUI((current) => normalizeCardUISettings({ ...current, ...patch }));
+  };
+  const updateDraftLoader = (patch) => {
+    setDraftLoader((current) => normalizeLoaderSettings({ ...current, ...patch }));
+  };
   const applyPreset = (preset) => {
-    onChange(preset.settings);
-    setAnnouncement(appliedCopy.replace("{name}", preset.label));
+    setDraftCardUI(normalizeCardUISettings({ ...preset.settings }));
+    setAnnouncement(`${appliedCopy.replace("{name}", preset.label)}. ${copy.applyHint || "Choose Apply to keep it."}`);
   };
   const applyQuick = (control, option) => {
-    onChange(option.patch);
-    setAnnouncement(`${control.label}: ${option.label}`);
+    updateDraftCardUI(option.patch);
+    setAnnouncement(`${control.label}: ${option.label}. ${copy.applyHint || "Choose Apply to keep it."}`);
   };
-  const resetCards = () => {
-    onReset();
-    setAnnouncement(copy.resetAnnouncement || "Card styles reset to the default look.");
+  const resetDraft = () => {
+    setDraftCardUI({ ...DEFAULT_CARD_UI_SETTINGS });
+    setDraftLoader({ ...DEFAULT_LOADER_SETTINGS });
+    setAnnouncement(copy.previewDefaults || "Default style loaded in the preview. Choose Apply to keep it.");
+  };
+  const cancelDraft = () => {
+    setDraftCardUI(settings);
+    setDraftLoader(appliedLoader);
+    setAnnouncement(copy.cancelAnnouncement || "Preview changes discarded.");
+  };
+  const applyDraft = () => {
+    if (!dirty) return;
+    const nextCardUI = normalizeCardUISettings(draftCardUI);
+    const nextLoader = normalizeLoaderSettings(draftLoader);
+    setDraftCardUI(nextCardUI);
+    setDraftLoader(nextLoader);
+    appliedCardRef.current = nextCardUI;
+    appliedLoaderRef.current = nextLoader;
+    onApply(nextCardUI, nextLoader);
+    setAnnouncement(copy.applyAnnouncement || "Card and loading styles applied.");
+  };
+  const openPreview = () => {
+    setPreviewOpen(true);
+    setAnnouncement(copy.previewOpened || "Layout preview opened. The live portfolio is unchanged.");
+  };
+  const closePreview = () => setPreviewOpen(false);
+  const applyFromPreview = () => {
+    applyDraft();
+    setPreviewOpen(false);
+  };
+  const discardFromPreview = () => {
+    cancelDraft();
+    setPreviewOpen(false);
   };
 
   return (
     <div className="card-studio">
       <div className="card-studio-intro">
-        <p>{copy.description || "Choose a curated look, preview it on a real project card, then fine-tune every detail."}</p>
-        <button type="button" className="card-studio-reset" onClick={resetCards}>
-          <ProfileIcon name="refresh" /> {copy.reset || "Reset all"}
-        </button>
+        <p>{copy.description || "Preview a look on a real card, then Apply to keep it everywhere."}</p>
+        <span className="card-studio-scope"><ProfileIcon name="sliders" /> {copy.scope || "Global card style"}</span>
       </div>
 
       <section className="card-studio-block card-studio-presets-block" aria-labelledby="card-studio-presets">
@@ -404,14 +481,22 @@ function CardStudio({
       <section className="card-studio-block card-studio-preview-block" aria-labelledby="card-studio-preview">
         <div className="card-studio-block-head">
           <h3 id="card-studio-preview">{copy.previewLabel || "Live preview"}</h3>
-          <span className="card-studio-preview-hint"><i aria-hidden="true" /> {copy.previewHint || "Hover to test the motion"}</span>
+          <span className={`card-studio-preview-hint${dirty ? " is-dirty" : ""}`}>
+            <i aria-hidden="true" /> {dirty ? (copy.previewDirty || "Unsaved preview") : (copy.previewClean || "Applied design")}
+          </span>
         </div>
         <div className="card-studio-preview">
-          <div className={`card-studio-preview-stage${settings.cardLayout === "depth" ? " is-depth" : ""}`} aria-hidden="true">
+          <div
+            className={`card-studio-preview-stage${draftCardUI.cardLayout === "depth" ? " is-depth" : ""}`}
+            style={getCardStyleVariables(draftCardUI)}
+            data-card-layout={draftCardUI.cardLayout}
+            aria-hidden="true"
+          >
             {previewProject
-              ? <ProjectCard project={previewProject} cardUI={settings} preview />
+              ? <ProjectCard project={previewProject} cardUI={draftCardUI} preview />
               : <p className="card-studio-preview-empty">Cards appear here once the catalog is ready.</p>}
           </div>
+          <p className="card-studio-preview-note">{copy.previewHint || "Hover the sample to test motion. Open Preview to see the layout across real projects. Only Apply changes the live portfolio."}</p>
         </div>
       </section>
 
@@ -422,7 +507,7 @@ function CardStudio({
         </div>
         <div className="card-studio-quick">
           {CARD_QUICK_CONTROLS.map((control) => {
-            const activeValue = control.getActive(settings);
+            const activeValue = control.getActive(draftCardUI);
             return (
               <div className="card-studio-quick-row" key={control.id}>
                 <span className="card-studio-quick-label">{control.label}</span>
@@ -448,16 +533,7 @@ function CardStudio({
       <section className="card-studio-block card-studio-loader-block" aria-labelledby="card-studio-loader">
         <div className="card-studio-block-head">
           <h3 id="card-studio-loader">{copy.loaderLabel || "Loading indicators"}</h3>
-          <button
-            type="button"
-            className="card-ui-reset"
-            onClick={() => {
-              onLoaderReset();
-              setAnnouncement(copy.loaderResetAnnouncement || "Loading indicator settings reset.");
-            }}
-          >
-            {copy.loaderReset || "Reset indicators"}
-          </button>
+          <span>{copy.loaderHint || "Previewed before Apply"}</span>
         </div>
         <div className="loader-studio">
           <div className="loader-studio-controls">
@@ -468,7 +544,7 @@ function CardStudio({
                   type="button"
                   className="card-studio-segment"
                   aria-pressed={loader.enabled}
-                  onClick={() => onLoaderChange({ enabled: true })}
+                  onClick={() => updateDraftLoader({ enabled: true })}
                 >
                   On
                 </button>
@@ -476,7 +552,7 @@ function CardStudio({
                   type="button"
                   className="card-studio-segment"
                   aria-pressed={!loader.enabled}
-                  onClick={() => onLoaderChange({ enabled: false })}
+                  onClick={() => updateDraftLoader({ enabled: false })}
                 >
                   Off
                 </button>
@@ -491,7 +567,7 @@ function CardStudio({
                     type="button"
                     className="card-studio-segment"
                     aria-pressed={loader.style === value}
-                    onClick={() => onLoaderChange({ style: value })}
+                    onClick={() => updateDraftLoader({ style: value })}
                   >
                     {label}
                   </button>
@@ -507,7 +583,7 @@ function CardStudio({
                     type="button"
                     className="card-studio-segment"
                     aria-pressed={loader.speed === value}
-                    onClick={() => onLoaderChange({ speed: value })}
+                    onClick={() => updateDraftLoader({ speed: value })}
                   >
                     {label}
                   </button>
@@ -519,7 +595,7 @@ function CardStudio({
                 id="card-ui-loader-labels"
                 type="checkbox"
                 checked={loader.labels}
-                onChange={(event) => onLoaderChange({ labels: event.target.checked })}
+                onChange={(event) => updateDraftLoader({ labels: event.target.checked })}
               />
               <span>{copy.loaderText || "Show loading text"}</span>
             </label>
@@ -534,8 +610,44 @@ function CardStudio({
         </div>
       </section>
 
-      <CardUISettings settings={settings} onChange={onChange} themeMode={themeMode} />
+      <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
+
+      <div className="card-studio-actions">
+        <div className="card-studio-actions-status">
+          <span className={`card-studio-actions-dot${dirty ? " is-dirty" : ""}`} aria-hidden="true" />
+          <span>{dirty ? (copy.unsaved || "Unsaved preview") : (copy.saved || "All changes applied")}</span>
+        </div>
+        <div className="card-studio-actions-buttons">
+          <button type="button" className="card-studio-action is-preview" onClick={openPreview} disabled={!dialogProjects.length}>
+            <ProfileIcon name="eye" /> {copy.previewAction || "Preview"}
+          </button>
+          <button type="button" className="card-studio-action is-reset" onClick={resetDraft}>
+            {copy.resetDefault || "Reset to default"}
+          </button>
+          <button type="button" className="card-studio-action is-cancel" onClick={cancelDraft}>
+            {copy.cancel || "Cancel"}
+          </button>
+          <button type="button" className="card-studio-action is-apply" onClick={applyDraft} disabled={!dirty}>
+            <ProfileIcon name="check" /> {copy.apply || "Apply"}
+          </button>
+        </div>
+      </div>
       <p className="visually-hidden" role="status" aria-live="polite">{announcement}</p>
+      <CardPreviewDialog
+        open={previewOpen}
+        cardUI={draftCardUI}
+        preset={{
+          label: activePreset ? activePreset.label : (copy.previewCustomLabel || "Custom"),
+          note: activePreset ? activePreset.note : (copy.previewCustomNote || "Your adjusted card style"),
+          motion: activePreset ? activePreset.motion : (copy.previewMotion || "Hover to preview motion"),
+        }}
+        projects={dialogProjects}
+        copy={copy}
+        dirty={dirty}
+        onClose={closePreview}
+        onApply={applyFromPreview}
+        onDiscard={discardFromPreview}
+      />
     </div>
   );
 }
@@ -546,12 +658,11 @@ function GuravvaProfilePopover({
   defaultProfile,
   cardUISettings,
   onCardUIChange,
-  onCardUIReset,
   themeMode,
   previewProject,
+  previewProjects,
   loaderSettings,
   onLoaderChange,
-  onLoaderReset,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
@@ -807,14 +918,15 @@ function GuravvaProfilePopover({
       <div className="profile-panel profile-panel-studio" id="guravva-card-studio" role="tabpanel" aria-labelledby="guravva-cards-tab" hidden={tab !== "cards"}>
         <CardStudio
           settings={cardUISettings}
-          onChange={onCardUIChange}
-          onReset={onCardUIReset}
+          onApply={(cardUI, loader) => {
+            onCardUIChange(cardUI);
+            onLoaderChange(loader);
+          }}
           themeMode={themeMode}
           previewProject={previewProject}
+          previewProjects={previewProjects}
           copy={studioCopy}
           loaderSettings={loaderSettings}
-          onLoaderChange={onLoaderChange}
-          onLoaderReset={onLoaderReset}
         />
       </div>
 
@@ -851,11 +963,10 @@ function SiteNav({
   profile,
   cardUISettings,
   onCardUIChange,
-  onCardUIReset,
   previewProject,
+  previewProjects,
   loaderSettings,
   onLoaderChange,
-  onLoaderReset,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -882,12 +993,13 @@ function SiteNav({
   useEffect(() => {
     if (!profileOpen) return undefined;
     const closeOnEscape = (event) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !document.querySelector("[data-card-preview-dialog]")) {
         setProfileOpen(false);
         profileTriggerRef.current?.focus();
       }
     };
     const closeOnOutsideClick = (event) => {
+      if (document.querySelector("[data-card-preview-dialog]")) return;
       if (navRef.current && !navRef.current.contains(event.target)) setProfileOpen(false);
     };
     document.addEventListener("keydown", closeOnEscape);
@@ -922,12 +1034,11 @@ function SiteNav({
               defaultProfile={profile}
               cardUISettings={cardUISettings}
               onCardUIChange={onCardUIChange}
-              onCardUIReset={onCardUIReset}
               themeMode={themeMode}
               previewProject={previewProject}
+              previewProjects={previewProjects}
               loaderSettings={loaderSettings}
               onLoaderChange={onLoaderChange}
-              onLoaderReset={onLoaderReset}
             />
           )}
         </div>
@@ -988,27 +1099,6 @@ function SiteNav({
 
 const HOME_COLLECTION_ORDER = ["python", "responsive", "static"];
 
-function monogram(title) {
-  return String(title || "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
-}
-
-function CollectionThumb({ project }) {
-  const source = project.thumbnail || project.image;
-  return (
-    <span className={`home-collection-thumb is-${project.collection}`}>
-      {source
-        ? <img src={source} alt="" loading="lazy" decoding="async" />
-        : <b aria-hidden="true">{monogram(project.title)}</b>}
-    </span>
-  );
-}
-
 function PortfolioHome({
   catalog,
   site,
@@ -1018,9 +1108,7 @@ function PortfolioHome({
   onCycleTheme,
   settings,
   onCardUIChange,
-  onCardUIReset,
   onLoaderChange,
-  onLoaderReset,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1041,9 +1129,18 @@ function PortfolioHome({
     ...(projectsByCollection.responsive || []).slice(0, 4),
     ...(projectsByCollection.static || []).slice(0, 4),
   ], [projectsByCollection]);
-  const featuredLayout = ["rail", "depth"].includes(settings.cardUI?.cardLayout) ? settings.cardUI.cardLayout : "grid";
+  const featuredLayout = CARD_LAYOUTS.includes(settings.cardUI?.cardLayout) ? settings.cardUI.cardLayout : "grid";
+  const featuredGridClass = ["rail", "depth"].includes(featuredLayout)
+    ? ` is-card-rail is-card-${featuredLayout}`
+    : featuredLayout !== "grid"
+      ? ` is-card-${featuredLayout}`
+      : "";
   const certificates = catalog.certificates || [];
   const previewProject = catalog.projects.find((project) => project.thumbnail || project.image) || catalog.projects[0] || null;
+  const previewProjects = useMemo(() => [...catalog.projects]
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .filter((project) => project.thumbnail || project.image)
+    .slice(0, 6), [catalog.projects]);
   const navigate = (event, destination) => onNavigate(event, destination);
 
   return (
@@ -1056,11 +1153,10 @@ function PortfolioHome({
         onCycleTheme={onCycleTheme}
         cardUISettings={settings.cardUI}
         onCardUIChange={onCardUIChange}
-        onCardUIReset={onCardUIReset}
         previewProject={previewProject}
+        previewProjects={previewProjects}
         loaderSettings={settings.loader}
         onLoaderChange={onLoaderChange}
-        onLoaderReset={onLoaderReset}
       />
       <main>
         <section className="home-hero">
@@ -1132,25 +1228,14 @@ function PortfolioHome({
             </header>
             <div className="home-collection-grid">
               {collections.map((collection, index) => (
-                <a
+                <GlassFolderCard
                   key={collection.id}
-                  className={`home-collection-card is-${collection.id}`}
-                  href={`/projects?collection=${collection.id}`}
-                  onClick={(event) => navigate(event, `/projects?collection=${collection.id}`)}
-                >
-                  <div className="home-collection-card-head">
-                    <span className="home-collection-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                    <span className="home-collection-count">{collection.count} {collection.count === 1 ? "build" : "builds"}</span>
-                  </div>
-                  <div className="home-collection-previews" aria-hidden="true">
-                    {(projectsByCollection[collection.id] || []).slice(0, 3).map((project) => (
-                      <CollectionThumb key={project.id} project={project} />
-                    ))}
-                  </div>
-                  <h3>{collection.label}</h3>
-                  <p>{collection.description}</p>
-                  <span className="home-collection-action">{copy.collections.action} <span aria-hidden="true">→</span></span>
-                </a>
+                  collection={collection}
+                  projects={projectsByCollection[collection.id] || []}
+                  index={index}
+                  copy={copy.collections}
+                  onNavigate={navigate}
+                />
               ))}
             </div>
           </div>
@@ -1165,7 +1250,7 @@ function PortfolioHome({
               </div>
               <p className="section-note">{copy.projects.note}</p>
             </header>
-            <div className={`lab-project-grid lab-home-grid${featuredLayout !== "grid" ? ` is-card-rail is-card-${featuredLayout}` : ""}`}>
+            <div className={`lab-project-grid lab-home-grid${featuredGridClass}`}>
               {featured.map((project) => <ProjectCard key={project.id} project={project} onNavigate={navigate} cardUI={settings.cardUI} />)}
             </div>
             <div className="home-featured-action">
@@ -1265,9 +1350,7 @@ function App() {
     settings,
     updateSettings,
     updateCardUISettings,
-    resetCardUISettings,
     updateLoaderSettings,
-    resetLoaderSettings,
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
@@ -1376,6 +1459,9 @@ function App() {
   const nextProject = projectIndex >= 0 && projectIndex < sortedProjects.length - 1 ? sortedProjects[projectIndex + 1] : null;
   const nextTheme = settings.mode === "dark" ? "light" : "dark";
   const cardPreviewProject = projects.find((project) => project.thumbnail || project.image) || projects[0] || null;
+  const cardPreviewProjects = sortedProjects
+    .filter((project) => project.thumbnail || project.image)
+    .slice(0, 6);
   const navProps = {
     site,
     profile: defaultProfile,
@@ -1384,11 +1470,10 @@ function App() {
     onCycleTheme: () => updateSettings({ mode: nextTheme }),
     cardUISettings: settings.cardUI,
     onCardUIChange: updateCardUISettings,
-    onCardUIReset: resetCardUISettings,
     previewProject: cardPreviewProject,
+    previewProjects: cardPreviewProjects,
     loaderSettings: settings.loader,
     onLoaderChange: updateLoaderSettings,
-    onLoaderReset: resetLoaderSettings,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
   const viewError = error ? (
@@ -1410,9 +1495,7 @@ function App() {
         onCycleTheme={() => updateSettings({ mode: nextTheme })}
         settings={settings}
         onCardUIChange={updateCardUISettings}
-        onCardUIReset={resetCardUISettings}
         onLoaderChange={updateLoaderSettings}
-        onLoaderReset={resetLoaderSettings}
       />
     );
   } else if (isCatalog) {

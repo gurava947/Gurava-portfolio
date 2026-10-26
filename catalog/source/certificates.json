@@ -21,7 +21,10 @@
         "label": "Attempt 1",
         "result": "Excellent",
         "date": "26 Apr 2026",
-        "duration": "56m 41s"
+        "duration": "56m 41s",
+        "grade": "A",
+        "score": "206/210",
+        "gradePoints": "10"
       }
     ],
     "performance": [
@@ -110,7 +113,10 @@
         "label": "Attempt 1",
         "result": "Excellent",
         "date": "03 Nov 2025",
-        "duration": "1hr47mins9sec"
+        "duration": "1hr47mins9sec",
+        "grade": "A",
+        "score": "276/280",
+        "gradePoints": "10"
       }
     ],
     "performance": [
@@ -202,7 +208,10 @@
         "label": "Attempt 1",
         "result": "Excellent",
         "date": "04 Nov 2025",
-        "duration": "1hr45mins11secs"
+        "duration": "1hr45mins11secs",
+        "grade": "A",
+        "score": "270/280",
+        "gradePoints": "10"
       }
     ],
     "trainersTitle": "Your Trainers are Alumni of",

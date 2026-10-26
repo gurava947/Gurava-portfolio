@@ -1,5 +1,6 @@
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ProjectCard from "./ProjectCard";
+import { CARD_LAYOUTS } from "../utils/cardStyle";
 import { filterProjects, pageNumbers, paginateProjects, PROJECTS_PER_PAGE, sortProjects } from "../utils/catalogFilters";
 
 const DEFAULT_FILTERS = { query: "", collection: "", category: "", technology: "", sort: "curated", page: 1 };
@@ -34,8 +35,8 @@ function writeSearch(search) {
   window.history.replaceState({ ...window.history.state, appRoute: true, appScrollY: window.scrollY }, "", url);
 }
 
-function FilterIcon({ name }) {
-  const props = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true };
+function FilterIcon({ name, className }) {
+  const props = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true, className };
   if (name === "search") return <svg {...props}><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4.5 4.5" /></svg>;
   if (name === "category") return <svg {...props}><path d="M3 5h18l-7 8v5l-4 2v-7L3 5Z" /></svg>;
   if (name === "technology") return <svg {...props}><rect x="4" y="4" width="7" height="7" rx="1.6" /><rect x="13" y="4" width="7" height="7" rx="1.6" /><rect x="4" y="13" width="7" height="7" rx="1.6" /><rect x="13" y="13" width="7" height="7" rx="1.6" /></svg>;
@@ -43,18 +44,153 @@ function FilterIcon({ name }) {
   return <svg {...props}><path d="m6 9 6 6 6-6" /></svg>;
 }
 
-function SelectField({ id, label, icon, value, onChange, children }) {
+export function SelectField({ id, label, icon, value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [dropUp, setDropUp] = useState(false);
+  const [menuMaxHeight, setMenuMaxHeight] = useState(null);
+  const fieldRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
+  const optionRefs = useRef([]);
+  const selectedIndex = Math.max(0, options.findIndex((option) => option.value === value));
+  const selected = options[selectedIndex] ?? options[0];
+
+  const closeMenu = (restoreFocus = false) => {
+    setOpen(false);
+    if (restoreFocus) triggerRef.current?.focus();
+  };
+
+  const choose = (option) => {
+    closeMenu(true);
+    if (option.value !== value) onChange(option.value);
+  };
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const trigger = triggerRef.current;
+    const menu = menuRef.current;
+    if (trigger && menu) {
+      const rect = trigger.getBoundingClientRect();
+      const preferred = Math.min(328, window.innerHeight * 0.58);
+      const desired = Math.min(menu.scrollHeight + 12, preferred);
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const nextDropUp = spaceBelow < desired + 12 && spaceAbove > spaceBelow;
+      const available = (nextDropUp ? spaceAbove : spaceBelow) - 12;
+      setDropUp(nextDropUp);
+      setMenuMaxHeight(Math.max(132, Math.min(desired, available)));
+    }
+    const node = optionRefs.current[activeIndex];
+    node?.focus({ preventScroll: true });
+    node?.scrollIntoView?.({ block: "nearest" });
+    // Active index is moved manually by the keyboard handler; focus only on open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const handlePointerDown = (event) => {
+      if (!fieldRef.current?.contains(event.target)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [open]);
+
+  const moveFocus = (nextIndex) => {
+    const clamped = (nextIndex + options.length) % options.length;
+    setActiveIndex(clamped);
+    optionRefs.current[clamped]?.focus();
+  };
+
+  const handleKeyDown = (event) => {
+    const { key } = event;
+    if (!open) {
+      if (event.target === triggerRef.current && (key === "ArrowDown" || key === "ArrowUp")) {
+        event.preventDefault();
+        setActiveIndex(selectedIndex);
+        setOpen(true);
+      }
+      return;
+    }
+    if (key === "Escape") {
+      event.preventDefault();
+      closeMenu(true);
+      return;
+    }
+    if (key === "Tab") {
+      setOpen(false);
+      return;
+    }
+    if (key === "ArrowDown" || key === "ArrowUp" || key === "Home" || key === "End") {
+      event.preventDefault();
+      if (key === "Home") moveFocus(0);
+      else if (key === "End") moveFocus(options.length - 1);
+      else moveFocus(activeIndex + (key === "ArrowDown" ? 1 : -1));
+      return;
+    }
+    if (key === "Enter" || key === " ") {
+      event.preventDefault();
+      choose(options[activeIndex]);
+    }
+  };
+
   return (
-    <label className="lab-catalog-field" htmlFor={id}>
-      <span className="lab-catalog-label">{label}</span>
-      <span className="lab-catalog-control is-select">
+    <div
+      className="lab-catalog-field"
+      ref={fieldRef}
+      onKeyDown={handleKeyDown}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <span className="lab-catalog-label" id={`${id}-label`}>{label}</span>
+      <div className={`lab-catalog-control is-select${open ? " is-open" : ""}`}>
         <span className="lab-catalog-control-icon"><FilterIcon name={icon} /></span>
-        <select id={id} value={value} onChange={(event) => onChange(event.target.value)}>
-          {children}
-        </select>
-        <FilterIcon name="chevron" />
-      </span>
-    </label>
+        <button
+          type="button"
+          id={id}
+          ref={triggerRef}
+          className="lab-catalog-select-trigger"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={`${id}-listbox`}
+          aria-labelledby={`${id}-label ${id}-selected`}
+          onClick={() => (open ? closeMenu(false) : (setActiveIndex(selectedIndex), setOpen(true)))}
+        >
+          <span id={`${id}-selected`} className="lab-catalog-select-value">{selected.label}</span>
+          {selected.count != null && <span className="lab-catalog-select-count">{selected.count}</span>}
+        </button>
+        <FilterIcon name="chevron" className="lab-catalog-chevron" />
+        {open && (
+          <ul
+            className={`lab-catalog-menu${dropUp ? " is-drop-up" : ""}`}
+            id={`${id}-listbox`}
+            role="listbox"
+            ref={menuRef}
+            aria-labelledby={`${id}-label`}
+            style={menuMaxHeight ? { maxHeight: `${menuMaxHeight}px` } : undefined}
+          >
+            {options.map((option, index) => (
+              <li
+                key={option.value || "all"}
+                ref={(node) => { optionRefs.current[index] = node; }}
+                className="lab-catalog-option"
+                role="option"
+                aria-selected={option.value === value}
+                tabIndex={-1}
+                onClick={() => choose(option)}
+                onMouseEnter={() => setActiveIndex(index)}
+              >
+                <span className="lab-catalog-option-label">{option.label}</span>
+                {option.count != null && <span className="lab-catalog-option-count">{option.count}</span>}
+                <svg className="lab-catalog-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" /></svg>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -66,8 +202,13 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
   const railRef = useRef(null);
   const filterSignature = `${routeSearch}`;
   const lastRouteSearch = useRef(routeSearch);
-  const cardLayout = ["rail", "depth"].includes(cardUI.cardLayout) ? cardUI.cardLayout : "grid";
-  const isRail = cardLayout !== "grid";
+  const cardLayout = CARD_LAYOUTS.includes(cardUI.cardLayout) ? cardUI.cardLayout : "grid";
+  const isRail = cardLayout === "rail" || cardLayout === "depth";
+  const gridLayoutClass = isRail
+    ? ` is-card-rail is-card-${cardLayout}`
+    : cardLayout !== "grid"
+      ? ` is-card-${cardLayout}`
+      : "";
 
   useEffect(() => {
     if (lastRouteSearch.current === filterSignature) return;
@@ -202,23 +343,40 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
                 />
               </span>
             </label>
-            <SelectField id="catalog-category" label={copy.categoryLabel} icon="category" value={filters.category} onChange={(value) => update({ category: value })}>
-              <option value="">{copy.allCategories}</option>
-              {catalog.categories.map((category) => (
-                <option key={category.slug} value={category.label}>{category.label} ({category.count})</option>
-              ))}
-            </SelectField>
-            <SelectField id="catalog-technology" label={copy.technologyLabel} icon="technology" value={filters.technology} onChange={(value) => update({ technology: value })}>
-              <option value="">{copy.allTechnologies}</option>
-              {catalog.technologies.map((technology) => (
-                <option key={technology.label} value={technology.label}>{technology.label} ({technology.count})</option>
-              ))}
-            </SelectField>
-            <SelectField id="catalog-sort" label={copy.sortLabel} icon="sort" value={filters.sort} onChange={(value) => update({ sort: value })}>
-              <option value="curated">{copy.sortOptions.curated}</option>
-              <option value="titleAsc">{copy.sortOptions.titleAsc}</option>
-              <option value="titleDesc">{copy.sortOptions.titleDesc}</option>
-            </SelectField>
+            <SelectField
+              id="catalog-category"
+              label={copy.categoryLabel}
+              icon="category"
+              value={filters.category}
+              onChange={(value) => update({ category: value })}
+              options={[
+                { value: "", label: copy.allCategories },
+                ...catalog.categories.map((category) => ({ value: category.label, label: category.label, count: category.count })),
+              ]}
+            />
+            <SelectField
+              id="catalog-technology"
+              label={copy.technologyLabel}
+              icon="technology"
+              value={filters.technology}
+              onChange={(value) => update({ technology: value })}
+              options={[
+                { value: "", label: copy.allTechnologies },
+                ...catalog.technologies.map((technology) => ({ value: technology.label, label: technology.label, count: technology.count })),
+              ]}
+            />
+            <SelectField
+              id="catalog-sort"
+              label={copy.sortLabel}
+              icon="sort"
+              value={filters.sort}
+              onChange={(value) => update({ sort: value })}
+              options={[
+                { value: "curated", label: copy.sortOptions.curated },
+                { value: "titleAsc", label: copy.sortOptions.titleAsc },
+                { value: "titleDesc", label: copy.sortOptions.titleDesc },
+              ]}
+            />
           </div>
 
           <div className="lab-catalog-summary">
@@ -263,7 +421,7 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
                 )}
                 <div
                   ref={railRef}
-                  className={`lab-project-grid lab-catalog-grid${isRail ? ` is-card-rail is-card-${cardLayout}` : ""}`}
+                  className={`lab-project-grid lab-catalog-grid${gridLayoutClass}`}
                   onScroll={isRail ? syncRail : undefined}
                   tabIndex={isRail ? 0 : undefined}
                   role={isRail ? "region" : undefined}

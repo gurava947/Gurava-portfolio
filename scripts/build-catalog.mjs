@@ -304,7 +304,11 @@ async function makeThumbnail(projectId, imagePath) {
 
 function normalizeProject(seed, collection, options) {
   const isPython = collection === "python";
-  const technologyList = Array.isArray(seed.technologies) ? seed.technologies.filter(Boolean) : [];
+  const technologyList = Array.isArray(seed.technologies)
+    ? seed.technologies
+      .filter(Boolean)
+      .map((technology) => technology === "Responsive design" ? "Responsive Design" : technology)
+    : [];
   const data = isPython ? seed.data : seed.data || {};
   const image = options.resolveImage(seed.image || "");
   const previewModule = options.previewModule;

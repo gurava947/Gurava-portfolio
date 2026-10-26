@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CARD_LAYOUTS } from "../utils/cardStyle";
 
 function monogram(title) {
   return String(title || "")
@@ -10,27 +11,36 @@ function monogram(title) {
     .toUpperCase();
 }
 
-export default function ProjectCard({ project, onNavigate, cardUI = {}, preview = false }) {
+export default function ProjectCard({ project, onNavigate, cardUI = {}, preview = false, animatePreview = false }) {
   const thumbnail = project.thumbnail || project.image || "";
   const scrollReveal = !preview && Boolean(cardUI.scrollReveal);
-  const entrance = preview ? "none" : (cardUI.entranceIntensity || "none");
+  const entrance = preview && !animatePreview ? "none" : (cardUI.entranceIntensity || "none");
   const pressFeedback = cardUI.pressFeedback !== false;
   const imageFit = cardUI.imageFit === "cover" ? "cover" : "contain";
-  const cardLayout = ["rail", "depth"].includes(cardUI.cardLayout) ? cardUI.cardLayout : "grid";
-  const tiltEnabled = cardLayout === "depth";
+  const cardLayout = CARD_LAYOUTS.includes(cardUI.cardLayout) ? cardUI.cardLayout : "grid";
+  const tiltIntensity = Number.isFinite(Number(cardUI.tiltIntensity)) ? Number(cardUI.tiltIntensity) : 7;
+  const tiltEnabled = cardLayout === "depth" && tiltIntensity > 0;
+  const [loadedThumb, setLoadedThumb] = useState("");
+  const imageLoaded = Boolean(thumbnail) && loadedThumb === thumbnail;
   const cardRef = useRef(null);
   const navigate = (event, destination) => {
     if (onNavigate) onNavigate(event, destination);
   };
+  const prefersReducedMotion = () => (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    || document.documentElement.dataset.reducedMotion === "true"
+    || document.documentElement.dataset.animation === "none"
+  );
   const handleTilt = (event) => {
     if (!tiltEnabled || event.pointerType !== "mouse") return;
+    if (prefersReducedMotion()) return;
     const node = cardRef.current;
     if (!node) return;
     const rect = node.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
     const y = (event.clientY - rect.top) / rect.height - 0.5;
-    node.style.setProperty("--card-tilt-y", `${(x * 7).toFixed(2)}deg`);
-    node.style.setProperty("--card-tilt-x", `${(y * -5).toFixed(2)}deg`);
+    node.style.setProperty("--card-tilt-y", `${(x * tiltIntensity).toFixed(2)}deg`);
+    node.style.setProperty("--card-tilt-x", `${(y * tiltIntensity * -0.7).toFixed(2)}deg`);
   };
   const resetTilt = () => {
     const node = cardRef.current;
@@ -45,7 +55,7 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
       node?.classList.remove("is-revealed");
       return undefined;
     }
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = prefersReducedMotion();
     if (reduceMotion || typeof IntersectionObserver === "undefined") {
       node.classList.add("is-revealed");
       return undefined;
@@ -73,7 +83,7 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
       onPointerMove={tiltEnabled ? handleTilt : undefined}
       onPointerLeave={tiltEnabled ? resetTilt : undefined}
     >
-      <div className="lab-card-media">
+      <div className={`lab-card-media${thumbnail ? " has-image" : ""}${imageLoaded ? " is-loaded" : ""}`}>
         {thumbnail ? (
           <>
             <span
@@ -82,11 +92,13 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
               aria-hidden="true"
             />
             <img
-              className="lab-card-image"
+              className={`lab-card-image${imageLoaded ? " is-loaded" : ""}`}
               src={thumbnail}
               alt={project.imageAlt || `${project.title} supplied project preview`}
               loading={preview ? "eager" : "lazy"}
               decoding="async"
+              onLoad={() => setLoadedThumb(thumbnail)}
+              onError={() => setLoadedThumb(thumbnail)}
             />
           </>
         ) : project.cardCode ? (

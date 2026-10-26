@@ -12,10 +12,19 @@ describe("card studio presets", () => {
   });
 
   it("detects the active preset and clears it after a manual change", () => {
+    expect(CARD_STYLE_PRESETS).toHaveLength(5);
     expect(getActiveCardPresetId(DEFAULT_CARD_UI_SETTINGS)).toBe("studio");
-    const soft = CARD_STYLE_PRESETS.find((preset) => preset.id === "soft");
-    expect(getActiveCardPresetId(soft.settings)).toBe("soft");
-    expect(getActiveCardPresetId({ ...soft.settings, radius: 31 })).toBe("");
+    const bento = CARD_STYLE_PRESETS.find((preset) => preset.id === "bento");
+    expect(getActiveCardPresetId(bento.settings)).toBe("bento");
+    expect(getActiveCardPresetId({ ...bento.settings, radius: 31 })).toBe("");
+  });
+
+  it("ships five distinct layouts with motion metadata", () => {
+    expect(new Set(CARD_STYLE_PRESETS.map((preset) => preset.settings.cardLayout)).size).toBe(5);
+    CARD_STYLE_PRESETS.forEach((preset) => {
+      expect(preset.motion).toBeTruthy();
+      expect(preset.note).toBeTruthy();
+    });
   });
 });
 

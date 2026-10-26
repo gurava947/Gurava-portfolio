@@ -73,10 +73,6 @@ select:focus-visible {
   display: none;
 }
 
-.portfolio-nav.is-scrolled {
-  padding-top: 8px;
-}
-
 .navbar.portfolio-nav > .container.portfolio-nav-inner {
   position: relative;
   display: flex;
@@ -116,7 +112,6 @@ select:focus-visible {
 }
 
 .navbar.portfolio-nav.is-scrolled > .container.portfolio-nav-inner {
-  padding-block: 5px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(243, 247, 252, 0.88));
   box-shadow:
     0 14px 32px -18px rgba(26, 44, 66, 0.44),
@@ -230,6 +225,7 @@ select:focus-visible {
   left: clamp(12px, 2vw, 24px);
   width: min(468px, calc(100vw - 24px));
   max-height: min(84vh, 780px);
+  max-height: min(84dvh, 780px, calc(100dvh - 150px));
   overflow: auto;
   overscroll-behavior: contain;
   padding: 0;
@@ -623,7 +619,8 @@ select:focus-visible {
     "presets preview"
     "quick preview"
     "loader loader"
-    "fine fine";
+    "fine fine"
+    "actions actions";
   column-gap: 16px;
   row-gap: 15px;
   align-items: start;
@@ -649,6 +646,29 @@ select:focus-visible {
   color: var(--theme-muted-text);
   font-size: 0.73rem;
   line-height: 1.55;
+}
+
+.card-studio-scope {
+  display: inline-flex;
+  min-height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-primary) 6%, transparent);
+  color: color-mix(in srgb, var(--theme-primary) 68%, var(--theme-text));
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.card-studio-scope .profile-icon {
+  width: 12px;
+  height: 12px;
+  flex-basis: 12px;
 }
 
 .card-studio-reset {
@@ -724,6 +744,20 @@ select:focus-visible {
   border-radius: 50%;
   background: var(--theme-primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary) 16%, transparent);
+}
+
+.card-studio-preview-hint.is-dirty {
+  color: color-mix(in srgb, #b45309 72%, var(--theme-text));
+}
+
+.card-studio-preview-hint.is-dirty i {
+  background: #d97706;
+  box-shadow: 0 0 0 3px rgb(217 119 6 / 18%);
+  animation: card-studio-dirty-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes card-studio-dirty-pulse {
+  50% { opacity: 0.45; }
 }
 
 .card-studio-presets {
@@ -838,14 +872,34 @@ select:focus-visible {
   box-shadow: 0 -8px 0 rgb(255 255 255 / 16%);
 }
 
-.card-studio-swatch.is-soft {
-  border-color: rgb(120 100 220 / 25%);
-  border-radius: 16px;
-  background: linear-gradient(150deg, #ece7ff, #dff7fb);
+.card-studio-swatch.is-bento {
+  border-color: rgb(120 105 70 / 20%);
+  border-radius: 12px;
+  background:
+    linear-gradient(150deg, #f6f2e7, #e3ece4),
+    linear-gradient(#dfe8d9, #dfe8d9);
 }
 
-.card-studio-swatch.is-soft > span:first-child { background: linear-gradient(120deg, #7d6af0, #48c6dd); }
-.card-studio-swatch.is-soft > span:last-child { background: rgb(46 58 72 / 55%); box-shadow: 0 -8px 0 rgb(46 58 72 / 14%); }
+.card-studio-swatch.is-bento > span:first-child {
+  inset: 6px 39% 6px 6px;
+  height: auto;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #23342c, #3e6b57);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%);
+}
+
+.card-studio-swatch.is-bento > span:last-child {
+  top: 6px;
+  right: 6px;
+  bottom: 6px;
+  left: 63%;
+  height: auto;
+  border-radius: 6px;
+  background:
+    linear-gradient(150deg, #416256, #22342c) 0 0 / 100% 54% no-repeat,
+    linear-gradient(150deg, #8aa08a, #5f7565) 0 100% / 100% 38% no-repeat;
+  box-shadow: none;
+}
 
 .card-studio-swatch.is-editorial {
   border-color: rgb(120 90 30 / 22%);
@@ -857,14 +911,29 @@ select:focus-visible {
 .card-studio-swatch.is-editorial > span:first-child { background: linear-gradient(120deg, #9a6e2e, #d5b166); }
 .card-studio-swatch.is-editorial > span:last-child { background: rgb(64 52 35 / 58%); box-shadow: 0 -8px 0 rgb(64 52 35 / 15%); }
 
-.card-studio-swatch.is-bold {
-  border-width: 2px;
-  border-color: rgb(255 255 255 / 46%);
-  border-radius: 7px;
-  background: linear-gradient(150deg, #241218, #401a24);
+.card-studio-swatch.is-poster {
+  border-color: rgb(255 255 255 / 12%);
+  border-radius: 13px;
+  background:
+    radial-gradient(120% 100% at 18% 8%, #4d7862 0%, #23382f 42%, #0b1510 100%);
 }
 
-.card-studio-swatch.is-bold > span:first-child { background: linear-gradient(120deg, #f472b6, #8b5cf6); }
+.card-studio-swatch.is-poster > span:first-child {
+  inset: 0;
+  height: auto;
+  border-radius: 12px;
+  background: linear-gradient(180deg, transparent 34%, rgb(4 10 7 / 78%) 74%, rgb(4 10 7 / 94%));
+}
+
+.card-studio-swatch.is-poster > span:last-child {
+  right: 10px;
+  bottom: 14px;
+  left: 10px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 86%);
+  box-shadow: 0 -9px 0 rgb(255 255 255 / 26%);
+}
 
 .card-studio-swatch.is-depth {
   border-color: rgb(255 255 255 / 14%);
@@ -891,10 +960,22 @@ select:focus-visible {
 }
 
 .card-studio-preview {
+  display: grid;
+  gap: 8px;
   padding: 10px;
   border: 1px solid color-mix(in srgb, var(--theme-text) 9%, transparent);
   border-radius: 16px;
   background: color-mix(in srgb, var(--theme-text) 3%, transparent);
+}
+
+.card-studio-preview-note {
+  margin: 0;
+  padding: 0 3px;
+  color: var(--theme-muted-text);
+  font-size: 0.59rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .card-studio-preview-stage {
@@ -974,6 +1055,137 @@ select:focus-visible {
   text-align: center;
 }
 
+.card-studio-actions {
+  position: sticky;
+  z-index: 6;
+  bottom: 0;
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px -6px -6px;
+  padding: 11px 12px calc(11px + env(safe-area-inset-bottom, 0px));
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 20%, var(--theme-card-border));
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--theme-card-bg) 93%, transparent);
+  box-shadow: 0 -12px 30px -18px rgb(9 18 14 / 42%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.card-studio-actions-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--theme-muted-text);
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.card-studio-actions-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #2f9e63;
+  box-shadow: 0 0 0 3px rgb(47 158 99 / 14%);
+}
+
+.card-studio-actions-dot.is-dirty {
+  background: #d97706;
+  box-shadow: 0 0 0 3px rgb(217 119 6 / 16%);
+}
+
+.card-studio-actions-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.card-studio-action {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.67rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+
+.card-studio-action .profile-icon {
+  width: 12px;
+  height: 12px;
+  flex-basis: 12px;
+}
+
+.card-studio-action.is-preview {
+  border-color: color-mix(in srgb, var(--theme-primary) 38%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 8%, transparent);
+  color: color-mix(in srgb, var(--theme-primary) 72%, var(--theme-card-text));
+}
+
+.card-studio-action.is-preview:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--theme-primary) 62%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 14%, transparent);
+}
+
+.card-studio-action.is-preview:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.card-studio-action.is-reset {
+  color: var(--theme-muted-text);
+}
+
+.card-studio-action.is-reset:hover {
+  background: color-mix(in srgb, var(--theme-text) 6%, transparent);
+  color: var(--theme-card-text);
+}
+
+.card-studio-action.is-cancel {
+  border-color: color-mix(in srgb, var(--theme-text) 14%, transparent);
+  background: color-mix(in srgb, var(--theme-text) 4%, transparent);
+  color: var(--theme-card-text);
+}
+
+.card-studio-action.is-cancel:hover {
+  border-color: color-mix(in srgb, var(--theme-text) 28%, transparent);
+}
+
+.card-studio-action.is-apply {
+  border-color: var(--theme-primary);
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--theme-primary) 70%, transparent);
+}
+
+.card-studio-action.is-apply:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.card-studio-action.is-apply:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.card-studio-action:focus-visible {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 2px;
+}
+
 @media (max-width: 679.98px) {
   .card-studio {
     grid-template-columns: minmax(0, 1fr);
@@ -983,8 +1195,20 @@ select:focus-visible {
       "preview"
       "quick"
       "loader"
-      "fine";
+      "fine"
+      "actions";
   }
+
+  .card-studio-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .card-studio-actions-buttons {
+    width: 100%;
+  }
+
+  .card-studio-action.is-apply { margin-left: auto; }
 }
 
 .card-studio-loader-block .card-studio-block-head {
@@ -3918,37 +4142,6 @@ select:focus-visible {
     column-gap: 10px;
     padding: 8px 10px;
     border-radius: 24px;
-  }
-
-  .navbar.portfolio-nav.is-scrolled > .container.portfolio-nav-inner {
-    padding-block: 7px;
-  }
-
-  .navbar.portfolio-nav.is-scrolled .portfolio-brand-link,
-  .navbar.portfolio-nav.is-scrolled .nav-contact {
-    display: none;
-  }
-
-  .navbar.portfolio-nav.is-scrolled .portfolio-brand {
-    flex: 0 0 auto;
-  }
-
-  .navbar.portfolio-nav.is-scrolled .navbar-text-controls {
-    order: 2;
-    width: auto;
-    flex: 0 1 auto;
-    margin-left: auto;
-    padding: 3px;
-  }
-
-  .navbar.portfolio-nav.is-scrolled .theme-toggle-icon {
-    order: 3;
-  }
-
-  .navbar.portfolio-nav.is-scrolled .navbar-text-controls .navbar-text-control {
-    min-height: 34px;
-    padding: 0 9px;
-    font-size: 0.76rem;
   }
 
   .portfolio-brand {
