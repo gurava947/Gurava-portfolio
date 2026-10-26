@@ -35,6 +35,21 @@ function DetailState({ title, message, onRetry, isLoading = false, loader }) {
   );
 }
 
+function DeviceGlyph({ width }) {
+  const common = {
+    "aria-hidden": true,
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: 1.8,
+    viewBox: "0 0 24 24",
+  };
+  if (width < 600) return <svg {...common}><rect x="7" y="2.5" width="10" height="19" rx="2.4" /><path d="M10.5 18.5h3" /></svg>;
+  if (width < 900) return <svg {...common}><rect x="4.5" y="2.5" width="15" height="19" rx="2.6" /><path d="M10 18.5h4" /></svg>;
+  return <svg {...common}><rect x="3" y="4.5" width="18" height="12" rx="2" /><path d="M8.5 20h7M12 16.5V20" /></svg>;
+}
+
 function DeviceToggle({ devices, value, onChange }) {
   return (
     <div className="device-toggle" role="group" aria-label="Preview size">
@@ -47,8 +62,11 @@ function DeviceToggle({ devices, value, onChange }) {
           onClick={() => onChange(device.id)}
           title={`${device.label} · ${device.range}`}
         >
-          <span>{device.label}</span>
-          <small>{device.range}</small>
+          <span className="device-toggle-glyph"><DeviceGlyph width={device.width} /></span>
+          <span className="device-toggle-copy">
+            <span>{device.label}</span>
+            <small>{device.range}</small>
+          </span>
         </button>
       ))}
     </div>

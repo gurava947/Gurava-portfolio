@@ -19,6 +19,7 @@ import ProjectCard from "./components/ProjectCard";
 import ProjectDetail from "./components/ProjectDetail";
 import ProjectsCatalog from "./components/ProjectsCatalog";
 import GlassFolderCard from "./components/ui/GlassFolderCard";
+import StudioSelect from "./components/ui/StudioSelect";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
@@ -77,6 +78,38 @@ function ProfileIcon({ name }) {
   if (name === "close") return <svg {...common}><path d="M6 6l12 12M18 6 6 18" /></svg>;
   return <svg {...common}><path d="M14 3h7v7m-1-6-9 9M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" /></svg>;
 }
+
+function OptionGlyph({ name }) {
+  const common = {
+    "aria-hidden": true,
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: 1.9,
+    viewBox: "0 0 24 24",
+  };
+  if (name === "image") return <svg {...common}><rect x="3.5" y="4.5" width="17" height="15" rx="2.4" /><circle cx="9" cy="10" r="1.6" /><path d="m4.5 17 4.8-4.7 3.4 3.3 3.2-3.1 3.6 3.6" /></svg>;
+  if (name === "layout") return <svg {...common}><rect x="3.5" y="3.5" width="17" height="17" rx="2.6" /><path d="M3.5 9.5h17M9.5 9.5v11" /></svg>;
+  if (name === "shadow") return <svg {...common}><rect x="4" y="4" width="12" height="12" rx="2.4" /><path d="M8 20h10a2 2 0 0 0 2-2V8" /></svg>;
+  if (name === "spacing") return <svg {...common}><path d="M4.5 7.5v9M19.5 7.5v9M8.5 12h7" /><path d="m10.5 10-2 2 2 2m3-4 2 2-2 2" /></svg>;
+  if (name === "type") return <svg {...common}><path d="M4.5 7V5.5h15V7M12 5.5v13M8.8 18.5h6.4" /></svg>;
+  if (name === "spark") return <svg {...common}><path d="m12 3.5 1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6-4.6-1.7 4.6-1.7L12 3.5Z" /><path d="m18.5 15 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z" /></svg>;
+  if (name === "easing") return <svg {...common}><path d="M4 18.5C10 18.5 10 5.5 20 5.5" /><path d="M16.8 5.5H20v3.2" /></svg>;
+  if (name === "motion") return <svg {...common}><path d="M5 8.5h9M5 12h13M5 15.5h7" /><path d="m17 8.5 2 2-2 2" /></svg>;
+  return <svg {...common}><circle cx="12" cy="12" r="7.5" /></svg>;
+}
+
+const CARD_UI_CONTROL_ICONS = {
+  imageFit: "image",
+  cardLayout: "layout",
+  shadowDepth: "shadow",
+  cardGap: "spacing",
+  fontFamily: "type",
+  hoverHighlight: "spark",
+  transitionEasing: "easing",
+  entranceIntensity: "motion",
+};
 
 function externalProfileUrl(value) {
   const trimmed = value.trim();
@@ -259,12 +292,15 @@ function CardUISettings({ settings, onChange, themeMode }) {
   );
 
   const selectControl = ([key, label, options]) => (
-    <label className="card-ui-select" htmlFor={`card-ui-${key}`} key={key}>
-      <span>{label}</span>
-      <select id={`card-ui-${key}`} value={settings[key]} onChange={(event) => setValue(key, event.target.value)}>
-        {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
-      </select>
-    </label>
+    <StudioSelect
+      key={key}
+      id={`card-ui-${key}`}
+      label={label}
+      icon={<OptionGlyph name={CARD_UI_CONTROL_ICONS[key]} />}
+      value={settings[key]}
+      options={options.map(([optionValue, text]) => ({ value: optionValue, label: text }))}
+      onChange={(nextValue) => setValue(key, nextValue)}
+    />
   );
 
   const colorControl = ([key, label]) => (
@@ -993,13 +1029,14 @@ function SiteNav({
   useEffect(() => {
     if (!profileOpen) return undefined;
     const closeOnEscape = (event) => {
-      if (event.key === "Escape" && !document.querySelector("[data-card-preview-dialog]")) {
-        setProfileOpen(false);
-        profileTriggerRef.current?.focus();
-      }
+      if (event.key !== "Escape" || document.querySelector("[data-card-preview-dialog]")) return;
+      if (document.documentElement.hasAttribute("data-studio-select-open")) return;
+      setProfileOpen(false);
+      profileTriggerRef.current?.focus();
     };
     const closeOnOutsideClick = (event) => {
       if (document.querySelector("[data-card-preview-dialog]")) return;
+      if (event.target?.closest?.("[data-studio-select-menu]")) return;
       if (navRef.current && !navRef.current.contains(event.target)) setProfileOpen(false);
     };
     document.addEventListener("keydown", closeOnEscape);
