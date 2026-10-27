@@ -1,0 +1,3015 @@
+[
+  {
+    "id": "python-three-hashes",
+    "title": "Three Hashes",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints three hashes (###) with a single print call.",
+    "technologies": [
+      "Python 3.10",
+      "print()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 1,
+    "active": 1,
+    "source": "three-hashes/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Write a program that prints three hashes (###) as output.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints three hashes (###) with a single print call.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Write a program that prints three hashes (###) as output."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The program calls print once with the string ###. It reads no input."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "###"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "###",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "###"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "###"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-sum-of-2495-and-789358",
+    "title": "Sum of 2495 and 789358",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints 791853, the sum of 2495 and 789358.",
+    "technologies": [
+      "Python 3.10",
+      "print()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 2,
+    "active": 1,
+    "source": "sum-of-2495-and-789358/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "In this coding question, you need to write a program that calculates the sum of two numbers, 2495 and 789358, and then prints the result.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints 791853, the sum of 2495 and 789358.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "In this coding question, you need to write a program that calculates the sum of two numbers, 2495 and 789358, and then prints the result."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The supplied code prints the string literal \"791853\" directly. It does not calculate the sum with an arithmetic expression."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "791853"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "791853",
+        "note": "The printed value matches the sum; the code uses a string literal, as supplied. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "791853"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "791853"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-subtract-596-from-193856",
+    "title": "Subtract 596 from 193856",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Calculates 193856 - 596 and prints the result.",
+    "technologies": [
+      "Python 3.10",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 3,
+    "active": 1,
+    "source": "subtract-596-from-193856/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "In this coding question, you need to write a program that prints the result when 596 is subtracted from 193856.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Calculates 193856 - 596 and prints the result.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "In this coding question, you need to write a program that prints the result when 596 is subtracted from 193856."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The expression 193856-596 is evaluated and printed. The supplied minus sign has no surrounding spaces."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "193260"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "193260",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "193260"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "193260"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-multiply-37-61-and-391",
+    "title": "Multiply 37, 61 and 391",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Multiplies 37, 61, and 391 and prints the product.",
+    "technologies": [
+      "Python 3.10",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 4,
+    "active": 1,
+    "source": "multiply-37-61-and-391/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Our goal is to create a program that multiplies 37, 61, and 391, and then shows us the result. \"Product\" means the answer when we multiply numbers.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Multiplies 37, 61, and 391 and prints the product.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Our goal is to create a program that multiplies 37, 61, and 391, and then shows us the result. \"Product\" means the answer when we multiply numbers."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "result = 37 * 61 * 391 stores the product, then print(result) displays it."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "882487"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "882487",
+        "note": "No title was supplied; this descriptive title is based on the supplied problem statement. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "882487"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "882487"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-divide-33968-by-176",
+    "title": "Divide 33968 by 176",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Divides 33968 by 176 and prints the floating-point result.",
+    "technologies": [
+      "Python 3.10",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 5,
+    "active": 1,
+    "source": "divide-33968-by-176/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Our goal is to create a program that divides 33968 by 176 and shows us the result. \"Divide\" means to find out how many times 176 can fit into 33968.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Divides 33968 by 176 and prints the floating-point result.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Our goal is to create a program that divides 33968 by 176 and shows us the result. \"Divide\" means to find out how many times 176 can fit into 33968."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The / operator returns a float; print(result) displays 193.0."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "193.0"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "193.0",
+        "note": "No title was supplied; this descriptive title is based on the supplied problem statement. Python's / operator prints 193.0, not 193. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "193.0"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "193.0"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-print-the-input",
+    "title": "Print the Input",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads one line and prints it back unchanged.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "print()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 6,
+    "active": 1,
+    "source": "print-the-input/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Write a program that reads a single line of input and print the given input.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads one line and prints it back unchanged.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Write a program that reads a single line of input and print the given input."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "word  = input();print(word) reads one line and prints it. The supplied line uses two spaces before the equals sign; that spacing is preserved."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello World",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello World",
+            "input": "Hello World",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Hello World"
+          },
+          {
+            "id": "case-2",
+            "name": "Spaces preserved",
+            "input": "  spaced  ",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "  spaced  "
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The input line"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-print-the-input-2",
+    "title": "Print the Input - 2",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads one word, then prints it followed by ### on separate lines.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 7,
+    "active": 1,
+    "source": "print-the-input-2/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "In this coding question, you need to write a program that reads a word and prints the word and \"###\" on two separate lines.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads one word, then prints it followed by ### on separate lines.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "In this coding question, you need to write a program that reads a word and prints the word and \"###\" on two separate lines."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "second_word is \"#\" * 3, so the second line is exactly ###. The variable name fist_word is preserved as supplied."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello",
+            "input": "Hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Hello\n###"
+          },
+          {
+            "id": "case-2",
+            "name": "Python",
+            "input": "Python",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Python\n###"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One word"
+        },
+        {
+          "label": "Output",
+          "value": "The word, then ###"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-print-the-input-3",
+    "title": "Print the Input - 3",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads two lines and prints each on its own line.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "print()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 8,
+    "active": 1,
+    "source": "print-the-input-3/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "In this coding question, you need to write a program that reads two words as input and prints them on two separate lines.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads two lines and prints each on its own line.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "In this coding question, you need to write a program that reads two words as input and prints them on two separate lines."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "Two input() calls read two lines; print(word) then print(word_second) preserves the order."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello\nWorld",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello and World",
+            "input": "Hello\nWorld",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Hello\nWorld"
+          },
+          {
+            "id": "case-2",
+            "name": "Two phrases",
+            "input": "first line\nsecond line",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "first line\nsecond line"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Two lines"
+        },
+        {
+          "label": "Output",
+          "value": "Both lines, in order"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-print-in-reverse-order",
+    "title": "Print in Reverse Order",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads two lines and prints the second before the first.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "print()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 9,
+    "active": 1,
+    "source": "print-in-reverse-order/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Write a program that reads two lines of input and prints those two lines in the reverse order. (Print the message given in the second line of input before the first line of input)",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads two lines and prints the second before the first.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Write a program that reads two lines of input and prints those two lines in the reverse order. (Print the message given in the second line of input before the first line of input)"
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The first line is stored in pen and the second in book; print(book) runs before print(pen)."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello\nWorld",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello and World",
+            "input": "Hello\nWorld",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "World\nHello"
+          },
+          {
+            "id": "case-2",
+            "name": "First and second",
+            "input": "first\nsecond",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "second\nfirst"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Two lines"
+        },
+        {
+          "label": "Output",
+          "value": "Both lines, reversed"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-join-words",
+    "title": "Join Words",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads two words and prints them joined with no separator.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String concatenation"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 10,
+    "active": 1,
+    "source": "join-words/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "In this coding question, you need to write a program that reads two words and prints the resultant word by joining the two words.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads two words and prints them joined with no separator.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "In this coding question, you need to write a program that reads two words and prints the resultant word by joining the two words."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The + operator concatenates first_word and second_word; no space is inserted."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello\nWorld",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello and World",
+            "input": "Hello\nWorld",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "HelloWorld"
+          },
+          {
+            "id": "case-2",
+            "name": "Gurava and iah",
+            "input": "Gurava\niah",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Guravaiah"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Two words"
+        },
+        {
+          "label": "Output",
+          "value": "The two words joined"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-full-name",
+    "title": "Full Name",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads first and last names and prints them separated by one space.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String concatenation"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 11,
+    "active": 1,
+    "source": "full-name/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "A job applicant is filling out an application form. He entered his first name and last name. Your task is to print his full name by joining his first name and last name with a space.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads first and last names and prints them separated by one space.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "A job applicant is filling out an application form. He entered his first name and last name. Your task is to print his full name by joining his first name and last name with a space."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The supplied expression concatenates first_name + \" \" + last_name."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Gurava\nGuravaiah",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Gurava Guravaiah",
+            "input": "Gurava\nGuravaiah",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Gurava Guravaiah"
+          },
+          {
+            "id": "case-2",
+            "name": "K Guravaiah",
+            "input": "K\nGuravaiah",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "K Guravaiah"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "First and last name"
+        },
+        {
+          "label": "Output",
+          "value": "First and last name with a space"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-print-name-and-age",
+    "title": "Print Name and Age",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads a name and age, then prints “<name> is <age> years old”.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String concatenation"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 12,
+    "active": 1,
+    "source": "print-name-and-age/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Write a program that reads the name and age of a person and prints them in the given format.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads a name and age, then prints “<name> is <age> years old”.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Write a program that reads the name and age of a person and prints them in the given format."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "Both values are read as strings; the supplied concatenation inserts them into the sentence."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Gurava\n24",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Gurava, 24",
+            "input": "Gurava\n24",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Gurava is 24 years old"
+          },
+          {
+            "id": "case-2",
+            "name": "Rahul, 30",
+            "input": "Rahul\n30",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Rahul is 30 years old"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Name and age"
+        },
+        {
+          "label": "Output",
+          "value": "Name, age, and sentence text"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-string-repetition-program",
+    "title": "String Repetition Program",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Repeats the input line three times, with a space after each copy.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 13,
+    "active": 1,
+    "source": "string-repetition-program/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "Let's break down the solution for “String Repetition Program” into simple steps:",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Repeats the input line three times, with a space after each copy.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "Let's break down the solution for “String Repetition Program” into simple steps:"
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "message = (word + ' ') * 3 appends one space to the word, then repeats the pair three times; print(message) leaves a trailing space before the newline."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "The supplied text stops after “into simple steps:” and provides no steps; the behavior below comes from the supplied code. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello",
+            "input": "Hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Hello Hello Hello "
+          },
+          {
+            "id": "case-2",
+            "name": "Hi",
+            "input": "Hi",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "Hi Hi Hi "
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The input repeated three times with spaces"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-simple-square",
+    "title": "Simple Square",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints two rows of two stars.",
+    "technologies": [
+      "Python 3.10",
+      "print()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 14,
+    "active": 1,
+    "source": "simple-square/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints two rows of two stars.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "Each print(\"*\" * 2) outputs **; the line is repeated twice."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "**\n**"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "**\n**",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "**\n**"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "Two rows of two stars"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-drawing-a-simple-triangle-with-python",
+    "title": "Drawing a Simple Triangle with Python",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints one star, then two stars on the next line.",
+    "technologies": [
+      "Python 3.10",
+      "print()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 15,
+    "active": 1,
+    "source": "drawing-a-simple-triangle-with-python/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints one star, then two stars on the next line.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "print(\"*\") then print(\"*\" * 2)."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "*\n**"
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "*\n**",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "*\n**"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "One star, then two stars"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-stars",
+    "title": "Stars",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads a word and surrounds it with three stars on each side.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String concatenation"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 16,
+    "active": 1,
+    "source": "stars/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads a word and surrounds it with three stars on each side.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "result = (\"* \" * 3) + word + (\" *\" * 3); the left block ends with a space and the right block starts with one, so one space separates the stars and the word."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "CCBP",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "CCBP",
+            "input": "CCBP",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "* * * CCBP * * *"
+          },
+          {
+            "id": "case-2",
+            "name": "Python",
+            "input": "Python",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "* * * Python * * *"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One word"
+        },
+        {
+          "label": "Output",
+          "value": "The word between star blocks"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-first-character",
+    "title": "First Character",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints the first character of the input line.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String indexing"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 17,
+    "active": 1,
+    "source": "first-character/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints the first character of the input line.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "word[0] selects the first character."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Python",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "An empty input line raises IndexError; this is documented by the test suite. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Python",
+            "input": "Python",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "P"
+          },
+          {
+            "id": "case-2",
+            "name": "Unicode",
+            "input": "ಗು",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "ಗ"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The first character"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 3 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-first-and-last-digits",
+    "title": "First & Last Digits",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints the first and fourth characters of the input.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String indexing"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 18,
+    "active": 1,
+    "source": "first-and-last-digits/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints the first and fourth characters of the input.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "number[0] and number[3] are printed on separate lines. Despite the title, index 3 is the fourth character, which is the last character only for a four-character input."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "1234",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Inputs shorter than four characters raise IndexError; longer inputs print the fourth character, not the last. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "1234",
+            "input": "1234",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "1\n4"
+          },
+          {
+            "id": "case-2",
+            "name": "9876",
+            "input": "9876",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "9\n6"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Four-character input"
+        },
+        {
+          "label": "Output",
+          "value": "The first and fourth characters"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 5 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-reverse-the-digits",
+    "title": "Reverse the Digits",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads two characters and prints them in reverse order.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String indexing"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 19,
+    "active": 1,
+    "source": "reverse-the-digits/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads two characters and prints them in reverse order.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "word[0] and word[1] are stored, then concatenated as second_digit + first_digit."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "12",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Inputs shorter than two characters raise IndexError; longer inputs print only the first two characters reversed. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "12",
+            "input": "12",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "21"
+          },
+          {
+            "id": "case-2",
+            "name": "90",
+            "input": "90",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "09"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Two-character input"
+        },
+        {
+          "label": "Output",
+          "value": "The first two characters reversed"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 5 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-find-the-length-of-a-string",
+    "title": "Find the Length of a String",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints the number of characters in the input line.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 20,
+    "active": 1,
+    "source": "find-the-length-of-a-string/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints the number of characters in the input line.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "len(message) counts characters; print(length) outputs the integer."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello",
+            "input": "Hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "5"
+          },
+          {
+            "id": "case-2",
+            "name": "Hello World",
+            "input": "Hello World",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "11"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The character count"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-subtract-1-from-string-length",
+    "title": "Subtract 1 from String Length",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints the input length minus one.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 21,
+    "active": 1,
+    "source": "subtract-1-from-string-length/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints the input length minus one.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "len(word) is stored in word_length, then 1 is subtracted and printed."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello",
+            "input": "Hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "4"
+          },
+          {
+            "id": "case-2",
+            "name": "Hi",
+            "input": "Hi",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "1"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The character count minus one"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-subtract-1-from-string-length-2",
+    "title": "Subtract 1 from String Length",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints the input length minus one. This is the second supplied copy of the same question and code.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 22,
+    "active": 1,
+    "source": "subtract-1-from-string-length-2/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints the input length minus one. This is the second supplied copy of the same question and code.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "len(word) is stored in word_length, then 1 is subtracted and printed."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "This is the second supplied copy of “Subtract 1 from String Length”; both are cataloged separately as requested. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello",
+            "input": "Hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "4"
+          },
+          {
+            "id": "case-2",
+            "name": "Hi",
+            "input": "Hi",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "1"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The character count minus one"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-half-length-of-string",
+    "title": "Half Length of String",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints half the input length using Python's / operator.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 23,
+    "active": 1,
+    "source": "half-length-of-string/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints half the input length using Python's / operator.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "len(word) / 2 always returns a float, so even lengths print with .0 (for example, 1.0)."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Hello",
+            "input": "Hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "2.5"
+          },
+          {
+            "id": "case-2",
+            "name": "Hi",
+            "input": "Hi",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "1.0"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "Half the character count"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-simple-rectangle",
+    "title": "Simple Rectangle",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints three rows of two stars with a trailing space after each row.",
+    "technologies": [
+      "Python 3.10",
+      "print()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 24,
+    "active": 1,
+    "source": "simple-rectangle/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints three rows of two stars with a trailing space after each row.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "print(\"* \" * 2) repeats the two-character string \"* \" twice, producing \"* * \" on each of three lines."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "* * \n* * \n* * "
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "* * \n* * \n* * ",
+        "note": "Each line ends with a space; the test suite compares it exactly. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "* * \n* * \n* * "
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "Three rows of stars with trailing spaces"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-simple-square-3",
+    "title": "Simple Square - 3",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints three rows of three stars with a trailing space after each row.",
+    "technologies": [
+      "Python 3.10",
+      "print()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 25,
+    "active": 1,
+    "source": "simple-square-3/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints three rows of three stars with a trailing space after each row.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "a = \"* \" * 3 creates \"* * * \"; three semicolon-separated print calls output it three times."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "* * * \n* * * \n* * * "
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "* * * \n* * * \n* * * ",
+        "note": "Each line ends with a space; the test suite compares it exactly. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "* * * \n* * * \n* * * "
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "Three rows of three stars with trailing spaces"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-simple-triangle-3",
+    "title": "Simple Triangle - 3",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Supplied code prints three rows of three stars; it is identical to Simple Square - 3.",
+    "technologies": [
+      "Python 3.10",
+      "print()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 26,
+    "active": 1,
+    "source": "simple-triangle-3/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Supplied code prints three rows of three stars; it is identical to Simple Square - 3.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "The code is byte-identical to Simple Square - 3: a = \"* \" * 3 followed by three print calls."
+          },
+          {
+            "heading": "Expected output",
+            "body": "The supplied program prints:",
+            "code": "* * * \n* * * \n* * * "
+          }
+        ],
+        "sampleInput": "",
+        "expectedOutput": "* * * \n* * * \n* * * ",
+        "note": "Title/behavior mismatch: this is not a triangle. The code is preserved exactly as supplied and was not corrected. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "No input",
+            "input": "",
+            "inputPlaceholder": "No input — this program reads no input.",
+            "expectedOutput": "* * * \n* * * \n* * * "
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "None"
+        },
+        {
+          "label": "Output",
+          "value": "Three rows of three stars with trailing spaces"
+        },
+        {
+          "label": "Tests",
+          "value": "1 interactive · 2 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-stars-2-medium",
+    "title": "Stars - 2 Medium",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads a name and prints it between two runs of stars, one star per character of the name.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 27,
+    "active": 1,
+    "source": "stars-2-medium/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads a name and prints it between two runs of stars, one star per character of the name.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "stars = len(name) * \"*\" creates a star string as long as the name; the output is stars + \" \" + name + \" \" + stars."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Gurava",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Gurava",
+            "input": "Gurava",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "****** Gurava ******"
+          },
+          {
+            "id": "case-2",
+            "name": "Hi",
+            "input": "Hi",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "** Hi **"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One name"
+        },
+        {
+          "label": "Output",
+          "value": "The name between star blocks"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-second-word-in-first-word-medium",
+    "title": "Second Word in First Word Medium",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads two words and prints the length of the second word minus one.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()",
+      "Arithmetic"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 28,
+    "active": 1,
+    "source": "second-word-in-first-word-medium/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads two words and prints the length of the second word minus one.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "w1 and w2 are read; length = (len(w2) - 1); print(length). The first word is read but never used in the output."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "hello\nworld",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Title/behavior mismatch: the code does not check whether the second word appears in the first. Preserved exactly as supplied. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "hello and world",
+            "input": "hello\nworld",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "4"
+          },
+          {
+            "id": "case-2",
+            "name": "aaa and b",
+            "input": "aaa\nb",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "0"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Two words"
+        },
+        {
+          "label": "Output",
+          "value": "Second word length minus one"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-print-in-reverse-order-2",
+    "title": "Print in Reverse Order - 2",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads two lines into the same variable, then prints the second line, ###, and the second line again.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "print()"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 29,
+    "active": 1,
+    "source": "print-in-reverse-order-2/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads two lines into the same variable, then prints the second line, ###, and the second line again.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "word_A = input() runs twice; the first value is overwritten. The output is word_A, then ###, then word_A."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "first\nsecond",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Title/behavior mismatch: the first input is discarded and the output is not a reversed pair. Preserved exactly as supplied. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "first and second",
+            "input": "first\nsecond",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "second\n###\nsecond"
+          },
+          {
+            "id": "case-2",
+            "name": "Hello and World",
+            "input": "Hello\nWorld",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "World\n###\nWorld"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Two lines"
+        },
+        {
+          "label": "Output",
+          "value": "The second line, ###, and the second line"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-first-and-last-characters",
+    "title": "First & Last Characters",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Prints the first and last characters of the input line on separate lines.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String indexing"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 30,
+    "active": 1,
+    "source": "first-and-last-characters/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Prints the first and last characters of the input line on separate lines.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "word[0] and word[len(word)-1] are printed."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "Python",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "An empty input line raises IndexError; a one-character input prints that character twice. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "Python",
+            "input": "Python",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "P\nn"
+          },
+          {
+            "id": "case-2",
+            "name": "Single character",
+            "input": "A",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "A\nA"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One line"
+        },
+        {
+          "label": "Output",
+          "value": "The first and last characters"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-first-letters",
+    "title": "First Letters",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads three words and prints their first characters joined together.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "String indexing"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 31,
+    "active": 1,
+    "source": "first-letters/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads three words and prints their first characters joined together.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "word[0], word_1[0], word_2[0] are concatenated into abc and printed."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "alpha\nbeta\ngamma",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "An empty line in any position raises IndexError; this is documented by the test suite. Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "alpha, beta, gamma",
+            "input": "alpha\nbeta\ngamma",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "abg"
+          },
+          {
+            "id": "case-2",
+            "name": "Gurava, Rahul, NxtWave",
+            "input": "Gurava\nRahul\nNxtWave",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "GRN"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "Three words"
+        },
+        {
+          "label": "Output",
+          "value": "First characters joined"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 4 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  },
+  {
+    "id": "python-star-repetition-3",
+    "title": "Star Repetition - 3",
+    "category": "Python",
+    "category_label": "Python",
+    "description": "Reads a string and puts stars between its first and last characters, with the count equal to the length minus two.",
+    "technologies": [
+      "Python 3.10",
+      "input()",
+      "len()",
+      "String repetition"
+    ],
+    "image": "",
+    "practice_label": "Python exercise",
+    "display_order": 32,
+    "active": 1,
+    "source": "star-repetition-3/solution.py",
+    "data": {
+      "kind": "python-exercise",
+      "language": "Python 3.10",
+      "runtime": "Python 3.10 · Pyodide",
+      "languageLocked": true,
+      "question": "No prose statement was supplied; the title and supplied code define the exercise.",
+      "brief": {
+        "kicker": "Question",
+        "summary": "Reads a string and puts stars between its first and last characters, with the count equal to the length minus two.",
+        "sections": [
+          {
+            "heading": "Question",
+            "body": "No prose statement was supplied; the title and supplied code define the exercise."
+          },
+          {
+            "heading": "What the supplied code does",
+            "body": "stars = \"*\" * (len(string)-2); print(string[0] + stars + string[-1]). For a two-character input the star block is empty; shorter inputs raise IndexError."
+          },
+          {
+            "heading": "Expected output",
+            "body": "Output depends on the input. The test cases below show exact stdout values captured by running the supplied code."
+          }
+        ],
+        "sampleInput": "hello",
+        "expectedOutput": "Depends on input — see the test cases.",
+        "note": "Expected outputs were captured by running the supplied solution.py. Test inputs are labeled fixtures."
+      },
+      "tests": {
+        "note": "These inputs are test fixtures; expected outputs were captured by running the supplied solution.py. Comparison is exact, including spaces.",
+        "cases": [
+          {
+            "id": "case-1",
+            "name": "hello",
+            "input": "hello",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "h***o"
+          },
+          {
+            "id": "case-2",
+            "name": "abc",
+            "input": "abc",
+            "inputPlaceholder": "Sample input for this question",
+            "expectedOutput": "a*c"
+          }
+        ]
+      },
+      "instructions": [
+        "The supplied solution is already loaded in the editor. Edits you make in this workspace do not change the preserved source file.",
+        "Run executes the selected test case; Submit executes every test case.",
+        "The test cards show the input, the expected output, and the real browser output.",
+        "Use the Back link to return to the Python shelf."
+      ],
+      "facts": [
+        {
+          "label": "Language",
+          "value": "Python 3.10"
+        },
+        {
+          "label": "Input",
+          "value": "One string"
+        },
+        {
+          "label": "Output",
+          "value": "Stars between the first and last characters"
+        },
+        {
+          "label": "Tests",
+          "value": "2 interactive · 5 checks"
+        }
+      ],
+      "preview": {
+        "kind": "mobile-terminal",
+        "description": "Runs the supplied solution with the first test case and shows the real browser output."
+      },
+      "card": {
+        "mediaLabel": "Supplied solution",
+        "note": "Python exercise · source preserved"
+      }
+    }
+  }
+]

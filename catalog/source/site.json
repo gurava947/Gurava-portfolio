@@ -234,7 +234,7 @@
   "collectionsPage": {
     "python": {
       "label": "Python",
-      "description": "A real Python 3.10 playground running in your browser through Pyodide."
+      "description": "Python 3.10 practice questions plus a real browser playground running through Pyodide."
     },
     "static": {
       "label": "Static Web",

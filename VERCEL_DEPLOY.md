@@ -1,6 +1,6 @@
 # Deploy this responsive portfolio to Vercel
 
-This project is configured as a static Vite deployment. The build exports the 35 project records and certificate data to `public/portfolio-data.json` using an in-memory SQLite database, then builds the Vite site. No SQLite database is opened or written to at Vercel request time.
+This project is configured as a static Vite deployment. The build generates the catalog from `catalog/source/`, `backend/db/projects/python-playground.json`, and the preserved `python-projects/<slug>/solution.py` files into `public/data/`, then builds the Vite site. No SQLite database is opened or written to at Vercel request time.
 
 ## Deploy
 
@@ -9,7 +9,7 @@ This project is configured as a static Vite deployment. The build exports the 35
 3. Keep the detected Vite framework and the commands from `vercel.json`: `npm ci`, `npm run build:vercel`, output directory `dist`. No environment variables are required.
 4. Deploy. The Vercel rewrite serves the SPA for direct links such as `/projects/...` and `/certificates/...`.
 
-For a local pre-deploy check, run `npm ci`, `npm run build:vercel`, then inspect `dist/index.html` and `dist/portfolio-data.json`. The build prints the number of exported projects and certificates.
+For a local pre-deploy check, run `npm ci`, `npm run build:vercel`, then inspect `dist/index.html` and `dist/data/catalog.json`. The build prints the number of projects and certificates in the generated catalog.
 
 ## Data and preferences
 

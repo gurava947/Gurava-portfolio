@@ -32,6 +32,10 @@ const responsiveMetadata = JSON.parse(readFileSync(join(SOURCE, "metadata-respon
 const site = JSON.parse(readFileSync(join(SOURCE, "site.json"), "utf8"));
 const certificates = JSON.parse(readFileSync(join(SOURCE, "certificates.json"), "utf8"));
 const pythonProject = JSON.parse(readFileSync(join(ROOT, "backend", "db", "projects", "python-playground.json"), "utf8"));
+const pythonProjects = JSON.parse(readFileSync(join(SOURCE, "projects-python.json"), "utf8"));
+const PYTHON_PROJECTS = join(ROOT, "python-projects");
+
+if (!Array.isArray(pythonProjects)) throw new Error("catalog/source/projects-python.json must contain an array.");
 
 const staticModules = {
   TodoList: ["TodoList/index.jsx"],
@@ -327,7 +331,7 @@ function normalizeProject(seed, collection, options) {
     technologies: technologyList,
     image,
     imageAlt: seed.image_alt || `${seed.title} supplied project preview`,
-    practiceLabel: isPython ? "Python playground" : seed.category_label || `Practice ${String(seed.display_order ?? 0).padStart(2, "0")}`,
+    practiceLabel: isPython ? seed.practice_label || "Python playground" : seed.category_label || `Practice ${String(seed.display_order ?? 0).padStart(2, "0")}`,
     sortOrder: options.sortOrder,
     previewType: isPython ? "python" : "react",
     language: isPython ? data.language || "Python 3.10" : "React",
@@ -383,13 +387,41 @@ async function main() {
     copyFileSync(join(SOURCE, "assets", "certificates", name), join(certificateDirectory, name));
   }
 
-  const normalizedPython = normalizeProject(pythonProject, "python", {
+  const normalizedPythonPlayground = normalizeProject(pythonProject, "python", {
     collectionLabel: "Python",
     sortOrder: 0,
     previewModule: "",
     deviceSet: null,
     resolveImage: () => "",
   });
+  const normalizedPythonExercises = pythonProjects.map((seed, index) => {
+    if (!seed || typeof seed.source !== "string" || !seed.source.trim()) {
+      throw new Error(`Python exercise at index ${index} is missing a source path.`);
+    }
+    const sourcePath = resolve(PYTHON_PROJECTS, seed.source);
+    if (!sourcePath.startsWith(`${PYTHON_PROJECTS}${sep}`)) {
+      throw new Error(`Python exercise source escapes python-projects: ${seed.source}`);
+    }
+    if (!existsSync(sourcePath)) {
+      throw new Error(`Missing Python exercise source: ${seed.source}`);
+    }
+    const initialCode = readFileSync(sourcePath, "utf8");
+    if (!initialCode.trim()) {
+      throw new Error(`Empty Python exercise source: ${seed.source}`);
+    }
+    return normalizeProject(
+      { ...seed, data: { ...seed.data, initialCode } },
+      "python",
+      {
+        collectionLabel: "Python",
+        sortOrder: 1 + (seed.display_order ?? index),
+        previewModule: "",
+        deviceSet: null,
+        resolveImage: () => "",
+      },
+    );
+  });
+  const normalizedPython = [normalizedPythonPlayground, ...normalizedPythonExercises];
   const normalizedResponsive = responsiveProjects.map((seed, index) => {
     const mapping = responsiveModules[seed.component_key];
     if (!mapping) throw new Error(`No preview mapping for responsive project "${seed.id}" (${seed.component_key}).`);
@@ -419,7 +451,7 @@ async function main() {
     });
   });
 
-  const allProjects = [normalizedPython, ...normalizedResponsive, ...normalizedStatic];
+  const allProjects = [...normalizedPython, ...normalizedResponsive, ...normalizedStatic];
   for (const project of allProjects) {
     project.thumbnail = await makeThumbnail(project.id, project.image);
     project.data = rewriteStrings(project.data, replacementMap);
