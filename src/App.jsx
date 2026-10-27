@@ -1255,8 +1255,10 @@ function PortfolioHome({
     ...(projectsByCollection.responsive || []).slice(0, 4),
     ...(projectsByCollection.static || []).slice(0, 4),
   ], [projectsByCollection]);
-  const featuredLayout = CARD_LAYOUTS.includes(settings.cardUI?.cardLayout) ? settings.cardUI.cardLayout : "grid";
-  const featuredGridClass = ["rail", "depth"].includes(featuredLayout)
+  const featuredLayout = CARD_LAYOUTS.includes(settings.cardUI?.cardLayout) && settings.cardUI.cardLayout !== "rail"
+    ? settings.cardUI.cardLayout
+    : "grid";
+  const featuredGridClass = ["depth"].includes(featuredLayout)
     ? ` is-card-rail is-card-${featuredLayout}`
     : featuredLayout !== "grid"
       ? ` is-card-${featuredLayout}`

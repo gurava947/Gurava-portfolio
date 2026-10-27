@@ -97,7 +97,7 @@ export default function CollectionShelf({
   preview = false,
 }) {
   const settings = normalizeShelfMotion(motion);
-  const [edge, setEdge] = useState({ start: true, end: true });
+  const [scrollState, setScrollState] = useState({ start: true, end: true, progress: 0, fraction: 1 });
   const trackRef = useRef(null);
   const frameRef = useRef(0);
   const idPrefix = useId().replace(/:/g, "");
@@ -111,9 +111,19 @@ export default function CollectionShelf({
   const syncEdges = () => {
     const node = trackRef.current;
     if (!node) return;
+    const max = node.scrollWidth - node.clientWidth;
     const start = node.scrollLeft <= 2;
     const end = node.scrollLeft + node.clientWidth >= node.scrollWidth - 2;
-    setEdge((current) => (current.start === start && current.end === end ? current : { start, end }));
+    const progress = max > 2 ? Math.min(1, Math.max(0, node.scrollLeft / max)) : 0;
+    const fraction = node.scrollWidth > 0 ? Math.min(1, node.clientWidth / node.scrollWidth) : 1;
+    setScrollState((current) => (
+      current.start === start
+      && current.end === end
+      && Math.abs(current.progress - progress) < 0.002
+      && Math.abs(current.fraction - fraction) < 0.002
+        ? current
+        : { start, end, progress, fraction }
+    ));
   };
 
   useEffect(() => {
@@ -252,7 +262,7 @@ export default function CollectionShelf({
               type="button"
               className="collection-shelf-button"
               onClick={() => stepShelf(-1)}
-              disabled={edge.start}
+              disabled={scrollState.start}
               aria-label="Scroll collections left"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6" /></svg>
@@ -261,7 +271,7 @@ export default function CollectionShelf({
               type="button"
               className="collection-shelf-button"
               onClick={() => stepShelf(1)}
-              disabled={edge.end}
+              disabled={scrollState.end}
               aria-label="Scroll collections right"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
@@ -293,8 +303,16 @@ export default function CollectionShelf({
               />
             ))}
           </div>
-          <span className={`collection-shelf-fade is-start${edge.start ? " is-hidden" : ""}`} aria-hidden="true" />
-          <span className={`collection-shelf-fade is-end${edge.end ? " is-hidden" : ""}`} aria-hidden="true" />
+          <span className={`collection-shelf-fade is-start${scrollState.start ? " is-hidden" : ""}`} aria-hidden="true" />
+          <span className={`collection-shelf-fade is-end${scrollState.end ? " is-hidden" : ""}`} aria-hidden="true" />
+        </div>
+        <div className="collection-shelf-progress" aria-hidden="true">
+          <i
+            style={{
+              left: `${scrollState.progress * (1 - scrollState.fraction) * 100}%`,
+              width: `${scrollState.fraction * 100}%`,
+            }}
+          />
         </div>
       </div>
       <p id={hintId} className="visually-hidden">Use the left and right arrow keys to move between collections.</p>

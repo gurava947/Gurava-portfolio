@@ -122,9 +122,9 @@ describe("LayoutStudio", () => {
     expect(screen.queryByRole("button", { name: /Masonry/i })).not.toBeInTheDocument();
   });
 
-  it("explains that the 3D shelf card style skips card layout patterns", () => {
+  it("explains that the side-scroll card style skips card layout patterns", () => {
     renderStudio({ cardUI: { cardLayout: "depth" } });
-    expect(screen.getByRole("note")).toHaveTextContent(/3D shelf card style keeps its side-scroll track/i);
+    expect(screen.getByRole("note")).toHaveTextContent(/side-scroll card style keeps its rail/i);
 
     fireEvent.click(screen.getByRole("button", { name: /Certificate cards/i }));
     expect(screen.queryByRole("note")).not.toBeInTheDocument();

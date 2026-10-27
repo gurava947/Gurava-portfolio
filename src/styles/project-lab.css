@@ -172,7 +172,7 @@
 .lab-project-grid.is-card-rail .lab-project-card {
   width: auto;
   max-width: none;
-  flex: 0 0 clamp(280px, 27vw, 360px);
+  flex: 0 0 clamp(300px, 29vw, 400px);
   margin-inline: 0;
   scroll-snap-align: start;
 }
@@ -292,6 +292,62 @@
 .lab-card-rail-button:disabled {
   opacity: 0.34;
   cursor: not-allowed;
+}
+
+.lab-card-rail-viewport {
+  position: relative;
+}
+
+.lab-card-rail-fade {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  bottom: 22px;
+  width: 48px;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.lab-card-rail-fade.is-start {
+  left: 0;
+  background: linear-gradient(90deg, var(--theme-background), color-mix(in srgb, var(--theme-background) 46%, transparent) 54%, transparent);
+}
+
+.lab-card-rail-fade.is-end {
+  right: 0;
+  background: linear-gradient(270deg, var(--theme-background), color-mix(in srgb, var(--theme-background) 46%, transparent) 54%, transparent);
+}
+
+.lab-card-rail-fade.is-hidden {
+  opacity: 0;
+}
+
+.lab-card-rail-progress {
+  position: relative;
+  height: 3px;
+  margin: 10px 2px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-text) 9%, transparent);
+}
+
+.lab-card-rail-progress i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--theme-primary) 88%, white),
+    color-mix(in srgb, var(--theme-secondary) 72%, var(--theme-primary)));
+  transition: left 200ms ease, width 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-card-rail-progress i {
+    transition-duration: 0.01ms;
+  }
 }
 
 .lab-card-terminal {
@@ -585,8 +641,10 @@
   .lab-card-body { padding: 14px 15px 15px; }
   .lab-card-heading h3 { font-size: calc(1.27rem * var(--portfolio-card-font-scale, 1)); }
   .lab-project-grid.is-card-rail { gap: min(var(--portfolio-card-gap, 20px), 18px); padding-inline: 2px; margin-inline: -2px; }
-  .lab-project-grid.is-card-rail .lab-project-card { flex-basis: min(82vw, 330px); }
+  .lab-project-grid.is-card-rail .lab-project-card { flex-basis: min(84vw, 360px); }
   .lab-card-rail-controls { display: none; }
+  .lab-card-rail-fade { width: 26px; }
+  .lab-card-rail-progress { margin-top: 6px; }
 }
 
 @media (min-width: 768px) and (max-width: 1199.98px) {

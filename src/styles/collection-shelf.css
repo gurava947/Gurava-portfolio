@@ -130,16 +130,17 @@
 }
 
 .collection-shelf-track {
-  --shelf-card-width: clamp(300px, 33vw, 480px);
+  --shelf-card-width: clamp(340px, 30vw, 520px);
   display: flex;
-  gap: clamp(14px, 1.6vw, 22px);
-  padding: 20px 14px 34px;
+  gap: clamp(16px, 1.8vw, 26px);
+  padding: 24px 18px 40px;
   margin: -10px -4px -10px;
   overflow-x: auto;
   overflow-y: hidden;
   border-radius: 24px;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
+  scroll-padding-inline: 12px;
   overscroll-behavior-x: contain;
   scrollbar-color: color-mix(in srgb, var(--theme-text) 14%, transparent) transparent;
   scrollbar-width: thin;
@@ -168,7 +169,7 @@
 .collection-shelf-item {
   --collection-accent: #7c6cf0;
   position: relative;
-  height: clamp(232px, 19vw, 258px);
+  height: clamp(260px, 20vw, 320px);
   flex: 0 0 var(--shelf-card-width);
   min-width: 0;
   scroll-snap-align: center;
@@ -289,7 +290,8 @@
   border-color: color-mix(in srgb, var(--collection-accent) 62%, transparent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--collection-accent) 30%, transparent),
-    0 26px 48px -22px rgb(15 24 35 / 34%);
+    0 0 0 4px color-mix(in srgb, var(--collection-accent) 12%, transparent),
+    0 32px 56px -24px rgb(15 24 35 / 40%);
 }
 
 .collection-shelf-art {
@@ -400,16 +402,16 @@
 .collection-shelf-glass {
   position: absolute;
   z-index: 2;
-  right: 8px;
-  bottom: 8px;
-  left: 8px;
+  right: 9px;
+  bottom: 9px;
+  left: 9px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 13px 16px 12px;
+  gap: 4px;
+  padding: 15px 18px 14px;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 42%);
-  border-radius: 21px;
+  border-radius: 22px;
   background:
     linear-gradient(180deg,
       color-mix(in srgb, var(--theme-card-bg) 42%, transparent) 0%,
@@ -440,7 +442,7 @@
   gap: 10px;
   color: color-mix(in srgb, var(--collection-accent) 62%, var(--theme-muted-text));
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 0.55rem;
+  font-size: 0.57rem;
   font-weight: 750;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -450,7 +452,7 @@
   overflow: hidden;
   color: var(--theme-text);
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.2rem, 1.6vw, 1.46rem);
+  font-size: clamp(1.34rem, 1.9vw, 1.66rem);
   font-weight: 700;
   letter-spacing: -0.045em;
   line-height: 1.08;
@@ -472,7 +474,7 @@
 .collection-shelf-count b {
   color: var(--collection-accent);
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.32rem;
+  font-size: 1.42rem;
   font-weight: 700;
   letter-spacing: -0.05em;
   line-height: 1;
@@ -480,19 +482,19 @@
 
 .collection-shelf-desc {
   display: -webkit-box;
-  margin-top: 1px;
+  margin-top: 2px;
   overflow: hidden;
   color: var(--theme-muted-text);
-  font-size: 0.72rem;
-  line-height: 1.48;
+  font-size: 0.76rem;
+  line-height: 1.5;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
 .collection-shelf-cue {
-  margin-top: 3px;
+  margin-top: 4px;
   color: var(--collection-accent);
-  font-size: 0.56rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -521,6 +523,27 @@
 
 .collection-shelf-fade.is-hidden {
   opacity: 0;
+}
+
+.collection-shelf-progress {
+  position: relative;
+  height: 3px;
+  margin: 8px 20px 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-text) 9%, transparent);
+}
+
+.collection-shelf-progress i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--theme-primary) 88%, white),
+    color-mix(in srgb, var(--theme-secondary) 72%, var(--theme-primary)));
+  transition: left 200ms ease, width 200ms ease;
 }
 
 /* Preview inside the G-logo settings panel */
@@ -786,7 +809,11 @@
 
 @media (max-width: 1199.98px) {
   .collection-shelf-track {
-    --shelf-card-width: clamp(280px, 46vw, 420px);
+    --shelf-card-width: clamp(300px, 48vw, 460px);
+  }
+
+  .collection-shelf-item {
+    height: clamp(252px, 32vw, 300px);
   }
 }
 
@@ -805,14 +832,18 @@
   }
 
   .collection-shelf-item {
-    height: 218px;
+    height: 238px;
   }
 
   .collection-shelf-track {
-    --shelf-card-width: min(78vw, 340px);
+    --shelf-card-width: min(80vw, 360px);
     gap: 12px;
     padding: 18px 12px 30px;
     margin: -8px -4px -8px;
+  }
+
+  .collection-shelf-progress {
+    margin: 6px 14px 7px;
   }
 
   .collection-shelf-fade {
@@ -822,7 +853,11 @@
 
 @media (max-width: 479.98px) {
   .collection-shelf-track {
-    --shelf-card-width: 82vw;
+    --shelf-card-width: 84vw;
+  }
+
+  .collection-shelf-item {
+    height: 228px;
   }
 
   .collection-shelf-label::before {
@@ -858,7 +893,9 @@
 :root[data-reduced-motion="true"] .collection-shelf-reflection,
 :root[data-animation="none"] .collection-shelf-reflection,
 :root[data-reduced-motion="true"] .collection-shelf-sheen,
-:root[data-animation="none"] .collection-shelf-sheen {
+:root[data-animation="none"] .collection-shelf-sheen,
+:root[data-reduced-motion="true"] .collection-shelf-progress i,
+:root[data-animation="none"] .collection-shelf-progress i {
   animation: none !important;
   transition-duration: 0.01ms !important;
 }
@@ -881,7 +918,8 @@
   .collection-shelf-stack,
   .collection-shelf-stack i,
   .collection-shelf-reflection,
-  .collection-shelf-sheen {
+  .collection-shelf-sheen,
+  .collection-shelf-progress i {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }

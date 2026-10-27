@@ -265,7 +265,7 @@ export default function LayoutStudio({
 
       {shelfStyle && (
         <p className="layout-studio-warning" role="note">
-          The 3D shelf card style keeps its side-scroll track, so card layout patterns are not applied to it.
+          The side-scroll card style keeps its rail, so card layout patterns are not applied to it.
           Switch the card style to Studio, Bento, Editorial, or Poster to use them.
         </p>
       )}

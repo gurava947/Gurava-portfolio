@@ -12,11 +12,18 @@ const roundedCorners = (radius) => ({
 
 export const CARD_STYLE_PRESETS = [
   {
+    id: "cinema",
+    label: "Cinema",
+    note: "Wide side-scroll · snap showcase",
+    motion: "Snap rail · edge fades",
+    settings: defaultSettings(),
+  },
+  {
     id: "studio",
     label: "Studio",
     note: "Balanced grid · calm lift",
     motion: "Quiet hover lift",
-    settings: defaultSettings(),
+    settings: { ...defaultSettings(), cardLayout: "grid" },
   },
   {
     id: "bento",

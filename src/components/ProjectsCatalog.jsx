@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import CollectionShelf from "./CollectionShelf";
 import ProjectCard from "./ProjectCard";
+import ProjectSlider from "./ProjectSlider";
 import { DEFAULT_SHELF_MOTION } from "../config/cardMotion";
 import { getOrderedCollections } from "../config/collections";
 import { CARD_LAYOUTS } from "../utils/cardStyle";
@@ -198,34 +199,19 @@ export function SelectField({ id, label, icon, value, options, onChange }) {
 
 export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {}, shelfMotion = DEFAULT_SHELF_MOTION }) {
   const [filters, setFilters] = useState(() => parseFilters(routeSearch));
-  const [railEdge, setRailEdge] = useState({ start: true, end: true });
   const deferredQuery = useDeferredValue(filters.query);
   const gridRef = useRef(null);
-  const railRef = useRef(null);
   const filterSignature = `${routeSearch}`;
   const lastRouteSearch = useRef(routeSearch);
   const cardLayout = CARD_LAYOUTS.includes(cardUI.cardLayout) ? cardUI.cardLayout : "grid";
   const isRail = cardLayout === "rail" || cardLayout === "depth";
-  const gridLayoutClass = isRail
-    ? ` is-card-rail is-card-${cardLayout}`
-    : cardLayout !== "grid"
-      ? ` is-card-${cardLayout}`
-      : "";
+  const gridLayoutClass = isRail || cardLayout === "grid" ? "" : ` is-card-${cardLayout}`;
 
   useEffect(() => {
     if (lastRouteSearch.current === filterSignature) return;
     lastRouteSearch.current = filterSignature;
     setFilters(parseFilters(routeSearch));
   }, [filterSignature, routeSearch]);
-
-  const syncRail = () => {
-    const node = railRef.current;
-    if (!node) return;
-    setRailEdge({
-      start: node.scrollLeft <= 2,
-      end: node.scrollLeft + node.clientWidth >= node.scrollWidth - 2,
-    });
-  };
 
   const collections = useMemo(
     () => getOrderedCollections(catalog.collections),
@@ -241,34 +227,6 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
 
   const sorted = useMemo(() => sortProjects(filtered, filters.sort), [filtered, filters.sort]);
   const pagination = useMemo(() => paginateProjects(sorted, filters.page), [sorted, filters.page]);
-
-  useEffect(() => {
-    if (!isRail) return undefined;
-    syncRail();
-    const frame = window.requestAnimationFrame(syncRail);
-    window.addEventListener("resize", syncRail, { passive: true });
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("resize", syncRail);
-    };
-  }, [isRail, cardLayout, pagination.page, pagination.items.length]);
-
-  useEffect(() => {
-    const node = railRef.current;
-    if (!node) return;
-    node.scrollLeft = 0;
-    setRailEdge({ start: true, end: node.scrollWidth <= node.clientWidth + 2 });
-  }, [deferredQuery, filters.collection, filters.category, filters.technology, filters.sort, filters.page, cardLayout]);
-
-  const scrollRail = (direction) => {
-    const node = railRef.current;
-    if (!node) return;
-    const first = node.children[0];
-    const second = node.children[1];
-    const unit = second && first ? second.offsetLeft - first.offsetLeft : Math.max(260, node.clientWidth * 0.82);
-    const visible = Math.max(1, Math.floor(node.clientWidth / unit));
-    node.scrollBy({ left: direction * unit * visible, behavior: "smooth" });
-  };
 
   const update = (patch, options = {}) => {
     const next = { ...filters, page: 1, ...patch };
@@ -386,45 +344,23 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
 
           <div ref={gridRef} className="lab-catalog-grid-anchor">
             {pagination.items.length > 0 ? (
-              <div className={`lab-card-rail-shell${isRail ? " is-rail" : ""}`}>
-                {isRail && (
-                  <div className="lab-card-rail-controls">
-                    <span className="lab-card-rail-hint">{cardLayout === "depth" ? "3D side-scroll shelf" : "Side-scroll shelf"}</span>
-                    <div className="lab-card-rail-buttons">
-                      <button
-                        type="button"
-                        className="lab-card-rail-button"
-                        onClick={() => scrollRail(-1)}
-                        disabled={railEdge.start}
-                        aria-label="Scroll project cards left"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6" /></svg>
-                      </button>
-                      <button
-                        type="button"
-                        className="lab-card-rail-button"
-                        onClick={() => scrollRail(1)}
-                        disabled={railEdge.end}
-                        aria-label="Scroll project cards right"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
-                      </button>
-                    </div>
-                  </div>
-                )}
-                <div
-                  ref={railRef}
-                  className={`lab-project-grid lab-catalog-grid${gridLayoutClass}`}
-                  onScroll={isRail ? syncRail : undefined}
-                  tabIndex={isRail ? 0 : undefined}
-                  role={isRail ? "region" : undefined}
-                  aria-label={isRail ? "Project cards, horizontally scrollable" : undefined}
-                >
+              isRail ? (
+                <ProjectSlider
+                  projects={pagination.items}
+                  layout={cardLayout}
+                  cardUI={cardUI}
+                  effects={cardEffects}
+                  onNavigate={onNavigate}
+                  resetKey={`${filterSignature}|${pagination.page}`}
+                  className="lab-catalog-grid"
+                />
+              ) : (
+                <div className={`lab-project-grid lab-catalog-grid${gridLayoutClass}`}>
                   {pagination.items.map((project) => (
                     <ProjectCard key={project.id} project={project} onNavigate={onNavigate} cardUI={cardUI} fx={cardEffects} />
                   ))}
                 </div>
-              </div>
+              )
             ) : (
               <div className="lab-detail-state lab-catalog-empty">
                 <strong>{copy.emptyTitle}</strong>

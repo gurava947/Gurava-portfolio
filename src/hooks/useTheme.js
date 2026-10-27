@@ -6,6 +6,7 @@ import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "
 
 export const THEME_STORAGE_KEY = "portfolio-theme-settings";
 export const THEME_MODES = ["dark", "light"];
+const SETTINGS_SCHEMA_VERSION = 2;
 
 export const LOADER_STYLES = ["ring", "dots", "bar"];
 export const LOADER_SPEEDS = ["calm", "normal", "fast"];
@@ -29,7 +30,7 @@ export function normalizeLoaderSettings(value = {}) {
 
 export const DEFAULT_CARD_UI_SETTINGS = {
   imageFit: "contain",
-  cardLayout: "grid",
+  cardLayout: "rail",
   radius: 20,
   topLeftRadius: 20,
   topRightRadius: 20,
@@ -193,6 +194,14 @@ function ensureCardTextContrast(cardUI, mode) {
   return { ...cardUI, backgroundColor: "theme", textColor: "theme" };
 }
 
+// Settings saved before schema 2 predate the slider default, so a stored grid
+// becomes the rail once. The schema stamp written on the next save keeps a
+// later, deliberate Studio grid choice intact.
+function migrateCardLayout(cardUI, parsed) {
+  if (parsed?.schema === SETTINGS_SCHEMA_VERSION) return cardUI;
+  return cardUI.cardLayout === "grid" ? { ...cardUI, cardLayout: "rail" } : cardUI;
+}
+
 function getInitialSettings() {
   try {
     const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -203,7 +212,7 @@ function getInitialSettings() {
         ...DEFAULT_THEME_SETTINGS,
         ...themePresets[mode],
         mode,
-        cardUI: ensureCardTextContrast(normalizeCardUISettings(parsed?.cardUI), mode),
+        cardUI: ensureCardTextContrast(migrateCardLayout(normalizeCardUISettings(parsed?.cardUI), parsed), mode),
         loader: normalizeLoaderSettings(parsed?.loader),
         layout: normalizeLayoutSettings(parsed?.layout),
         effects: normalizeCardEffects(parsed?.effects),
@@ -271,7 +280,7 @@ export function useTheme() {
     root.dataset.shelfMotion = motion.preset;
 
     try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode, cardUI, loader, layout, effects, motion }));
+      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion }));
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
       console.error("Unable to persist theme mode.", error);
