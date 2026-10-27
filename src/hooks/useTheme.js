@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { applyCardStyleVariables, CARD_LAYOUTS } from "../utils/cardStyle";
+import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
 
 export const THEME_STORAGE_KEY = "portfolio-theme-settings";
 export const THEME_MODES = ["dark", "light"];
@@ -156,6 +157,7 @@ export const DEFAULT_THEME_SETTINGS = {
   reducedMotion: false,
   cardUI: DEFAULT_CARD_UI_SETTINGS,
   loader: DEFAULT_LOADER_SETTINGS,
+  layout: DEFAULT_LAYOUT_SETTINGS,
 };
 
 const themePresets = {
@@ -199,6 +201,7 @@ function getInitialSettings() {
         mode,
         cardUI: ensureCardTextContrast(normalizeCardUISettings(parsed?.cardUI), mode),
         loader: normalizeLoaderSettings(parsed?.loader),
+        layout: normalizeLayoutSettings(parsed?.layout),
       };
     }
     if (window.localStorage.getItem("portfolio-theme") === "dark") {
@@ -250,9 +253,14 @@ export function useTheme() {
     root.style.setProperty("--theme-transition", "240ms ease");
     const cardUI = ensureCardTextContrast(normalizeCardUISettings(settings.cardUI), mode);
     applyCardStyleVariables(root, cardUI);
+    const layout = normalizeLayoutSettings(settings.layout);
+    LAYOUT_AREAS.forEach(({ id, attribute }) => {
+      if (layout[id] === "default") delete root.dataset[attribute];
+      else root.dataset[attribute] = layout[id];
+    });
 
     try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode, cardUI, loader }));
+      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode, cardUI, loader, layout }));
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
       console.error("Unable to persist theme mode.", error);
@@ -364,6 +372,13 @@ export function useTheme() {
     userChangedSettings.current = true;
     setSettings((current) => ({ ...current, loader: DEFAULT_LOADER_SETTINGS }));
   };
+  const updateLayoutSettings = (changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      layout: normalizeLayoutSettings({ ...normalizeLayoutSettings(current.layout), ...changes }),
+    }));
+  };
 
   return {
     settings,
@@ -372,5 +387,6 @@ export function useTheme() {
     resetCardUISettings,
     updateLoaderSettings,
     resetLoaderSettings,
+    updateLayoutSettings,
   };
 }

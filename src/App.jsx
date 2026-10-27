@@ -6,6 +6,7 @@ import "./styles/portfolio-effects.css";
 import "./styles/project-lab.css";
 import "./styles/unified.css";
 import "./styles/card-layouts.css";
+import "./styles/layout-patterns.css";
 import { DEFAULT_CARD_UI_SETTINGS, DEFAULT_LOADER_SETTINGS, normalizeCardUISettings, normalizeLoaderSettings, useTheme } from "./hooks/useTheme";
 import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
@@ -19,6 +20,7 @@ import ProjectCard from "./components/ProjectCard";
 import ProjectDetail from "./components/ProjectDetail";
 import ProjectsCatalog from "./components/ProjectsCatalog";
 import GlassFolderCard from "./components/ui/GlassFolderCard";
+import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
@@ -397,8 +399,11 @@ function CardStudio({
   themeMode,
   previewProject,
   previewProjects = [],
+  previewCertificates = [],
   copy = {},
   loaderSettings,
+  layoutSettings,
+  onLayoutApply,
 }) {
   const appliedLoader = loaderSettings || DEFAULT_LOADER_SETTINGS;
   const [draftCardUI, setDraftCardUI] = useState(settings);
@@ -646,6 +651,15 @@ function CardStudio({
         </div>
       </section>
 
+      <LayoutStudio
+        settings={layoutSettings}
+        onApply={onLayoutApply}
+        previewProject={previewProject}
+        previewProjects={previewProjects}
+        previewCertificates={previewCertificates}
+        cardUI={draftCardUI}
+      />
+
       <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
 
       <div className="card-studio-actions">
@@ -697,8 +711,11 @@ function GuravvaProfilePopover({
   themeMode,
   previewProject,
   previewProjects,
+  previewCertificates,
   loaderSettings,
   onLoaderChange,
+  layoutSettings,
+  onLayoutChange,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
@@ -961,8 +978,11 @@ function GuravvaProfilePopover({
           themeMode={themeMode}
           previewProject={previewProject}
           previewProjects={previewProjects}
+          previewCertificates={previewCertificates}
           copy={studioCopy}
           loaderSettings={loaderSettings}
+          layoutSettings={layoutSettings}
+          onLayoutApply={onLayoutChange}
         />
       </div>
 
@@ -1001,8 +1021,11 @@ function SiteNav({
   onCardUIChange,
   previewProject,
   previewProjects,
+  previewCertificates,
   loaderSettings,
   onLoaderChange,
+  layoutSettings,
+  onLayoutChange,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1074,8 +1097,11 @@ function SiteNav({
               themeMode={themeMode}
               previewProject={previewProject}
               previewProjects={previewProjects}
+              previewCertificates={previewCertificates}
               loaderSettings={loaderSettings}
               onLoaderChange={onLoaderChange}
+              layoutSettings={layoutSettings}
+              onLayoutChange={onLayoutChange}
             />
           )}
         </div>
@@ -1146,6 +1172,7 @@ function PortfolioHome({
   settings,
   onCardUIChange,
   onLoaderChange,
+  onLayoutChange,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1192,8 +1219,11 @@ function PortfolioHome({
         onCardUIChange={onCardUIChange}
         previewProject={previewProject}
         previewProjects={previewProjects}
+        previewCertificates={certificates}
         loaderSettings={settings.loader}
         onLoaderChange={onLoaderChange}
+        layoutSettings={settings.layout}
+        onLayoutChange={onLayoutChange}
       />
       <main>
         <section className="home-hero">
@@ -1388,6 +1418,7 @@ function App() {
     updateSettings,
     updateCardUISettings,
     updateLoaderSettings,
+    updateLayoutSettings,
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
@@ -1511,6 +1542,9 @@ function App() {
     previewProjects: cardPreviewProjects,
     loaderSettings: settings.loader,
     onLoaderChange: updateLoaderSettings,
+    layoutSettings: settings.layout,
+    onLayoutChange: updateLayoutSettings,
+    previewCertificates: catalog.certificates,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
   const viewError = error ? (
@@ -1533,6 +1567,7 @@ function App() {
         settings={settings}
         onCardUIChange={updateCardUISettings}
         onLoaderChange={updateLoaderSettings}
+        onLayoutChange={updateLayoutSettings}
       />
     );
   } else if (isCatalog) {

@@ -202,7 +202,7 @@
     "recipient": "K. Guravaiah",
     "examTitle": "Build Your Own Responsive Website Course Exam",
     "performanceTitle": "Assessment Attempts",
-    "performanceAria": "Build Your Own Responsive Website Course Exam; Assessment Attempts; Attempt 1: Excellent; 04 Nov 2025; 1 hour 45 minutes 11 seconds; Grade A; 270 out of 280; 10 grade points; percentage 96.43",
+    "performanceAria": "Build Your Own Responsive Website Course Exam; Assessment Attempts; Attempt 1: Excellent; 04 Nov 2025; 1 hour 45 minutes 11 seconds; Grade A; 280 out of 280; 10 grade points; percentage 96.43",
     "attempts": [
       {
         "label": "Attempt 1",
@@ -210,7 +210,7 @@
         "date": "04 Nov 2025",
         "duration": "1hr45mins11secs",
         "grade": "A",
-        "score": "270/280",
+        "score": "280/280",
         "gradePoints": "10"
       }
     ],
@@ -233,7 +233,7 @@
       {
         "key": "score",
         "label": "Score",
-        "value": "270/280",
+        "value": "280/280",
         "icon": "score"
       },
       {
