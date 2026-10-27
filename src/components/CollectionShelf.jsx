@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { DEFAULT_SHELF_MOTION, getShelfMotionStyles, normalizeShelfMotion } from "../config/cardMotion";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/collection-shelf.css";
@@ -15,7 +15,7 @@ function previewsFor(projects, collectionId) {
   return { images: [], code: coded?.cardCode || "", output: coded?.cardOutput || "" };
 }
 
-function ShelfCard({ collection, index, total, previews, active, preview, idPrefix, onSelect }) {
+function ShelfCard({ collection, index, total, previews, active, preview, idPrefix, onSelect, onCenter }) {
   const label = `${collection.label}, ${collection.count} projects`;
   const descriptionId = `${idPrefix}-desc-${collection.id}`;
   const content = (
@@ -79,6 +79,7 @@ function ShelfCard({ collection, index, total, previews, active, preview, idPref
         aria-label={label}
         aria-describedby={descriptionId}
         onClick={() => onSelect?.(active ? "" : collection.id)}
+        onFocus={() => onCenter?.(index)}
       >
         {content}
       </button>
@@ -145,36 +146,74 @@ export default function CollectionShelf({
     });
   };
 
-  const scrollUnit = () => {
+  const centerCard = useCallback((index, behavior = prefersReducedMotion() ? "auto" : "smooth") => {
+    const node = trackRef.current;
+    if (!node) return;
+    const item = node.querySelectorAll(".collection-shelf-item")[index];
+    if (!item) return;
+    const trackRect = node.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    const left = node.scrollLeft + (itemRect.left + itemRect.width / 2) - (trackRect.left + trackRect.width / 2);
+    if (typeof node.scrollTo === "function") {
+      node.scrollTo({ left, behavior });
+      return;
+    }
+    try {
+      node.scrollLeft = left;
+    } catch {
+      // Non-browser test environments expose a read-only scrollLeft.
+    }
+  }, []);
+
+  const nearestIndex = useCallback(() => {
     const node = trackRef.current;
     if (!node) return 0;
-    const [first, second] = node.children;
-    const measured = first && second ? second.offsetLeft - first.offsetLeft : 0;
-    return measured > 0 ? measured : Math.max(260, node.clientWidth * 0.85);
+    const items = Array.from(node.querySelectorAll(".collection-shelf-item"));
+    const center = node.getBoundingClientRect().left + node.clientWidth / 2;
+    let nearest = 0;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+    items.forEach((item, index) => {
+      const rect = item.getBoundingClientRect();
+      const distance = Math.abs(rect.left + rect.width / 2 - center);
+      if (distance < nearestDistance) {
+        nearest = index;
+        nearestDistance = distance;
+      }
+    });
+    return nearest;
+  }, []);
+
+  const stepShelf = (direction) => {
+    const lastIndex = Math.max(collections.length - 1, 0);
+    const next = Math.min(Math.max(nearestIndex() + direction, 0), lastIndex);
+    centerCard(next);
   };
 
-  const scrollShelf = (direction) => {
-    const node = trackRef.current;
-    if (!node) return;
-    const behavior = prefersReducedMotion() ? "auto" : "smooth";
-    node.scrollBy({ left: direction * scrollUnit(), behavior });
-  };
+  const didCenterOnLoad = useRef(false);
 
-  const jumpTo = (position) => {
-    const node = trackRef.current;
-    if (!node) return;
-    const behavior = prefersReducedMotion() ? "auto" : "smooth";
-    const left = position === "end" ? node.scrollWidth : 0;
-    if (typeof node.scrollTo === "function") node.scrollTo({ left, behavior });
-    else node.scrollLeft = left;
-  };
+  useEffect(() => {
+    if (preview || !activeCollection) return;
+    const index = collections.findIndex((collection) => collection.id === activeCollection);
+    if (index >= 0) centerCard(index);
+  }, [preview, activeCollection, collections, centerCard]);
+
+  useEffect(() => {
+    if (preview || activeCollection || didCenterOnLoad.current) return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      const node = trackRef.current;
+      if (!node || node.scrollWidth <= node.clientWidth + 2) return;
+      didCenterOnLoad.current = true;
+      centerCard(Math.floor(collections.length / 2), "auto");
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [preview, activeCollection, collections.length, centerCard]);
 
   const handleKeyDown = (event) => {
     if (!SCROLL_KEYS.includes(event.key)) return;
     event.preventDefault();
-    if (event.key === "Home") jumpTo("start");
-    else if (event.key === "End") jumpTo("end");
-    else scrollShelf(event.key === "ArrowRight" ? 1 : -1);
+    if (event.key === "Home") centerCard(0);
+    else if (event.key === "End") centerCard(collections.length - 1);
+    else stepShelf(event.key === "ArrowRight" ? 1 : -1);
   };
 
   const style = getShelfMotionStyles(settings);
@@ -212,7 +251,7 @@ export default function CollectionShelf({
             <button
               type="button"
               className="collection-shelf-button"
-              onClick={() => scrollShelf(-1)}
+              onClick={() => stepShelf(-1)}
               disabled={edge.start}
               aria-label="Scroll collections left"
             >
@@ -221,7 +260,7 @@ export default function CollectionShelf({
             <button
               type="button"
               className="collection-shelf-button"
-              onClick={() => scrollShelf(1)}
+              onClick={() => stepShelf(1)}
               disabled={edge.end}
               aria-label="Scroll collections right"
             >
@@ -250,6 +289,7 @@ export default function CollectionShelf({
                 active={activeCollection === collection.id}
                 idPrefix={idPrefix}
                 onSelect={onSelect}
+                onCenter={(cardIndex) => centerCard(cardIndex)}
               />
             ))}
           </div>

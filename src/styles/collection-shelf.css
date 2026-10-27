@@ -130,6 +130,7 @@
 }
 
 .collection-shelf-track {
+  --shelf-card-width: clamp(300px, 33vw, 480px);
   display: flex;
   gap: clamp(14px, 1.6vw, 22px);
   padding: 20px 14px 34px;
@@ -138,8 +139,7 @@
   overflow-y: hidden;
   border-radius: 24px;
   scroll-behavior: smooth;
-  scroll-padding-inline: 14px;
-  scroll-snap-type: x proximity;
+  scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-color: color-mix(in srgb, var(--theme-text) 14%, transparent) transparent;
   scrollbar-width: thin;
@@ -169,9 +169,9 @@
   --collection-accent: #7c6cf0;
   position: relative;
   height: clamp(232px, 19vw, 258px);
-  flex: 0 0 clamp(300px, 33vw, 480px);
+  flex: 0 0 var(--shelf-card-width);
   min-width: 0;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   isolation: isolate;
 }
 
@@ -785,8 +785,8 @@
 }
 
 @media (max-width: 1199.98px) {
-  .collection-shelf-item {
-    flex-basis: clamp(280px, 46vw, 420px);
+  .collection-shelf-track {
+    --shelf-card-width: clamp(280px, 46vw, 420px);
   }
 }
 
@@ -806,15 +806,13 @@
 
   .collection-shelf-item {
     height: 218px;
-    flex-basis: min(78vw, 340px);
   }
 
   .collection-shelf-track {
+    --shelf-card-width: min(78vw, 340px);
     gap: 12px;
     padding: 18px 12px 30px;
     margin: -8px -4px -8px;
-    scroll-padding-inline: 12px;
-    scroll-snap-type: x mandatory;
   }
 
   .collection-shelf-fade {
@@ -823,8 +821,8 @@
 }
 
 @media (max-width: 479.98px) {
-  .collection-shelf-item {
-    flex-basis: 82vw;
+  .collection-shelf-track {
+    --shelf-card-width: 82vw;
   }
 
   .collection-shelf-label::before {
@@ -835,6 +833,11 @@
   .collection-shelf-desc {
     -webkit-line-clamp: 2;
   }
+}
+
+.collection-shelf.is-preview .collection-shelf-track {
+  padding: 18px 8px 28px;
+  scroll-snap-type: none;
 }
 
 :root[data-reduced-motion="true"] .collection-shelf-track,

@@ -14,6 +14,15 @@ const projects = [
   { id: "sw-one", collection: "static", thumbnail: "/thumb-static.jpg" },
 ];
 
+function stubShelfGeometry(container, track) {
+  Object.defineProperty(track, "clientWidth", { configurable: true, value: 1000 });
+  track.getBoundingClientRect = () => ({ left: 0, top: 0, right: 1000, bottom: 0, width: 1000, height: 0, x: 0, y: 0, toJSON: () => ({}) });
+  container.querySelectorAll(".collection-shelf-item").forEach((item, index) => {
+    const left = 300 + index * 420;
+    item.getBoundingClientRect = () => ({ left, top: 0, right: left + 400, bottom: 0, width: 400, height: 0, x: left, y: 0, toJSON: () => ({}) });
+  });
+}
+
 function renderShelf(overrides = {}) {
   const onSelect = vi.fn();
   const view = render(
@@ -66,27 +75,59 @@ describe("CollectionShelf", () => {
     expect(onSelect).toHaveBeenLastCalledWith("");
   });
 
-  it("moves the shelf with arrow, Home and End keys", () => {
+  it("centers the shelf cards with arrow, Home and End keys", () => {
     const { container } = renderShelf();
     const track = screen.getByRole("region", { name: "Project collections" });
-    const scrollBy = vi.fn();
     const scrollTo = vi.fn();
-    track.scrollBy = scrollBy;
     track.scrollTo = scrollTo;
+    stubShelfGeometry(container, track);
 
     fireEvent.keyDown(track, { key: "ArrowRight" });
-    expect(scrollBy).toHaveBeenLastCalledWith({ left: 260, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 420, behavior: "smooth" });
 
     fireEvent.keyDown(track, { key: "ArrowLeft" });
-    expect(scrollBy).toHaveBeenLastCalledWith({ left: -260, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
 
     fireEvent.keyDown(track, { key: "Home" });
     expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
 
     fireEvent.keyDown(track, { key: "End" });
-    expect(scrollTo).toHaveBeenLastCalledWith({ left: expect.any(Number), behavior: "smooth" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 840, behavior: "smooth" });
 
     expect(container.querySelector(".collection-shelf-track")).toHaveAttribute("tabindex", "0");
+  });
+
+  it("centers the active collection card when a selection changes", () => {
+    const { container, rerender } = renderShelf();
+    const track = screen.getByRole("region", { name: "Project collections" });
+    const scrollTo = vi.fn();
+    track.scrollTo = scrollTo;
+    stubShelfGeometry(container, track);
+
+    rerender(
+      <CollectionShelf
+        collections={collections}
+        projects={projects}
+        activeCollection="static"
+        onSelect={vi.fn()}
+        label="Collections"
+      />,
+    );
+
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 840, behavior: "smooth" });
+  });
+
+  it("centers the middle card on load when the shelf overflows", async () => {
+    const { container } = renderShelf();
+    const track = screen.getByRole("region", { name: "Project collections" });
+    const scrollTo = vi.fn();
+    track.scrollTo = scrollTo;
+    stubShelfGeometry(container, track);
+    Object.defineProperty(track, "scrollWidth", { configurable: true, value: 1800 });
+
+    await waitFor(() => {
+      expect(scrollTo).toHaveBeenCalledWith({ left: 420, behavior: "auto" });
+    });
   });
 
   it("enables the scroll buttons only when the shelf overflows", async () => {
@@ -95,6 +136,7 @@ describe("CollectionShelf", () => {
     Object.defineProperty(track, "clientWidth", { configurable: true, value: 900 });
     Object.defineProperty(track, "scrollWidth", { configurable: true, value: 1800 });
     Object.defineProperty(track, "scrollLeft", { configurable: true, value: 0 });
+    track.scrollTo = vi.fn();
 
     fireEvent.scroll(track);
 
