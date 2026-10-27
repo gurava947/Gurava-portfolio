@@ -428,7 +428,7 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
         </>
       )}
 
-      {(previousProject || nextProject) && (
+      {!isLoading && detail && (previousProject || nextProject) && (
         <nav className="lab-project-nav" aria-label="Project navigation">
           <div className="lab-workspace-wide lab-project-nav-inner">
             {previousProject ? (

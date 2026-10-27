@@ -10,6 +10,15 @@
   min-height: 52vh;
 }
 
+/* Suspense fallback for code-split route bodies; a full viewport keeps the footer
+   off-screen so swapping in the real content does not register as layout shift. */
+.lab-route-fallback {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+}
+
 .lab-hero h1 span,
 .lab-catalog-hero h1 span,
 .lab-certificates-hero h1 span {

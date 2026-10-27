@@ -26,13 +26,15 @@
     "catalog:build": "node scripts/build-catalog.mjs",
     "predev": "node scripts/build-catalog.mjs",
     "build:frontend": "vite build",
-    "prestart": "node scripts/build-catalog.mjs"
+    "prestart": "node scripts/build-catalog.mjs",
+    "bootstrap:shim": "node scripts/filter-bootstrap-css.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "6.1.2",
     "jsdom": "^26.1.0",
+    "postcss": "^8.5.28",
     "sharp": "^0.35.5",
-    "vite": "8.3.2",
+    "vite": "8.3.5",
     "vitest": "5.0.3"
   },
   "engines": {

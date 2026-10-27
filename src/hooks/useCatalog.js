@@ -12,6 +12,10 @@ export function useCatalog() {
   const retry = useCallback(() => setRequestId((current) => current + 1), []);
 
   useEffect(() => {
+    if (requestId === 0 && cached && !cached.isStale) {
+      setIsLoading(false);
+      return undefined;
+    }
     let active = true;
     setIsLoading(true);
     fetchCatalog()

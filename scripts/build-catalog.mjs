@@ -382,7 +382,11 @@ async function main() {
   await writeOptimizedImage(join(SOURCE, "assets", "certificates", "responsive-website-certificate.png"), join(certificateDirectory, "responsive-website-certificate.webp"), 1400, 88);
   await writeOptimizedImage(join(SOURCE, "assets", "certificates", "alumni.png"), join(certificateDirectory, "alumni.webp"), 1200, 84);
   const pythonCertificate = join(PUBLIC, "programming-foundations-with-python-certificate.png");
-  if (existsSync(pythonCertificate)) copyFileSync(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.png"));
+  if (existsSync(pythonCertificate)) {
+    // The PNG stays for print/download links; pages render the much smaller WebP.
+    await writeOptimizedImage(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.webp"), 1800, 90);
+    copyFileSync(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.png"));
+  }
   for (const name of ["static-website-certificate.pdf", "responsive-website-certificate.pdf"]) {
     copyFileSync(join(SOURCE, "assets", "certificates", name), join(certificateDirectory, name));
   }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import "./styles/theme.css";
 import "./App.css";
@@ -16,12 +16,8 @@ import CardPreviewDialog from "./components/CardPreviewDialog";
 import CardEffectsStudio from "./components/CardEffectsStudio";
 import CardMotionStudio from "./components/CardMotionStudio";
 import CertificateCard from "./components/CertificateCard";
-import CertificateShowcase from "./components/CertificateShowcase";
-import CertificatesIndex from "./components/CertificatesIndex";
 import { LoadSpinner } from "./components/LoadSpinner";
 import ProjectCard from "./components/ProjectCard";
-import ProjectDetail from "./components/ProjectDetail";
-import ProjectsCatalog from "./components/ProjectsCatalog";
 import GlassFolderCard from "./components/ui/GlassFolderCard";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
@@ -29,6 +25,20 @@ import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
 const PROFILE_STORAGE_KEY = "myapp.guravva.profile.v1";
+
+// Route bodies are split so the home page does not ship catalog, detail or certificate code.
+const ProjectDetail = lazy(() => import("./components/ProjectDetail"));
+const ProjectsCatalog = lazy(() => import("./components/ProjectsCatalog"));
+const CertificatesIndex = lazy(() => import("./components/CertificatesIndex"));
+const CertificateShowcase = lazy(() => import("./components/CertificateShowcase"));
+
+function RouteFallback({ loader }) {
+  return (
+    <div className="lab-route-fallback" aria-busy="true">
+      <LoadSpinner settings={loader} label="Loading page" size="lg" />
+    </div>
+  );
+}
 
 function NavIcon({ name, className = "nav-control-icon" }) {
   const iconProps = {
@@ -1528,6 +1538,33 @@ function App() {
     return attachImageFallbacks(site.imageFallback);
   }, [site?.imageFallback]);
 
+  // Warm the code-split route chunks after the first load so navigating still feels instant
+  // without paying for them in the initial bundle. Skipped when the user is saving data.
+  useEffect(() => {
+    if (navigator.connection?.saveData) return undefined;
+    let idleId = 0;
+    let timeoutId = 0;
+    const prefetchRoutes = () => {
+      Promise.allSettled([
+        import("./components/ProjectsCatalog"),
+        import("./components/ProjectDetail"),
+        import("./components/CertificatesIndex"),
+        import("./components/CertificateShowcase"),
+      ]);
+    };
+    const schedule = () => {
+      if ("requestIdleCallback" in window) idleId = window.requestIdleCallback(prefetchRoutes, { timeout: 3000 });
+      else timeoutId = window.setTimeout(prefetchRoutes, 1200);
+    };
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
+    return () => {
+      window.removeEventListener("load", schedule);
+      if (idleId) window.cancelIdleCallback(idleId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, []);
+
   useEffect(() => {
     if (isHome) document.title = HOME_TITLE;
     else if (isCatalog) document.title = "Projects · Practice.folio";
@@ -1642,7 +1679,9 @@ function App() {
     page = (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="projects" />
-        <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} />
+        <Suspense fallback={<RouteFallback loader={settings.loader} />}>
+          <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} />
+        </Suspense>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     );
@@ -1650,7 +1689,9 @@ function App() {
     page = (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="certificates" />
-        <CertificatesIndex certificates={catalog.certificates} copy={site.certificatesPage} onNavigate={navigate} cardEffects={settings.effects} />
+        <Suspense fallback={<RouteFallback loader={settings.loader} />}>
+          <CertificatesIndex certificates={catalog.certificates} copy={site.certificatesPage} onNavigate={navigate} cardEffects={settings.effects} />
+        </Suspense>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     );
@@ -1658,7 +1699,9 @@ function App() {
     page = certificate ? (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="certificates" isDetail />
-        <CertificateShowcase data={certificate} copy={site.certificate} onBack={(event) => goBackTo(event, "/certificates")} />
+        <Suspense fallback={<RouteFallback loader={settings.loader} />}>
+          <CertificateShowcase data={certificate} copy={site.certificate} onBack={(event) => goBackTo(event, "/certificates")} />
+        </Suspense>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     ) : (
@@ -1679,21 +1722,23 @@ function App() {
     page = projectSummary ? (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="projects" isDetail />
-        <ProjectDetail
-          project={projectSummary}
-          detail={detail}
-          devices={catalog.devices}
-          isLoading={detailLoading}
-          error={detailError}
-          onRetry={retryDetail}
-          onNavigate={navigate}
-          onBack={(event) => goBackTo(event, "/projects")}
-          previousProject={previousProject}
-          nextProject={nextProject}
-          copy={site.detail}
-          loader={settings.loader}
-        />
-        <SiteFooter site={site} onNavigate={navigate} />
+        <Suspense fallback={<RouteFallback loader={settings.loader} />}>
+          <ProjectDetail
+            project={projectSummary}
+            detail={detail}
+            devices={catalog.devices}
+            isLoading={detailLoading}
+            error={detailError}
+            onRetry={retryDetail}
+            onNavigate={navigate}
+            onBack={(event) => goBackTo(event, "/projects")}
+            previousProject={previousProject}
+            nextProject={nextProject}
+            copy={site.detail}
+            loader={settings.loader}
+          />
+        </Suspense>
+        {!detailLoading && <SiteFooter site={site} onNavigate={navigate} />}
       </div>
     ) : (
       <div className={pageClass} id="top">
