@@ -1,0 +1,5 @@
+a0 = int(input())
+a1 = int(input())
+print(a0+a1)
+print(a0-a1)
+print(a0*a1)
