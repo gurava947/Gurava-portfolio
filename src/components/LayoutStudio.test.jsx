@@ -31,7 +31,7 @@ const projects = [
   },
 ];
 
-function Harness({ onApply, initialSettings = DEFAULT_LAYOUT_SETTINGS }) {
+function Harness({ onApply, initialSettings = DEFAULT_LAYOUT_SETTINGS, cardUI = {} }) {
   const [settings, setSettings] = useState(normalizeLayoutSettings(initialSettings));
   return (
     <LayoutStudio
@@ -42,7 +42,7 @@ function Harness({ onApply, initialSettings = DEFAULT_LAYOUT_SETTINGS }) {
       }}
       previewProject={projects[0]}
       previewProjects={projects}
-      cardUI={{}}
+      cardUI={cardUI}
     />
   );
 }
@@ -120,5 +120,13 @@ describe("LayoutStudio", () => {
     fireEvent.click(screen.getByRole("button", { name: /Project pages/i }));
     expect(screen.getByRole("button", { name: /Full-screen/i })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Masonry/i })).not.toBeInTheDocument();
+  });
+
+  it("explains that the 3D shelf card style skips card layout patterns", () => {
+    renderStudio({ cardUI: { cardLayout: "depth" } });
+    expect(screen.getByRole("note")).toHaveTextContent(/3D shelf card style keeps its side-scroll track/i);
+
+    fireEvent.click(screen.getByRole("button", { name: /Certificate cards/i }));
+    expect(screen.queryByRole("note")).not.toBeInTheDocument();
   });
 });

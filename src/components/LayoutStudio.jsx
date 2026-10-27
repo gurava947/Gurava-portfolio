@@ -167,6 +167,7 @@ export default function LayoutStudio({
       ? [previewProject]
       : [];
   const siteAreas = getPatternAreas(draft[area]);
+  const shelfStyle = area === "projectCards" && (cardUI?.cardLayout === "rail" || cardUI?.cardLayout === "depth");
 
   useEffect(() => {
     if (sameLayoutSettings(appliedRef.current, applied)) return;
@@ -261,6 +262,13 @@ export default function LayoutStudio({
           </button>
         ))}
       </div>
+
+      {shelfStyle && (
+        <p className="layout-studio-warning" role="note">
+          The 3D shelf card style keeps its side-scroll track, so card layout patterns are not applied to it.
+          Switch the card style to Studio, Bento, Editorial, or Poster to use them.
+        </p>
+      )}
 
       <div className="layout-studio-patterns" role="group" aria-label={`${activeArea.label} layout patterns`}>
         {patterns.map((pattern) => {
