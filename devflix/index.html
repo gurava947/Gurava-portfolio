@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_standard" name="shell-type"/>
+<title>DEVFLIX — Portfolio</title>
+<script>
+  // Apply the saved theme before styles paint so the page never flashes the wrong palette.
+  (function () {
+    var saved = null;
+    try { saved = window.localStorage.getItem("devflix-theme"); } catch (error) { saved = null; }
+    document.documentElement.classList.toggle("dark", saved !== "light");
+  })();
+</script>
+<style>
+  /* Base reset from the supplied reference */
+  @layer base{
+    html,body{margin:0;padding:0;}
+    body{overscroll-behavior:none;}
+    main>:first-child{margin-top:0!important;}
+    main>:last-child{margin-bottom:0!important;}
+  }
+  ::-webkit-scrollbar{display:none;}
+
+  /* Design tokens. Themes only swap values; no component is duplicated. */
+  :root {
+    color-scheme: light;
+    --df-error-container: 255 218 214;
+    --df-on-secondary-fixed-variant: 105 0 179;
+    --df-surface-dim: 234 231 242;
+    --df-secondary-fixed: 240 219 255;
+    --df-primary-container: 225 224 255;
+    --df-surface-container-lowest: 236 233 245;
+    --df-on-surface: 27 27 31;
+    --df-primary-fixed-dim: 192 193 255;
+    --df-on-primary: 255 255 255;
+    --df-on-surface-variant: 74 72 88;
+    --df-surface: 243 241 249;
+    --df-surface-tint: 73 75 214;
+    --df-on-tertiary-container: 0 47 56;
+    --df-background: 243 241 249;
+    --df-on-background: 27 27 31;
+    --df-on-tertiary: 255 255 255;
+    --df-secondary: 125 38 180;
+    --df-inverse-on-surface: 242 240 246;
+    --df-on-primary-fixed: 7 0 108;
+    --df-error: 186 26 26;
+    --df-primary-fixed: 225 224 255;
+    --df-primary: 73 75 214;
+    --df-on-tertiary-fixed: 0 31 38;
+    --df-secondary-container: 240 219 255;
+    --df-on-tertiary-fixed-variant: 0 78 92;
+    --df-outline-variant: 211 208 224;
+    --df-inverse-surface: 48 48 52;
+    --df-surface-container-high: 222 218 234;
+    --df-on-secondary-fixed: 44 0 81;
+    --df-surface-container-highest: 212 208 224;
+    --df-on-secondary: 255 255 255;
+    --df-surface-container: 255 255 255;
+    --df-on-primary-fixed-variant: 47 46 190;
+    --df-surface-container-low: 229 225 239;
+    --df-on-error-container: 65 0 2;
+    --df-on-primary-container: 7 0 108;
+    --df-tertiary-container: 172 237 255;
+    --df-secondary-fixed-dim: 221 183 255;
+    --df-surface-variant: 229 225 239;
+    --df-inverse-primary: 192 193 255;
+    --df-outline: 91 89 102;
+    --df-tertiary: 0 103 123;
+    --df-surface-bright: 255 255 255;
+    --df-tertiary-fixed: 172 237 255;
+    --df-on-error: 255 255 255;
+    --df-on-secondary-container: 73 0 128;
+    --df-tertiary-fixed-dim: 76 215 246;
+    --df-header-shadow: 0 1px 10px rgb(35 30 70 / 0.08);
+    --df-cta-glow: 0 0 20px rgb(73 75 214 / 0.25);
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --df-error-container: 147 0 10;
+    --df-on-secondary-fixed-variant: 105 0 179;
+    --df-surface-dim: 19 19 21;
+    --df-secondary-fixed: 240 219 255;
+    --df-primary-container: 128 131 255;
+    --df-surface-container-lowest: 14 14 16;
+    --df-on-surface: 229 225 228;
+    --df-primary-fixed-dim: 192 193 255;
+    --df-on-primary: 16 0 169;
+    --df-on-surface-variant: 199 196 215;
+    --df-surface: 19 19 21;
+    --df-surface-tint: 192 193 255;
+    --df-on-tertiary-container: 0 47 56;
+    --df-background: 19 19 21;
+    --df-on-background: 229 225 228;
+    --df-on-tertiary: 0 54 64;
+    --df-secondary: 221 183 255;
+    --df-inverse-on-surface: 49 48 50;
+    --df-on-primary-fixed: 7 0 108;
+    --df-error: 255 180 171;
+    --df-primary-fixed: 225 224 255;
+    --df-primary: 192 193 255;
+    --df-on-tertiary-fixed: 0 31 38;
+    --df-secondary-container: 111 0 190;
+    --df-on-tertiary-fixed-variant: 0 78 92;
+    --df-outline-variant: 70 69 84;
+    --df-inverse-surface: 229 225 228;
+    --df-surface-container-high: 42 42 44;
+    --df-on-secondary-fixed: 44 0 81;
+    --df-surface-container-highest: 53 52 55;
+    --df-on-secondary: 73 0 128;
+    --df-surface-container: 32 31 33;
+    --df-on-primary-fixed-variant: 47 46 190;
+    --df-surface-container-low: 28 27 29;
+    --df-on-error-container: 255 218 214;
+    --df-on-primary-container: 13 0 150;
+    --df-tertiary-container: 0 158 185;
+    --df-secondary-fixed-dim: 221 183 255;
+    --df-surface-variant: 53 52 55;
+    --df-inverse-primary: 73 75 214;
+    --df-outline: 144 143 160;
+    --df-tertiary: 76 215 246;
+    --df-surface-bright: 57 57 59;
+    --df-tertiary-fixed: 172 237 255;
+    --df-on-error: 105 0 5;
+    --df-on-secondary-container: 214 169 255;
+    --df-tertiary-fixed-dim: 76 215 246;
+    --df-header-shadow: 0 1px 8px rgb(0 0 0 / 0.04);
+    --df-cta-glow: 0 0 20px rgb(192 193 255 / 0.3);
+  }
+
+  html { background-color: rgb(var(--df-background)); }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {darkMode: "class",theme: {extend: {"colors": {
+  "error-container": "rgb(var(--df-error-container) / <alpha-value>)",
+  "on-secondary-fixed-variant": "rgb(var(--df-on-secondary-fixed-variant) / <alpha-value>)",
+  "surface-dim": "rgb(var(--df-surface-dim) / <alpha-value>)",
+  "secondary-fixed": "rgb(var(--df-secondary-fixed) / <alpha-value>)",
+  "primary-container": "rgb(var(--df-primary-container) / <alpha-value>)",
+  "surface-container-lowest": "rgb(var(--df-surface-container-lowest) / <alpha-value>)",
+  "on-surface": "rgb(var(--df-on-surface) / <alpha-value>)",
+  "primary-fixed-dim": "rgb(var(--df-primary-fixed-dim) / <alpha-value>)",
+  "on-primary": "rgb(var(--df-on-primary) / <alpha-value>)",
+  "on-surface-variant": "rgb(var(--df-on-surface-variant) / <alpha-value>)",
+  "surface": "rgb(var(--df-surface) / <alpha-value>)",
+  "surface-tint": "rgb(var(--df-surface-tint) / <alpha-value>)",
+  "on-tertiary-container": "rgb(var(--df-on-tertiary-container) / <alpha-value>)",
+  "background": "rgb(var(--df-background) / <alpha-value>)",
+  "on-background": "rgb(var(--df-on-background) / <alpha-value>)",
+  "on-tertiary": "rgb(var(--df-on-tertiary) / <alpha-value>)",
+  "secondary": "rgb(var(--df-secondary) / <alpha-value>)",
+  "inverse-on-surface": "rgb(var(--df-inverse-on-surface) / <alpha-value>)",
+  "on-primary-fixed": "rgb(var(--df-on-primary-fixed) / <alpha-value>)",
+  "error": "rgb(var(--df-error) / <alpha-value>)",
+  "primary-fixed": "rgb(var(--df-primary-fixed) / <alpha-value>)",
+  "primary": "rgb(var(--df-primary) / <alpha-value>)",
+  "on-tertiary-fixed": "rgb(var(--df-on-tertiary-fixed) / <alpha-value>)",
+  "secondary-container": "rgb(var(--df-secondary-container) / <alpha-value>)",
+  "on-tertiary-fixed-variant": "rgb(var(--df-on-tertiary-fixed-variant) / <alpha-value>)",
+  "outline-variant": "rgb(var(--df-outline-variant) / <alpha-value>)",
+  "inverse-surface": "rgb(var(--df-inverse-surface) / <alpha-value>)",
+  "surface-container-high": "rgb(var(--df-surface-container-high) / <alpha-value>)",
+  "on-secondary-fixed": "rgb(var(--df-on-secondary-fixed) / <alpha-value>)",
+  "surface-container-highest": "rgb(var(--df-surface-container-highest) / <alpha-value>)",
+  "on-secondary": "rgb(var(--df-on-secondary) / <alpha-value>)",
+  "surface-container": "rgb(var(--df-surface-container) / <alpha-value>)",
+  "on-primary-fixed-variant": "rgb(var(--df-on-primary-fixed-variant) / <alpha-value>)",
+  "surface-container-low": "rgb(var(--df-surface-container-low) / <alpha-value>)",
+  "on-error-container": "rgb(var(--df-on-error-container) / <alpha-value>)",
+  "on-primary-container": "rgb(var(--df-on-primary-container) / <alpha-value>)",
+  "tertiary-container": "rgb(var(--df-tertiary-container) / <alpha-value>)",
+  "secondary-fixed-dim": "rgb(var(--df-secondary-fixed-dim) / <alpha-value>)",
+  "surface-variant": "rgb(var(--df-surface-variant) / <alpha-value>)",
+  "inverse-primary": "rgb(var(--df-inverse-primary) / <alpha-value>)",
+  "outline": "rgb(var(--df-outline) / <alpha-value>)",
+  "tertiary": "rgb(var(--df-tertiary) / <alpha-value>)",
+  "surface-bright": "rgb(var(--df-surface-bright) / <alpha-value>)",
+  "tertiary-fixed": "rgb(var(--df-tertiary-fixed) / <alpha-value>)",
+  "on-error": "rgb(var(--df-on-error) / <alpha-value>)",
+  "on-secondary-container": "rgb(var(--df-on-secondary-container) / <alpha-value>)",
+  "tertiary-fixed-dim": "rgb(var(--df-tertiary-fixed-dim) / <alpha-value>)"
+}, "borderRadius": {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"}, "spacing": {"space-md": "1rem", "space-sm": "0.5rem", "space-xl": "3rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "2rem"}, "fontFamily": {"body": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"], "headline": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"], "label-sm": ["Inter"], "label-md": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "headline-xl": ["Inter"], "headline-lg": ["Inter"], "headline-md": ["Inter"], "body-lg": ["Inter"], "label-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "body-md": ["Inter"]}, "fontSize": {"label-sm": ["10px", {"lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "600"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}], "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "500"}], "body-sm": ["13px", {"lineHeight": "20px", "fontWeight": "400"}], "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "headline-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}], "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}], "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}], "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]}}}};
+</script>
+<style>
+  /* Themed replacements for the three hard-coded color values in the reference */
+  .df-header-shadow { box-shadow: var(--df-header-shadow); }
+  .df-cta-glow { box-shadow: var(--df-cta-glow); }
+  .df-hero-glow {
+    background-image: radial-gradient(circle at 30% 30%, rgb(var(--df-primary)), transparent 60%);
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid rgb(var(--df-tertiary));
+    outline-offset: 2px;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl df-header-shadow">
+  <div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+    <div class="flex items-center gap-10">
+      <a class="flex items-center gap-2 text-primary font-headline font-bold text-headline-sm tracking-wider uppercase" data-path="home" href="#">DEVFLIX</a>
+      <nav class="hidden lg:flex items-center gap-6" data-active-classes="bg-primary-container text-on-primary-container font-bold rounded-lg px-3 py-1.5">
+        <a aria-current="page" class="transition-colors bg-primary-container text-on-primary-container font-bold rounded-lg px-3 py-1.5" data-path="home" href="#">Home</a>
+        <a class="text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="catalog" href="#">Catalog</a>
+        <a class="text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="carousels" href="#">Carousels</a>
+        <a class="text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="search" href="#">Search</a>
+        <a class="text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="certificates" href="#">Certificates</a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="relative hidden sm:block">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+        <input aria-label="Search projects" class="bg-surface-container-high text-on-surface pl-10 pr-4 py-2 rounded-xl text-body-sm w-64 focus:outline-none focus:ring-2 focus:ring-tertiary placeholder:text-outline" id="header-search" onkeydown="if (event.key === 'Enter') { event.preventDefault(); searchFromHeader(); }" placeholder="Search 4,000+ projects..." type="text"/>
+      </div>
+      <button aria-label="Notifications" class="p-2 rounded-xl hover:bg-surface-container-high hover:text-on-surface text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button aria-label="Switch to light theme" aria-pressed="true" class="p-2 rounded-xl hover:bg-surface-container-high hover:text-on-surface text-on-surface-variant transition-colors" id="theme-toggle" title="Switch to light theme" type="button">
+        <span class="material-symbols-outlined" id="theme-toggle-icon">dark_mode</span>
+      </button>
+      <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-md">
+        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+      </div>
+      <button aria-controls="mobile-nav" aria-expanded="false" aria-label="Open navigation menu" class="lg:hidden p-2 rounded-xl hover:bg-surface-container-high hover:text-on-surface text-on-surface-variant transition-colors" id="nav-toggle" type="button">
+        <span class="material-symbols-outlined" id="nav-toggle-icon">menu</span>
+      </button>
+    </div>
+  </div>
+  <div class="hidden lg:hidden border-t border-outline-variant/20 bg-surface-container shadow-lg" id="mobile-nav">
+    <nav aria-label="Mobile navigation" class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
+      <a aria-current="page" class="block px-3 py-2.5 rounded-xl bg-primary-container text-on-primary-container font-bold text-body-md" data-path="home" href="#">Home</a>
+      <a class="block px-3 py-2.5 rounded-xl text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="catalog" href="#">Catalog</a>
+      <a class="block px-3 py-2.5 rounded-xl text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="carousels" href="#">Carousels</a>
+      <a class="block px-3 py-2.5 rounded-xl text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="search" href="#">Search</a>
+      <a class="block px-3 py-2.5 rounded-xl text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="certificates" href="#">Certificates</a>
+    </nav>
+  </div>
+</header>
+<main class="w-full pt-20 bg-surface">
+  <div class="flex flex-col w-full text-on-surface">
+    <!-- HERO SECTION -->
+    <section class="relative w-full pt-16 pb-24 px-6 lg:px-12 overflow-hidden bg-gradient-to-b from-surface-container-low via-surface to-surface">
+      <div class="absolute inset-0 opacity-20 pointer-events-none df-hero-glow"></div>
+      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        <div class="lg:col-span-7 space-y-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-container/20 text-primary dark:text-primary-fixed-dim text-label-md">
+            <span class="material-symbols-outlined text-[16px]">verified</span>
+            <span>Cinematic Engineering Stream • v4.2.0</span>
+          </div>
+          <h1 class="font-headline font-bold text-headline-xl text-on-surface tracking-tight">
+            Built, refined, <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">kept in practice.</span>
+          </h1>
+          <p class="font-body text-body-lg text-on-surface-variant max-w-xl">
+            Streaming over 4,000+ architectural wonders, full-stack apps, and open-source systems crafted with uncompromising precision and high-performance engineering.
+          </p>
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <a class="px-6 py-3 rounded-xl bg-primary text-on-primary font-label-lg flex items-center gap-2 hover:opacity-90 transition-all df-cta-glow" data-path="catalog" href="#">
+              <span class="material-symbols-outlined text-[20px]">play_arrow</span>
+              Explore Catalog
+            </a>
+            <a class="px-6 py-3 rounded-xl bg-surface-container-high text-on-surface font-label-lg flex items-center gap-2 hover:bg-surface-bright transition-all" data-path="carousels" href="#">
+              <span class="material-symbols-outlined text-[20px]">grid_view</span>
+              Browse Carousels
+            </a>
+          </div>
+          <div class="grid grid-cols-3 gap-6 pt-8 border-t border-outline-variant/20">
+            <div>
+              <div class="font-headline font-bold text-headline-md text-primary">3,366+</div>
+              <div class="font-body text-body-sm text-on-surface-variant">Active Builds</div>
+            </div>
+            <div>
+              <div class="font-headline font-bold text-headline-md text-tertiary">100%</div>
+              <div class="font-body text-body-sm text-on-surface-variant">Accessibility</div>
+            </div>
+            <div>
+              <div class="font-headline font-bold text-headline-md text-secondary">42%</div>
+              <div class="font-body text-body-sm text-on-surface-variant">Speed Boost</div>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-5 relative">
+          <div class="relative w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-surface-container-high group">
+            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Cinematic abstract dark developer portfolio showcase with glowing electric indigo and neon cyan UI cards floating over a deep carbon fiber surface background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDK3Cv9jbQRd13s3tBzfDJcNbhgtL9fpzRyQTI1LvTC3Nt1vwII9y1M8UfqLg-ghK3DlY0mAxwyUR2X5Y_VqWx8ZFedJMbAYIVy-YwsC5WFAwbBBzo_uXqJ8r7R_gVb2bTLR-TN9yl7dxS155mCQL-1WoUbOJ83nJmbVP7MQ7EVzhU_0_X4lfdNcG2x-krickMESz5rDOdWB5WqdkY42YOzX7m6-EPKlq6Ysgb_AMddy8_IHfIrMongrA')"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+            <div class="absolute bottom-6 left-6 right-6 p-6 rounded-xl bg-surface/80 backdrop-blur-md border border-outline-variant/20">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-label-sm px-2.5 py-1 rounded-md bg-tertiary-container text-on-tertiary-container font-label-sm">FEATURED REPO</span>
+                <span class="text-body-sm text-tertiary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bolt</span> Live</span>
+              </div>
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Distributed Edge Engine</h3>
+              <p class="font-body text-body-sm text-on-surface-variant mt-1 line-clamp-2">High-throughput WebAssembly runtime processing 100k requests/sec at edge nodes globally.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- AUDIT REPORT ACCORDION / SUMMARY PANEL -->
+    <section class="w-full py-12 px-6 lg:px-12 bg-surface-container-lowest">
+      <div class="max-w-7xl mx-auto">
+        <div class="bg-surface-container-low rounded-2xl p-6 lg:p-8 transition-all">
+          <div aria-controls="audit-content" aria-expanded="false" class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 cursor-pointer" id="audit-toggle" onclick="toggleAuditPanel()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleAuditPanel(); }" role="button" tabindex="0">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-[24px]">security</span>
+              </div>
+              <div>
+                <h2 class="font-headline font-bold text-headline-sm text-on-surface">System Audit &amp; Compliance Report</h2>
+                <p class="font-body text-body-sm text-on-surface-variant">Performance +42% • Accessibility 100% • Security Verified</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 rounded-full bg-surface-container-high text-tertiary text-label-md">All Checks Passed</span>
+              <span class="material-symbols-outlined text-on-surface transition-transform duration-300" id="audit-chevron">expand_more</span>
+            </div>
+          </div>
+          <div class="hidden mt-8 pt-8 border-t border-outline-variant/20 grid grid-cols-1 md:grid-cols-3 gap-6" id="audit-content">
+            <div class="p-6 rounded-xl bg-surface-container">
+              <div class="flex items-center gap-3 mb-3 text-tertiary">
+                <span class="material-symbols-outlined">speed</span>
+                <h3 class="font-label-lg font-bold">Performance Audit</h3>
+              </div>
+              <p class="font-body text-body-sm text-on-surface-variant">Lighthouse score increased by +42% through aggressive asset optimization, edge caching, and bundle tree-shaking.</p>
+            </div>
+            <div class="p-6 rounded-xl bg-surface-container">
+              <div class="flex items-center gap-3 mb-3 text-primary">
+                <span class="material-symbols-outlined">accessibility_new</span>
+                <h3 class="font-label-lg font-bold">Accessibility &amp; UX</h3>
+              </div>
+              <p class="font-body text-body-sm text-on-surface-variant">Achieved 100% WCAG AAA compliance with semantic landmarks, keyboard navigation loops, and high-contrast color tokens.</p>
+            </div>
+            <div class="p-6 rounded-xl bg-surface-container">
+              <div class="flex items-center gap-3 mb-3 text-secondary">
+                <span class="material-symbols-outlined">verified_user</span>
+                <h3 class="font-label-lg font-bold">Security &amp; Scale</h3>
+              </div>
+              <p class="font-body text-body-sm text-on-surface-variant">Zero vulnerabilities found in static dependency scans. Robust scalable architecture effortlessly orchestrating 4,000+ projects.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- NETFLIX / JIOHOTSTAR-STYLE HORIZONTAL CAROUSELS -->
+    <!-- Carousel 1: Python Playground & Core Logic -->
+    <section class="w-full py-12 px-6 lg:px-12 bg-surface">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-headline font-bold text-headline-md text-on-surface">Python Playground &amp; Core Logic</h2>
+          <div class="flex gap-2">
+            <button aria-label="Scroll left" class="p-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="scrollCarousel('python-carousel', -1)">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button aria-label="Scroll right" class="p-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="scrollCarousel('python-carousel', 1)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-4" id="python-carousel">
+          <!-- Card 1 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Python code editor window showing complex algorithm logic with glowing syntax highlighting on dark background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCJFeR8JKVH0rOxkhouxJf2mze4mKFYLvvG9RO36BaTPYmxtCzS3y8orsN1YW25Ko_l99oIWtUcx9Ns-xG37omad7rLMaymNVOIMivCmMldUyeCBAsUX35bSSoKbCn6di4fwZvbES2L6DOVpswkZDV-CDTopEHe3oYBV5nSgpWPQp2GmK1uA-lK0u3Oso96hoy6dtp6xOjcI-g6RDzot6Bf3pQeXs9u92LBgvkqb3GmwNRc2OrIcibCVA')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary text-label-sm font-label-sm">Python</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">Pyodide</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Algorithmic Trading Bot</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">High-frequency backtesting engine with custom indicators and 99.4% test coverage.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-tertiary">14 Test Cases Passed</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Run Code <span class="material-symbols-outlined text-[16px]">play_arrow</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Neural network graph visualization rendered in Python with nodes and connection lines glowing in neon cyan." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCY9vHwU9e5eKkJXE0zRZ4gIatBmttTW3P2FC59DbWSA7r9tvfjmcjmT_wXUgv4gzhl7MsmATZ82gsILw9OYFxK8VPtC9gFmdnY26snDd1nNYZbD-mW6VqC8oJFj_Rfs7kju6WoQtQ7I2yGSefSd4qfJh_TLWFz8ImyurB-KT3tU-wdtyoi2EkSY77vwN4nla_M9iydp7te7wbGJVaZih6kkxCYDYVc1_Um6KYMpEZCCHY7KNkpXl2q_g')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary text-label-sm font-label-sm">Python</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">TensorFlow</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Neural OCR Parser</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Custom convolutional network for parsing handwritten technical schematics with high accuracy.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-tertiary">28 Test Cases Passed</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Run Code <span class="material-symbols-outlined text-[16px]">play_arrow</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Distributed server cluster metrics dashboard with real-time graphs and Python backend logs." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvrL_XwcrZXeP60ppwUbFXBZ4vXnfvJISjBQMK4QQ-MQ2EQeA4LN3mJPsScbQ5FP6lP2OVqYs-HdBx8MgNyPTM-68SI6GcYuibIrMs2RZ50pVltjVN0HczRwoO4mkE3cwW4q-i0E3DQt9gvFOEpdgKTzapxtDeFCxklcxTYLW_5K8s7vV1YqthN98UatuLCl1hiyRgj_2fbzWvNTThPhFUf4QrC48x_oJSwTVHKfCyncic3erAkP-q7g')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary text-label-sm font-label-sm">Python</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">FastAPI</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Async Log Aggregator</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Real-time log stream processor handling 50,000 events per second with minimal memory footprint.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-tertiary">42 Test Cases Passed</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Run Code <span class="material-symbols-outlined text-[16px]">play_arrow</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Database schema migration tool interface built with Python and SQLAlchemy." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAn1xrc_LUJuniPBy75lfY7KFu5OztJ4qS7Zr-9THY0YP6HrIWdd0KgBKAJ-BWKZtEjqgByhXV4qrDDo1GFLRpCNHs_0BpzkGIUJ-Qb6g3noEw9n-TxynVp2pEps5Sh8TGhHTG4WYqUoyaomzrF8W6v8e-zLqDRZ9Bp_wJFWlzJq30klx2UTvEhPc9-NUWhNyBjzR0j9ESBmbqM6Uik9uBMmh7nBx39ccD43SYOMB_J_GOYeQnC4fGvgQ')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary text-label-sm font-label-sm">Python</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">SQLAlchemy</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">DB Schema Migrator</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Zero-downtime database migration tool with automated rollback capabilities.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-tertiary">19 Test Cases Passed</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Run Code <span class="material-symbols-outlined text-[16px]">play_arrow</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Carousel 2: Responsive Web & React Components -->
+    <section class="w-full py-12 px-6 lg:px-12 bg-surface-container-low">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-headline font-bold text-headline-md text-on-surface">Responsive Web &amp; React Components</h2>
+          <div class="flex gap-2">
+            <button aria-label="Scroll left" class="p-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="scrollCarousel('react-carousel', -1)">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button aria-label="Scroll right" class="p-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="scrollCarousel('react-carousel', 1)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-4" id="react-carousel">
+          <!-- Card 1 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Modern React dashboard UI mockup with dark glassmorphic cards, glowing charts, and fluid layout." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBo-kz594M3bLBY3Yz98hd4wWsTQH7B6rZBAYYAHErBjhvvtj9pYW4te-BFjP9iFarfAdpkrpJejAziYj5oSv5ScFF5oUpm3qC0SiLuVum0ICT2sAuzDw35D962cZqdoB74dRocHiyOSvdOo1AF6fUPDJDeSlKZ7nl04YrgtoW4JzS-1vehQh54GsYYpcDyBuVvSLd7IGrebirmXUVB-iRs6zmSwiRXBn1CnpOKjNqGw4jLejgEAcG_hA')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-tertiary text-on-tertiary text-label-sm font-label-sm">React</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">Tailwind</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Cinematic Analytics Suite</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Responsive dashboard featuring fluid grid systems, real-time data streaming, and smooth micro-interactions.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="px-2 py-0.5 rounded bg-surface-container-high text-primary text-label-sm">Live Build</span>
+                <a class="text-label-md text-tertiary font-bold hover:underline flex items-center gap-1" href="#">Preview <span class="material-symbols-outlined text-[16px]">open_in_new</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="E-commerce storefront UI built with Next.js featuring high-resolution product imagery and smooth cart drawers." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC58nA0kgdh1uEgAM4RC9KKnrXsBGz49O04MiTyhUpf-YNxJnfgY4AcZQeWovFl_VFKeDNccFtA6YYTPEDqwx2gHhVdLsjIpYxVxhQHytuFt_F2UOyF7DFIXaEArozTMkqKzzyRlpG1h6H734oXg0D4gczi5Ylr_eXSr3asLzahW9kzqHh0p50dYWiiMJcpftuvTjuDOAQqgACjHNrk2_xyy5x228t1j3bsGhsXgI6j1y91AmxBQG5IYw')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-tertiary text-on-tertiary text-label-sm font-label-sm">Next.js</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">GraphQL</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Immersive Storefront</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Lightning-fast e-commerce platform with optimistic UI updates and server-side rendering.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="px-2 py-0.5 rounded bg-surface-container-high text-primary text-label-sm">Live Build</span>
+                <a class="text-label-md text-tertiary font-bold hover:underline flex items-center gap-1" href="#">Preview <span class="material-symbols-outlined text-[16px]">open_in_new</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Interactive Kanban project management board built with React and drag-and-drop animation." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBX8_Vc6sWrReAuHEgTXuysAvkS_asLVAjmnBaJCp02dv9k3LWxZp0RQw7xR-tErXK19LLAmOe1yS9NUessBOQXR0ALe-KjnT6Ho6JvcihTzi9zY9_tdx-jqmKd0dZgrjqXiwcuw-8n16tV-EGZg8oIKfxsrsQk0C-fnEFKg3m4EKzCJlpqRqTo0KPsgOxp1_fhMbZ6L058MFrR4AJR9g9iUgIGkmbr-W6pQLscOXPy7lxQFP1hFn_XFw')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-tertiary text-on-tertiary text-label-sm font-label-sm">React</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">TypeScript</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Kanban Workspace</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Collaborative task management application with fluid drag-and-drop mechanics and live sync.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="px-2 py-0.5 rounded bg-surface-container-high text-primary text-label-sm">Live Build</span>
+                <a class="text-label-md text-tertiary font-bold hover:underline flex items-center gap-1" href="#">Preview <span class="material-symbols-outlined text-[16px]">open_in_new</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Social media video streaming feed interface with floating reactions and comments." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDn5eh9r8clAcAUHuiV2lnDImDr9EVrCCD3dyhYavkJ_f_mLpuCpOX5WLxrHsLwagjtvOPu2Wy7gE2UW3gfkyJdCeQT-LxA7lfTPuESATlp5JhFmppFI2TPvaA8oUbQUcIp_6Z6Wc7SVjHf7UFppfbIIeQ71i_t7nR43xdEPAhm5GxCGN-tDXpuYlDd4C4ZS5-uMN-niB5Ctli0OL5iqV6JRRyFzkxMScnuKpBJfY0gk7xuTxFSgVtHyw')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-tertiary text-on-tertiary text-label-sm font-label-sm">React</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">WebRTC</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">StreamFeed Social</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Real-time video sharing and comment streaming feed built for high concurrent traffic.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="px-2 py-0.5 rounded bg-surface-container-high text-primary text-label-sm">Live Build</span>
+                <a class="text-label-md text-tertiary font-bold hover:underline flex items-center gap-1" href="#">Preview <span class="material-symbols-outlined text-[16px]">open_in_new</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Carousel 3: Static Web & Advanced CSS Masterpieces -->
+    <section class="w-full py-12 px-6 lg:px-12 bg-surface">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-headline font-bold text-headline-md text-on-surface">Static Web &amp; Advanced CSS Masterpieces</h2>
+          <div class="flex gap-2">
+            <button aria-label="Scroll left" class="p-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="scrollCarousel('css-carousel', -1)">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button aria-label="Scroll right" class="p-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="scrollCarousel('css-carousel', 1)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-4" id="css-carousel">
+          <!-- Card 1 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Matrix digital rain code effect rendered with pure advanced CSS animations on deep black background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCN81261x7414Q5umQ7HWmSSS3EizxtR458zgcRw9Z7jWrl-x7GzifjD9PoAOLAuZsGKgy62n_6XkjQdcgFqdEBRcw0ZPwr1jIgG0uyawTlp7yVOom4LWc1idk1wGi-emO1ctjF6alDx9BWwqulMau-bf90gOk8jPdG4QeMvAjA9gUyQDND2JPsrmcdEhgIgWDeykHL_wuS78u_ZID1u7lqcGS53qsJ-la4B7fxeSuCP1UEvYkHIhLNAQ')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-secondary text-on-secondary text-label-sm font-label-sm">CSS3</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">Animation</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Matrix Code Rain</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">High-performance cascading character simulation crafted purely with modern CSS variables and keyframes.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-secondary">60 FPS Render</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Editorial typography showcase with massive serif and sans-serif contrast, grid alignment, and whitespace." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD7vCdyqHeJ6BFxx5KDt0x4gXwPtEv7UnFODjIiz6G0i-7XzRMjZLR1tcwM3gQx7VvpT4KeUtEoRT7Mpeqa0UIKsoYRd1UborzI9jpUo0bCCzdPebQcawDuqmBrBI-XWUNYlHx2pO7vYpgaNWupL-j4ck791wemh0-NEOVUqUIVgkoaUObf4ARHfIs1Ek4WXKcCUv0gPl5AAPaituV04Hy0e2RIy55Idzmg_xOlBG5TcG1nl2w0rR08fg')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-secondary text-on-secondary text-label-sm font-label-sm">Typography</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">Grid</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Typographic Showcase</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Experimental editorial layout exploring heavy scale contrasts, vertical writing modes, and optical sizing.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-secondary">Editorial Layout</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Gourmet food and dining web interface with rich imagery, menu grids, and warm cinematic lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDmDNqw2R4m8I8-Eimt_WejRigODfZWUSYkpqWyE3TBC5b4A2cSVtsCueU2mRfCshDCL99KzUUe-IKjL1A-Gy0NSlXjQwjNZBWxkf7ANx0lURIkmzQ9h2P5oahNYBlLIksmBmVWJCBpgQ-qjIA9YJIyp_elrBNSshyQjFRyBRngqWXiRAPsLqm5bew_FciQdI-xOkW8ThaghKbgBV9ghRK7v6OFkebaTpQH6076Vgy-B553-syga8P1TQ')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-secondary text-on-secondary text-label-sm font-label-sm">Static Web</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">Dining</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Happy Meals &amp; Dining</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Culinary landing experience with gorgeous visual hierarchy, CSS grid menus, and smooth hover zooms.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-secondary">Responsive UI</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+              </div>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="min-w-[300px] md:min-w-[360px] flex-1 bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Cyberpunk neon UI component library preview with glowing borders and futuristic badges." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAhgbGHNj6o5XjSjNpxrnXTevoAUkh_lJvUMfJVtgpezPGf54v0O-IXa1_2AenRKaGpQh5wdoK0UNdOo_M-SwpaOOjO1WRQRR_Y7ehSXFLtovL0eRkD1F1cd3Eev84G1tZ3KG1V5M7o3kqh7jb3mgDlnWVUSyLLMPTOzvZP4g6SUcgWR4YguVX5J3IkZp9vqSyrnQIBqzVd4HjeI8OgGZuNvSvezBSfEYy5N5It5-PLTRtxAE7VvtDd1w')"></div>
+              <div class="absolute top-3 left-3 flex gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-secondary text-on-secondary text-label-sm font-label-sm">CSS UI</span>
+                <span class="px-2.5 py-1 rounded-md bg-surface/80 backdrop-blur-md text-on-surface text-label-sm">Components</span>
+              </div>
+            </div>
+            <div class="p-5 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Neon Component System</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Modular CSS design system featuring glowing focus states, frosted glassmorphism, and smooth transitions.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-secondary">Design Tokens</span>
+                <a class="text-label-md text-primary font-bold hover:underline flex items-center gap-1" href="#">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ADVANCED PROJECT EXPLORER & SEARCH BAR -->
+    <section class="w-full py-16 px-6 lg:px-12 bg-surface-container-lowest scroll-mt-24" id="explorer">
+      <div class="max-w-7xl mx-auto space-y-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <h2 class="font-headline font-bold text-headline-lg text-on-surface">Project Explorer</h2>
+            <p class="font-body text-body-md text-on-surface-variant">Filter across 4,000+ indexed repositories by technology and category.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="relative flex-1 md:w-72">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+              <input class="w-full bg-surface-container-high text-on-surface pl-10 pr-4 py-2.5 rounded-xl text-body-sm focus:outline-none focus:ring-2 focus:ring-tertiary placeholder:text-outline" id="project-search-input" oninput="filterProjects()" placeholder="Search builds..." type="text"/>
+            </div>
+            <select class="bg-surface-container-high text-on-surface px-4 py-2.5 rounded-xl text-body-sm focus:outline-none focus:ring-2 focus:ring-tertiary" id="sort-select" onchange="sortProjects()">
+              <option value="recent">Most Recent</option>
+              <option value="stars">Most Popular</option>
+              <option value="name">Alphabetical</option>
+            </select>
+          </div>
+        </div>
+        <!-- Category Filter Chips -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button class="category-chip px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md transition-all" onclick="filterCategory('all')">All Projects</button>
+          <button class="category-chip px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md transition-all" onclick="filterCategory('Python')">Python</button>
+          <button class="category-chip px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md transition-all" onclick="filterCategory('Responsive')">Responsive Web</button>
+          <button class="category-chip px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md transition-all" onclick="filterCategory('Static')">Static Web</button>
+          <button class="category-chip px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md transition-all" onclick="filterCategory('React')">React</button>
+          <button class="category-chip px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md transition-all" onclick="filterCategory('AI')">AI &amp; ML</button>
+        </div>
+        <!-- Projects Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="explorer-grid">
+          <!-- Project Item 1 -->
+          <div class="project-card bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl" data-category="Python" data-name="Algorithmic Trading Bot" data-stars="1245">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Advanced Python algorithmic trading dashboard with real-time candlestick charts and financial metrics." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC3StAqe8G34vwAePw2eqBKxvP4VKLSrxbKcTFCw_TuaXovZ0iGYdVF5xij4-1HJd2NmJbnwEjRbFgI9axPHEBsf7_R-MLBfmJFjZlYAgvICkXSsZKjcrDJjZ04XbuQPZdxcwRStJJZiJ-u9FMgIRPwtZk8Tr1TJNOZFD4ycIIZxapdsW3nyx9vAR5r-ofc_uXW9uhOMHs3YVTbjsWMdF_kJvclCipxy--GItYw5hwn8dyMAuq1xcjr8A')"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-primary text-on-primary text-label-sm">Python</span>
+            </div>
+            <div class="p-6 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Algorithmic Trading Bot</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">High-frequency backtesting engine with custom indicators and 99.4% test coverage.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">star</span> 1,245</span>
+                <a class="text-label-md text-primary font-bold hover:underline" href="#">View Source</a>
+              </div>
+            </div>
+          </div>
+          <!-- Project Item 2 -->
+          <div class="project-card bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl" data-category="React" data-name="Cinematic Analytics Suite" data-stars="3420">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Modern React dashboard UI with dark glassmorphic cards and glowing charts." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxA58I2WS_kdpnJP2Z-7t2kfPGwVrCHS01nv8KGp6wn_gs8qj-jOBuX99T5U3sZ2kaHstreVWMaWcS4GB8_uCR-beYrQi7uyI57ZuC6AW3RPYtKt7G_4ss7k9IlEAPul_JfzB3gWLXU9s09XLjrvA452z41PIo2QjcWTvNs8rVojERPGGlozyiDrHHu4mXm8ApdBr9Z8VD5m5mAvqL6QDzmXqe_-JNmDLWK4pYNnVYtkNJowC9rH4m5g')"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-tertiary text-on-tertiary text-label-sm">React</span>
+            </div>
+            <div class="p-6 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Cinematic Analytics Suite</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Responsive dashboard featuring fluid grid systems and real-time data streaming.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">star</span> 3,420</span>
+                <a class="text-label-md text-primary font-bold hover:underline" href="#">View Source</a>
+              </div>
+            </div>
+          </div>
+          <!-- Project Item 3 -->
+          <div class="project-card bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl" data-category="Static" data-name="Matrix Code Rain" data-stars="890">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Matrix digital rain code effect rendered with pure advanced CSS animations." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB7uzCZ22t_0bIb8rw6ateZawUkS9AP5CVaXN7_RQWVXYIyCcUIZ7mMXIc1EtT4oIdbp1YndBXy2KlxIoKiAEOMrB36rJnb7hs_PTzkqOYMHmq9ccrK9zVXiEmxfItY7kRHMo-49oSbMfpNv1r2axQHdH_Dq9pnC6VdBDGz4S79UTs2oSas-AwrSjClomrIHC_kK57zqi8NqdiDIV-aDNig6O3Ecy_2im3rYrUCRJYavB3DCyfd2merYA')"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-secondary text-on-secondary text-label-sm">Static Web</span>
+            </div>
+            <div class="p-6 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Matrix Code Rain</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">High-performance cascading character simulation crafted purely with modern CSS variables.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">star</span> 890</span>
+                <a class="text-label-md text-primary font-bold hover:underline" href="#">View Source</a>
+              </div>
+            </div>
+          </div>
+          <!-- Project Item 4 -->
+          <div class="project-card bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl" data-category="AI" data-name="Neural OCR Parser" data-stars="2150">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Neural network graph visualization rendered in Python with glowing nodes." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC7HuybPhWgcN7qED8hsMc4NNyPTgW8hNePJDbVQOz8LhJoHVIlAgQ4wuaXzsmBMv9ttHPv0RXPjhlANLjAkMl-koY-ZlUA1lP7IJf3elUNA7lsbHBILpsV1A1iEkEBDeQPxtzBIp_XHCrMmm-eUrBj3eFT9mSRlzfTqJR8RGvd8ONDKxW0uNLBsQn1EsKHsEXzK2qJuGDThRz3qBZn_clCcmaR24xSFdTH7hnhkGifrJmG4avSAKUjLw')"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-primary-container text-on-primary-container text-label-sm">AI &amp; ML</span>
+            </div>
+            <div class="p-6 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Neural OCR Parser</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Custom convolutional network for parsing handwritten technical schematics.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">star</span> 2,150</span>
+                <a class="text-label-md text-primary font-bold hover:underline" href="#">View Source</a>
+              </div>
+            </div>
+          </div>
+          <!-- Project Item 5 -->
+          <div class="project-card bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl" data-category="Responsive" data-name="Immersive Storefront" data-stars="1840">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="E-commerce storefront UI built with Next.js featuring high-resolution product imagery." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCnAszaMmVnlwjQ9BwsQ4mvM1QJCcGOVw1xgDhiNjIivdWv-ScPZyiMSx4_nuhndjYYFpcAadbWsZ-a34DNEhaOaOygfdhTIUXIDNpAU3bspeqA07z6hWLu__PqchaLV2escKmQ-xxHlw4QrlLqDVTEwaJoRm39UClRhmgRf-bdEhtni-KntnRV1gtqzZAywYQX4vNNrb_k6rWstZ4QmVuQRFpPwvzb01feYPlgwCtvkvp_1BppEUajyQ')"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-tertiary text-on-tertiary text-label-sm">Responsive</span>
+            </div>
+            <div class="p-6 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Immersive Storefront</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Lightning-fast e-commerce platform with optimistic UI updates and server-side rendering.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">star</span> 1,840</span>
+                <a class="text-label-md text-primary font-bold hover:underline" href="#">View Source</a>
+              </div>
+            </div>
+          </div>
+          <!-- Project Item 6 -->
+          <div class="project-card bg-surface-container rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl" data-category="Static" data-name="Happy Meals &amp; Dining" data-stars="920">
+            <div class="relative h-48 bg-surface-container-high overflow-hidden">
+              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Gourmet food and dining web interface with rich imagery and warm lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAYP9Rh0JBe7m7mT9is-sdU43Aoxz8AQQntZ8Yr2FycEzGbCtCenhuFeV8lC8RcerSDmrK-V1TdOw-Gceo_uWPzTOAmp9DJncv8ZT0uWlW_bhF4x1lZq82gXpt_IQ8B0H4TYhTEFOjIeMI4SHg-_jUGmvxta1Tg-2RAeaYeC5s_XnyDDg8M4iE3EcUNS6couFN-EG0cqayNuZlXTtB4J0hEzb4xtM7ndtF0W25q6u7gijIciLIrs-hPtQ')"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-secondary text-on-secondary text-label-sm">Static Web</span>
+            </div>
+            <div class="p-6 space-y-3">
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface">Happy Meals &amp; Dining</h3>
+              <p class="font-body text-body-sm text-on-surface-variant line-clamp-2">Culinary landing experience with gorgeous visual hierarchy and CSS grid menus.</p>
+              <div class="flex items-center justify-between pt-2">
+                <span class="text-label-md text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-tertiary">star</span> 920</span>
+                <a class="text-label-md text-primary font-bold hover:underline" href="#">View Source</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- PROOF OF PRACTICE & CERTIFICATES SECTION -->
+    <section class="w-full py-16 px-6 lg:px-12 bg-surface">
+      <div class="max-w-7xl mx-auto space-y-12">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/30 text-secondary text-label-md mb-2">
+              <span class="material-symbols-outlined text-[16px]">military_tech</span>
+              <span>Verified Credentials</span>
+            </div>
+            <h2 class="font-headline font-bold text-headline-lg text-on-surface">Proof of Practice &amp; Certificates</h2>
+          </div>
+          <a class="px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-md transition-all flex items-center gap-2" data-path="certificates" href="#">
+            View All Credentials <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Certificate Card 1 -->
+          <div class="bg-surface-container rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:shadow-xl transition-all">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-label-sm px-3 py-1 rounded-full bg-primary-container text-on-primary-container font-bold">TOP 1%</span>
+              <span class="text-headline-md font-headline font-bold text-primary">206 / 210</span>
+            </div>
+            <div>
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface mb-2">Advanced Systems Architecture</h3>
+              <p class="font-body text-body-sm text-on-surface-variant">Comprehensive mastery of distributed microservices, event-driven messaging, and high-availability clusters.</p>
+            </div>
+            <div class="space-y-2 pt-2 border-t border-outline-variant/20">
+              <div class="flex justify-between text-label-md">
+                <span class="text-on-surface-variant">Topic Coverage</span>
+                <span class="text-on-surface font-bold">100%</span>
+              </div>
+              <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Certificate Card 2 -->
+          <div class="bg-surface-container rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:shadow-xl transition-all">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-label-sm px-3 py-1 rounded-full bg-tertiary-container text-on-tertiary-container font-bold">EXCELLENCE</span>
+              <span class="text-headline-md font-headline font-bold text-tertiary">276 / 280</span>
+            </div>
+            <div>
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface mb-2">Full-Stack Engineering Mastery</h3>
+              <p class="font-body text-body-sm text-on-surface-variant">Rigorous evaluation covering React, Node.js, database optimization, and secure API design.</p>
+            </div>
+            <div class="space-y-2 pt-2 border-t border-outline-variant/20">
+              <div class="flex justify-between text-label-md">
+                <span class="text-on-surface-variant">Topic Coverage</span>
+                <span class="text-on-surface font-bold">98.5%</span>
+              </div>
+              <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                <div class="bg-tertiary h-full rounded-full" style="width: 98.5%;"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Certificate Card 3 -->
+          <div class="bg-surface-container rounded-2xl p-8 space-y-6 relative overflow-hidden group hover:shadow-xl transition-all">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-label-sm px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-bold">DISTINCTION</span>
+              <span class="text-headline-md font-headline font-bold text-secondary">195 / 200</span>
+            </div>
+            <div>
+              <h3 class="font-headline font-bold text-headline-sm text-on-surface mb-2">AI &amp; Machine Learning Pipelines</h3>
+              <p class="font-body text-body-sm text-on-surface-variant">Specialized certification in neural network deployment, LLM fine-tuning, and vector database indexing.</p>
+            </div>
+            <div class="space-y-2 pt-2 border-t border-outline-variant/20">
+              <div class="flex justify-between text-label-md">
+                <span class="text-on-surface-variant">Topic Coverage</span>
+                <span class="text-on-surface font-bold">97.5%</span>
+              </div>
+              <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                <div class="bg-secondary h-full rounded-full" style="width: 97.5%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    function toggleAuditPanel() {
+      const content = document.getElementById('audit-content');
+      const chevron = document.getElementById('audit-chevron');
+      const toggle = document.getElementById('audit-toggle');
+      const isHidden = content.classList.contains('hidden');
+      content.classList.toggle('hidden', !isHidden);
+      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+      if (toggle) toggle.setAttribute('aria-expanded', String(isHidden));
+    }
+
+    function scrollCarousel(id, direction) {
+      const container = document.getElementById(id);
+      const scrollAmount = 380 * direction;
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+
+    function filterCategory(category) {
+      const chips = document.querySelectorAll('.category-chip');
+      chips.forEach(chip => {
+        chip.className = "category-chip px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md transition-all";
+      });
+      event.target.className = "category-chip px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md transition-all";
+
+      const cards = document.querySelectorAll('.project-card');
+      cards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function searchFromHeader() {
+      const source = document.getElementById('header-search');
+      const target = document.getElementById('project-search-input');
+      const explorer = document.getElementById('explorer');
+      if (!source || !target || !explorer) return;
+      target.value = source.value;
+      filterProjects();
+      explorer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.focus({ preventScroll: true });
+    }
+
+    function filterProjects() {
+      const query = document.getElementById('project-search-input').value.toLowerCase();
+      const cards = document.querySelectorAll('.project-card');
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        if (name.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function sortProjects() {
+      const sortBy = document.getElementById('sort-select').value;
+      const grid = document.getElementById('explorer-grid');
+      const cardsArray = Array.from(grid.getElementsByClassName('project-card'));
+
+      cardsArray.sort((a, b) => {
+        if (sortBy === 'stars') {
+          return parseInt(b.getAttribute('data-stars')) - parseInt(a.getAttribute('data-stars'));
+        } else if (sortBy === 'name') {
+          return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+        } else {
+          return 0; // default recent order
+        }
+      });
+
+      cardsArray.forEach(card => grid.appendChild(card));
+    }
+
+    (function initThemeToggle() {
+      const button = document.getElementById('theme-toggle');
+      const icon = document.getElementById('theme-toggle-icon');
+
+      function renderControls(isDark) {
+        if (button) {
+          button.setAttribute('aria-pressed', String(isDark));
+          button.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+          button.title = isDark ? 'Switch to light theme' : 'Switch to dark theme';
+        }
+        if (icon) {
+          icon.textContent = isDark ? 'dark_mode' : 'light_mode';
+        }
+      }
+
+      function setTheme(theme) {
+        const isDark = theme === 'dark';
+        document.documentElement.classList.toggle('dark', isDark);
+        try { window.localStorage.setItem('devflix-theme', theme); } catch (error) {}
+        renderControls(isDark);
+      }
+
+      renderControls(document.documentElement.classList.contains('dark'));
+
+      if (button) {
+        button.addEventListener('click', () => {
+          setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+        });
+      }
+    })();
+
+    // Reference routes are placeholders; keep them from jumping back to the top of the page.
+    document.addEventListener('click', function (event) {
+      const placeholder = event.target.closest && event.target.closest('a[href="#"]');
+      if (placeholder) event.preventDefault();
+    });
+
+    (function initMobileNav() {
+      const button = document.getElementById('nav-toggle');
+      const panel = document.getElementById('mobile-nav');
+      const icon = document.getElementById('nav-toggle-icon');
+      if (!button || !panel) return;
+
+      function setOpen(open) {
+        panel.classList.toggle('hidden', !open);
+        button.setAttribute('aria-expanded', String(open));
+        button.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+        if (icon) icon.textContent = open ? 'close' : 'menu';
+      }
+
+      button.addEventListener('click', () => setOpen(panel.classList.contains('hidden')));
+      panel.addEventListener('click', (event) => {
+        if (event.target.closest('a')) setOpen(false);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !panel.classList.contains('hidden')) {
+          setOpen(false);
+          button.focus();
+        }
+      });
+      window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+        if (event.matches) setOpen(false);
+      });
+    })();
+  </script>
+</main>
+<footer class="w-full bg-surface-container-low py-16">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-10">
+    <div class="space-y-4">
+      <span class="text-headline-sm font-headline font-bold text-primary tracking-wider uppercase">DEVFLIX</span>
+      <p class="text-body-sm text-on-surface-variant">Cinematic engineering portfolio showcasing over 4,000 architectural wonders, full-stack apps, and open-source systems.</p>
+    </div>
+    <div>
+      <h4 class="text-label-lg font-label-lg text-on-surface mb-4">Navigation</h4>
+      <ul class="space-y-2 text-body-sm text-on-surface-variant">
+        <li><a class="hover:text-on-surface transition-colors" data-path="home" href="#">Home Feed</a></li>
+        <li><a class="hover:text-on-surface transition-colors" data-path="catalog" href="#">Project Catalog</a></li>
+        <li><a class="hover:text-on-surface transition-colors" data-path="carousels" href="#">Genre Carousels</a></li>
+        <li><a class="hover:text-on-surface transition-colors" data-path="certificates" href="#">Verified Credentials</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-label-lg font-label-lg text-on-surface mb-4">Tech Stacks</h4>
+      <ul class="space-y-2 text-body-sm text-on-surface-variant">
+        <li><a class="hover:text-on-surface transition-colors" href="#">React &amp; Next.js</a></li>
+        <li><a class="hover:text-on-surface transition-colors" href="#">Rust &amp; WebAssembly</a></li>
+        <li><a class="hover:text-on-surface transition-colors" href="#">Distributed Systems</a></li>
+        <li><a class="hover:text-on-surface transition-colors" href="#">AI &amp; Machine Learning</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-label-lg font-label-lg text-on-surface mb-4">Connect</h4>
+      <div class="flex gap-4 text-on-surface-variant mb-4">
+        <a class="p-2 rounded-xl bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined">code</span></a>
+        <a class="p-2 rounded-xl bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined">terminal</span></a>
+        <a class="p-2 rounded-xl bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined">hub</span></a>
+      </div>
+      <p class="text-body-sm text-on-surface-variant">© 2024 DevFlix Studios. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

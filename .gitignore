@@ -13,6 +13,9 @@ __pycache__/
 # lighthouse ci output
 /.lighthouseci
 
+# devflix verification captures (kept locally)
+/devflix/screenshots/
+
 # production
 /build
 /dist
