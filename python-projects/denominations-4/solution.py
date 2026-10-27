@@ -1,0 +1,5 @@
+A = int(input())
+Note_100_Notes_rupes_substcting = A - ( int(A / 100) * 100)
+Note_50_Notes_rupes_substcting = Note_100_Notes_rupes_substcting - (int(Note_100_Notes_rupes_substcting / 50) * 50)
+Note_20_Notes_rupes_substcting =Note_50_Notes_rupes_substcting - (int(Note_50_Notes_rupes_substcting / 20) * 20)
+print("100 Notes: " + str( int(A / 100))),print("50 Notes: " + str(int(Note_100_Notes_rupes_substcting / 50))),print("20 Notes: " + str(int(Note_50_Notes_rupes_substcting / 20))),print("10 Notes: " + str( int(Note_20_Notes_rupes_substcting/10)))

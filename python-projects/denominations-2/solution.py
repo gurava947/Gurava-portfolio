@@ -1,0 +1,5 @@
+A = int(input())
+number_of_100_substring = A - (int(A / 100) * 100)
+number_of_50_substring =number_of_100_substring - (int(number_of_100_substring / 50) * 50)
+number_of_10_substring =(number_of_50_substring - (int(number_of_50_substring / 10) * 10))
+print("100:"+str(int(A / 100))),print("50:"+str(int(number_of_100_substring / 50))),print("10:"+str(int(number_of_50_substring / 10))),print("1:"+str(number_of_10_substring))

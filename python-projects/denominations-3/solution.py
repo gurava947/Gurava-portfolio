@@ -1,0 +1,5 @@
+A = int(input())
+divied_in_500_substring = A - (500 * (A // 500))
+divied_in_50_substring = divied_in_500_substring - ((divied_in_500_substring // 50) * 50)
+divied_in_10_substring = divied_in_50_substring - (((divied_in_50_substring // 10)) * 10)
+print("500: " +str((A // 500))+" " + "50: " +str((divied_in_500_substring // 50))+" " + "10: " +str(((divied_in_50_substring // 10)))+" " + "1: " +str(divied_in_10_substring))
