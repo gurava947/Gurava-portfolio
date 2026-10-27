@@ -40,8 +40,15 @@ npm run build           # catalog build + production frontend build
 npm run build:vercel    # Vercel-mode production build
 npm test                # Vitest unit tests + backend API tests
 npm run test:python     # Python exercise unittest suite (110 checks)
+npm run lighthouse      # production build check against the Lighthouse budget
 npm start               # build and serve the production app with Express
 ```
+
+### Performance budget
+
+`lighthouserc.cjs` audits five routes (home, catalog, certificates, a project page, a certificate page) with Lighthouse's mobile preset and fails when a Core Web Vital or byte budget is exceeded. Thresholds are calibrated from measured medians, not guesses; see the comments in that file. `npm run lighthouse` builds first, then runs the audit, so it needs a locally installed Chrome. Lighthouse CI runs through `npx` from the pinned `@lhci/cli` version rather than a project dependency, because its transitive tooling carries advisories that would otherwise show up in `npm audit` for a tool the app never ships.
+
+The catalog route (`/projects`) currently cannot produce a Largest Contentful Paint in Lighthouse: its real content paints after the route chunk and catalog JSON arrive, while the removed Suspense fallback was the last recorded candidate. FCP, CLS, and byte budgets still guard that route; LCP and the performance score are not asserted there.
 
 ## Data sources
 

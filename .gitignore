@@ -10,6 +10,9 @@
 __pycache__/
 *.pyc
 
+# lighthouse ci output
+/.lighthouseci
+
 # production
 /build
 /dist

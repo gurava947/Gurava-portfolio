@@ -22,6 +22,7 @@
     "build:vercel": "node scripts/build-catalog.mjs && vite build --mode vercel",
     "test": "vitest --run && node --test backend/tests/api.test.js",
     "test:python": "python -m unittest discover -s python-projects/tests -p \"test_*.py\"",
+    "lighthouse": "npm run build && npx --yes @lhci/cli@0.15.1 autorun",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
     "catalog:build": "node scripts/build-catalog.mjs",
     "predev": "node scripts/build-catalog.mjs",
