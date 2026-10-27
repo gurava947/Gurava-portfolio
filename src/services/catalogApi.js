@@ -1,4 +1,4 @@
-const CATALOG_CACHE_KEY = "practicefolio.catalog.v4";
+const CATALOG_CACHE_KEY = "practicefolio.catalog.v5";
 const CACHE_TTL = 10 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 15000;
 const detailCache = new Map();
