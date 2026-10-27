@@ -280,8 +280,7 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-:root[data-layout-internal-pages="single-column"] .lab-collection-strip {
-  grid-template-columns: minmax(0, 1fr);
+:root[data-layout-internal-pages="single-column"] .collection-shelf {
   max-width: 620px;
 }
 
@@ -291,11 +290,6 @@
 :root[data-layout-internal-pages="split-screen"] .lab-certificates-hero-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: end;
-}
-
-:root[data-layout-internal-pages="two-column"] .lab-collection-strip,
-:root[data-layout-internal-pages="split-screen"] .lab-collection-strip {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 :root[data-layout-internal-pages="z-pattern"] .lab-catalog-hero-grid,
@@ -410,11 +404,6 @@
   :root[data-layout-internal-pages="split-screen"] .lab-certificates-hero-grid,
   :root[data-layout-internal-pages="magazine"] .lab-catalog-hero-grid,
   :root[data-layout-internal-pages="magazine"] .lab-certificates-hero-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  :root[data-layout-internal-pages="two-column"] .lab-collection-strip,
-  :root[data-layout-internal-pages="split-screen"] .lab-collection-strip {
     grid-template-columns: minmax(0, 1fr);
   }
 

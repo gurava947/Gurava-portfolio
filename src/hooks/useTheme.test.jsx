@@ -119,6 +119,67 @@ describe("useTheme settings synchronization", () => {
       certificates: "foil",
     });
   });
+
+  it("hydrates saved shelf motion and keeps it out of the settings API", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: {} }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    globalThis.__ENABLE_LOCAL_API_TESTS__ = true;
+    window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({
+      mode: "light",
+      motion: { preset: "depth", intensity: "strong", duration: 480, delay: 90 },
+    }));
+
+    const { result } = renderHook(() => useTheme());
+
+    expect(result.current.settings.motion).toEqual({
+      preset: "depth",
+      intensity: "strong",
+      duration: 480,
+      delay: 90,
+    });
+    expect(document.documentElement.dataset.shelfMotion).toBe("depth");
+
+    await act(async () => { await Promise.resolve(); });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody).not.toHaveProperty("motion");
+  });
+
+  it("persists shelf motion locally and keeps it out of the settings API", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: {} }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    globalThis.__ENABLE_LOCAL_API_TESTS__ = true;
+    window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode: "light" }));
+
+    const { result } = renderHook(() => useTheme());
+    await act(async () => { await Promise.resolve(); });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      result.current.updateShelfMotionSettings({ preset: "glass", intensity: "strong", duration: 200, delay: 0 });
+    });
+
+    expect(document.documentElement.dataset.shelfMotion).toBe("glass");
+
+    await act(async () => {
+      vi.advanceTimersByTime(250);
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const sentBody = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(sentBody).not.toHaveProperty("motion");
+    const saved = JSON.parse(window.localStorage.getItem(THEME_STORAGE_KEY));
+    expect(saved.motion).toEqual({ preset: "glass", intensity: "strong", duration: 200, delay: 0 });
+  });
 });
 
 describe("normalizeLoaderSettings", () => {

@@ -1,10 +1,12 @@
 import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import CollectionShelf from "./CollectionShelf";
 import ProjectCard from "./ProjectCard";
+import { DEFAULT_SHELF_MOTION } from "../config/cardMotion";
+import { getOrderedCollections } from "../config/collections";
 import { CARD_LAYOUTS } from "../utils/cardStyle";
 import { filterProjects, pageNumbers, paginateProjects, PROJECTS_PER_PAGE, sortProjects } from "../utils/catalogFilters";
 
 const DEFAULT_FILTERS = { query: "", collection: "", category: "", technology: "", sort: "curated", page: 1 };
-const COLLECTION_ORDER = ["python", "responsive", "static"];
 
 function parseFilters(search) {
   const params = new URLSearchParams(search);
@@ -194,7 +196,7 @@ export function SelectField({ id, label, icon, value, options, onChange }) {
   );
 }
 
-export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {} }) {
+export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {}, shelfMotion = DEFAULT_SHELF_MOTION }) {
   const [filters, setFilters] = useState(() => parseFilters(routeSearch));
   const [railEdge, setRailEdge] = useState({ start: true, end: true });
   const deferredQuery = useDeferredValue(filters.query);
@@ -226,9 +228,7 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
   };
 
   const collections = useMemo(
-    () => COLLECTION_ORDER
-      .map((id) => catalog.collections.find((collection) => collection.id === id))
-      .filter(Boolean),
+    () => getOrderedCollections(catalog.collections),
     [catalog.collections],
   );
 
@@ -309,21 +309,14 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
             <h1>{copy.title} <span>{copy.titleAccent}</span></h1>
             <p>{copy.description}</p>
           </div>
-          <div className="lab-collection-strip">
-            {collections.map((collection) => (
-              <button
-                key={collection.id}
-                type="button"
-                className={`lab-collection-tile is-${collection.id}${filters.collection === collection.id ? " is-active" : ""}`}
-                onClick={() => update({ collection: filters.collection === collection.id ? "" : collection.id })}
-                aria-pressed={filters.collection === collection.id}
-              >
-                <span>{collection.label}</span>
-                <strong>{String(collection.count).padStart(2, "0")}</strong>
-                <small>{collection.description}</small>
-              </button>
-            ))}
-          </div>
+          <CollectionShelf
+            collections={collections}
+            projects={catalog.projects}
+            activeCollection={filters.collection}
+            onSelect={(collection) => update({ collection })}
+            label={copy.collectionLabel}
+            motion={shelfMotion}
+          />
         </div>
       </section>
 

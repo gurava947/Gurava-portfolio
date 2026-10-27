@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { applyCardStyleVariables, CARD_LAYOUTS } from "../utils/cardStyle";
 import { DEFAULT_CARD_EFFECTS, normalizeCardEffects } from "../config/cardEffects";
+import { DEFAULT_SHELF_MOTION, normalizeShelfMotion } from "../config/cardMotion";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
 
 export const THEME_STORAGE_KEY = "portfolio-theme-settings";
@@ -160,6 +161,7 @@ export const DEFAULT_THEME_SETTINGS = {
   loader: DEFAULT_LOADER_SETTINGS,
   layout: DEFAULT_LAYOUT_SETTINGS,
   effects: DEFAULT_CARD_EFFECTS,
+  motion: DEFAULT_SHELF_MOTION,
 };
 
 const themePresets = {
@@ -205,6 +207,7 @@ function getInitialSettings() {
         loader: normalizeLoaderSettings(parsed?.loader),
         layout: normalizeLayoutSettings(parsed?.layout),
         effects: normalizeCardEffects(parsed?.effects),
+        motion: normalizeShelfMotion(parsed?.motion),
       };
     }
     if (window.localStorage.getItem("portfolio-theme") === "dark") {
@@ -264,9 +267,11 @@ export function useTheme() {
     const effects = normalizeCardEffects(settings.effects);
     root.dataset.cardFxEnabled = String(effects.enabled);
     root.dataset.cardFxIntensity = effects.intensity;
+    const motion = normalizeShelfMotion(settings.motion);
+    root.dataset.shelfMotion = motion.preset;
 
     try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode, cardUI, loader, layout, effects }));
+      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode, cardUI, loader, layout, effects, motion }));
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
       console.error("Unable to persist theme mode.", error);
@@ -393,6 +398,13 @@ export function useTheme() {
       effects: normalizeCardEffects({ ...normalizeCardEffects(current.effects), ...changes }),
     }));
   };
+  const updateShelfMotionSettings = (changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      motion: normalizeShelfMotion({ ...normalizeShelfMotion(current.motion), ...changes }),
+    }));
+  };
 
   return {
     settings,
@@ -403,5 +415,6 @@ export function useTheme() {
     resetLoaderSettings,
     updateLayoutSettings,
     updateCardEffectsSettings,
+    updateShelfMotionSettings,
   };
 }

@@ -14,6 +14,7 @@ import { useProjectDetail } from "./hooks/useProjectDetail";
 import { attachImageFallbacks } from "./utils/imageFallback";
 import CardPreviewDialog from "./components/CardPreviewDialog";
 import CardEffectsStudio from "./components/CardEffectsStudio";
+import CardMotionStudio from "./components/CardMotionStudio";
 import CertificateCard from "./components/CertificateCard";
 import CertificateShowcase from "./components/CertificateShowcase";
 import CertificatesIndex from "./components/CertificatesIndex";
@@ -408,6 +409,10 @@ function CardStudio({
   onLayoutApply,
   effectsSettings,
   onEffectsApply,
+  motionSettings,
+  onMotionApply,
+  shelfCollections = [],
+  shelfProjects = [],
 }) {
   const appliedLoader = loaderSettings || DEFAULT_LOADER_SETTINGS;
   const [draftCardUI, setDraftCardUI] = useState(settings);
@@ -673,6 +678,13 @@ function CardStudio({
         previewCertificates={previewCertificates}
       />
 
+      <CardMotionStudio
+        settings={motionSettings}
+        onApply={onMotionApply}
+        collections={shelfCollections}
+        projects={shelfProjects}
+      />
+
       <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
 
       <div className="card-studio-actions">
@@ -732,6 +744,10 @@ function GuravvaProfilePopover({
   onLayoutChange,
   effectsSettings,
   onEffectsChange,
+  motionSettings,
+  onMotionChange,
+  shelfCollections,
+  shelfProjects,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
@@ -1001,6 +1017,10 @@ function GuravvaProfilePopover({
           onLayoutApply={onLayoutChange}
           effectsSettings={effectsSettings}
           onEffectsApply={onEffectsChange}
+          motionSettings={motionSettings}
+          onMotionApply={onMotionChange}
+          shelfCollections={shelfCollections}
+          shelfProjects={shelfProjects}
         />
       </div>
 
@@ -1046,6 +1066,10 @@ function SiteNav({
   onLayoutChange,
   effectsSettings,
   onEffectsChange,
+  motionSettings,
+  onMotionChange,
+  shelfCollections,
+  shelfProjects,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1124,6 +1148,10 @@ function SiteNav({
               onLayoutChange={onLayoutChange}
               effectsSettings={effectsSettings}
               onEffectsChange={onEffectsChange}
+              motionSettings={motionSettings}
+              onMotionChange={onMotionChange}
+              shelfCollections={shelfCollections}
+              shelfProjects={shelfProjects}
             />
           )}
         </div>
@@ -1196,6 +1224,7 @@ function PortfolioHome({
   onLoaderChange,
   onLayoutChange,
   onEffectsChange,
+  onMotionChange,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1249,6 +1278,10 @@ function PortfolioHome({
         onLayoutChange={onLayoutChange}
         effectsSettings={settings.effects}
         onEffectsChange={onEffectsChange}
+        motionSettings={settings.motion}
+        onMotionChange={onMotionChange}
+        shelfCollections={catalog.collections}
+        shelfProjects={catalog.projects}
       />
       <main>
         <section className="home-hero">
@@ -1445,6 +1478,7 @@ function App() {
     updateLoaderSettings,
     updateLayoutSettings,
     updateCardEffectsSettings,
+    updateShelfMotionSettings,
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
@@ -1572,6 +1606,10 @@ function App() {
     onLayoutChange: updateLayoutSettings,
     effectsSettings: settings.effects,
     onEffectsChange: updateCardEffectsSettings,
+    motionSettings: settings.motion,
+    onMotionChange: updateShelfMotionSettings,
+    shelfCollections: catalog.collections,
+    shelfProjects: catalog.projects,
     previewCertificates: catalog.certificates,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
@@ -1597,13 +1635,14 @@ function App() {
         onLoaderChange={updateLoaderSettings}
         onLayoutChange={updateLayoutSettings}
         onEffectsChange={updateCardEffectsSettings}
+        onMotionChange={updateShelfMotionSettings}
       />
     );
   } else if (isCatalog) {
     page = (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="projects" />
-        <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} />
+        <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} />
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     );
