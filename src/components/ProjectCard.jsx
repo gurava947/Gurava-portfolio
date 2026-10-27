@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { getEffectVariables, normalizeCardEffects } from "../config/cardEffects";
+import { useCardPointerFx } from "../hooks/useCardPointerFx";
 import { CARD_LAYOUTS } from "../utils/cardStyle";
+import { prefersReducedMotion } from "../utils/motion";
 
 function monogram(title) {
   return String(title || "")
@@ -11,7 +14,7 @@ function monogram(title) {
     .toUpperCase();
 }
 
-export default function ProjectCard({ project, onNavigate, cardUI = {}, preview = false, animatePreview = false }) {
+export default function ProjectCard({ project, onNavigate, cardUI = {}, fx = {}, preview = false, animatePreview = false }) {
   const thumbnail = project.thumbnail || project.image || "";
   const scrollReveal = !preview && Boolean(cardUI.scrollReveal);
   const entrance = preview && !animatePreview ? "none" : (cardUI.entranceIntensity || "none");
@@ -20,17 +23,16 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
   const cardLayout = CARD_LAYOUTS.includes(cardUI.cardLayout) ? cardUI.cardLayout : "grid";
   const tiltIntensity = Number.isFinite(Number(cardUI.tiltIntensity)) ? Number(cardUI.tiltIntensity) : 7;
   const tiltEnabled = cardLayout === "depth" && tiltIntensity > 0;
+  const effectSettings = normalizeCardEffects(fx);
+  const cardEffect = effectSettings.enabled ? effectSettings.projects : "none";
+  const effectVariables = getEffectVariables(effectSettings);
   const [loadedThumb, setLoadedThumb] = useState("");
   const imageLoaded = Boolean(thumbnail) && loadedThumb === thumbnail;
   const cardRef = useRef(null);
+  const effectPointer = useCardPointerFx({ ref: cardRef, effect: cardEffect, effects: effectSettings });
   const navigate = (event, destination) => {
     if (onNavigate) onNavigate(event, destination);
   };
-  const prefersReducedMotion = () => (
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    || document.documentElement.dataset.reducedMotion === "true"
-    || document.documentElement.dataset.animation === "none"
-  );
   const handleTilt = (event) => {
     if (!tiltEnabled || event.pointerType !== "mouse") return;
     if (prefersReducedMotion()) return;
@@ -48,6 +50,15 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
     node.style.setProperty("--card-tilt-y", "0deg");
     node.style.setProperty("--card-tilt-x", "0deg");
   };
+  const handlePointerMove = (event) => {
+    if (tiltEnabled) handleTilt(event);
+    effectPointer.onPointerMove?.(event);
+  };
+  const handlePointerLeave = () => {
+    if (tiltEnabled) resetTilt();
+    effectPointer.onPointerLeave?.();
+  };
+  const tracksPointer = tiltEnabled || Boolean(effectPointer.onPointerMove);
 
   useEffect(() => {
     const node = cardRef.current;
@@ -75,13 +86,15 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
     <article
       ref={cardRef}
       className={`lab-project-card is-${project.collection}${preview ? " is-preview" : ""}`}
+      style={effectVariables}
       data-entrance={entrance}
       data-scroll-reveal={String(scrollReveal)}
       data-press-feedback={String(pressFeedback)}
       data-image-fit={imageFit}
       data-card-layout={cardLayout}
-      onPointerMove={tiltEnabled ? handleTilt : undefined}
-      onPointerLeave={tiltEnabled ? resetTilt : undefined}
+      data-card-fx={cardEffect}
+      onPointerMove={tracksPointer ? handlePointerMove : undefined}
+      onPointerLeave={tracksPointer ? handlePointerLeave : undefined}
     >
       <div className={`lab-card-media${thumbnail ? " has-image" : ""}${imageLoaded ? " is-loaded" : ""}`}>
         {thumbnail ? (
@@ -156,6 +169,28 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, preview 
           </span>
         </p>
       </div>
+      {cardEffect === "reveal" && (
+        <details className="lab-card-reveal">
+          <summary>
+            <span>Quick look</span>
+            <span className="lab-card-reveal-cue" aria-hidden="true">+</span>
+          </summary>
+          <div className="lab-card-reveal-body">
+            <p>{project.description}</p>
+            <dl className="lab-card-reveal-facts">
+              <div><dt>Collection</dt><dd>{project.collectionLabel}</dd></div>
+              <div><dt>Category</dt><dd>{project.category}</dd></div>
+              <div><dt>Practice</dt><dd>{project.practiceLabel}</dd></div>
+              <div><dt>Preview</dt><dd>{project.previewType === "python" ? "Live Python" : "Live build"}</dd></div>
+            </dl>
+            {!preview && (
+              <a className="lab-card-reveal-link" href={project.route} onClick={(event) => navigate(event, project.route)}>
+                Open project <span aria-hidden="true">→</span>
+              </a>
+            )}
+          </div>
+        </details>
+      )}
     </article>
   );
 }

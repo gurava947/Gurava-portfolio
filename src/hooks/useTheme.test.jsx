@@ -81,6 +81,44 @@ describe("useTheme settings synchronization", () => {
     const saved = JSON.parse(window.localStorage.getItem(THEME_STORAGE_KEY));
     expect(saved.loader).toEqual({ enabled: true, style: "dots", speed: "fast", labels: false });
   });
+
+  it("persists card effects locally and keeps them out of the settings API", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: {} }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    globalThis.__ENABLE_LOCAL_API_TESTS__ = true;
+    window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode: "light" }));
+
+    const { result } = renderHook(() => useTheme());
+    await act(async () => { await Promise.resolve(); });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      result.current.updateCardEffectsSettings({ intensity: "strong", projects: "tilt", certificates: "foil" });
+    });
+
+    expect(document.documentElement.dataset.cardFxEnabled).toBe("true");
+    expect(document.documentElement.dataset.cardFxIntensity).toBe("strong");
+
+    await act(async () => {
+      vi.advanceTimersByTime(250);
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const sentBody = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(sentBody).not.toHaveProperty("effects");
+    const saved = JSON.parse(window.localStorage.getItem(THEME_STORAGE_KEY));
+    expect(saved.effects).toEqual({
+      enabled: true,
+      intensity: "strong",
+      projects: "tilt",
+      certificates: "foil",
+    });
+  });
 });
 
 describe("normalizeLoaderSettings", () => {

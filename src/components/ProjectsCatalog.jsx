@@ -194,7 +194,7 @@ export function SelectField({ id, label, icon, value, options, onChange }) {
   );
 }
 
-export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {} }) {
+export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {} }) {
   const [filters, setFilters] = useState(() => parseFilters(routeSearch));
   const [railEdge, setRailEdge] = useState({ start: true, end: true });
   const deferredQuery = useDeferredValue(filters.query);
@@ -428,7 +428,7 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
                   aria-label={isRail ? "Project cards, horizontally scrollable" : undefined}
                 >
                   {pagination.items.map((project) => (
-                    <ProjectCard key={project.id} project={project} onNavigate={onNavigate} cardUI={cardUI} />
+                    <ProjectCard key={project.id} project={project} onNavigate={onNavigate} cardUI={cardUI} fx={cardEffects} />
                   ))}
                 </div>
               </div>

@@ -10,6 +10,7 @@ const FOCUSABLE = [
   "input:not([disabled])",
   "select:not([disabled])",
   "textarea:not([disabled])",
+  "summary",
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
@@ -35,6 +36,7 @@ function PreviewGlyph({ name }) {
 export default function CardPreviewDialog({
   open,
   cardUI,
+  effects = {},
   preset = {},
   projects = [],
   copy = {},
@@ -59,7 +61,7 @@ export default function CardPreviewDialog({
     setMotionKey((key) => key + 1);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.requestAnimationFrame(() => closeRef.current?.focus());
+    closeRef.current?.focus({ preventScroll: true });
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -166,6 +168,7 @@ export default function CardPreviewDialog({
                     key={project.id}
                     project={project}
                     cardUI={cardUI}
+                    fx={effects}
                     preview
                     animatePreview
                   />

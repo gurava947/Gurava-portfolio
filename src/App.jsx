@@ -7,11 +7,13 @@ import "./styles/project-lab.css";
 import "./styles/unified.css";
 import "./styles/card-layouts.css";
 import "./styles/layout-patterns.css";
+import "./styles/card-effects.css";
 import { DEFAULT_CARD_UI_SETTINGS, DEFAULT_LOADER_SETTINGS, normalizeCardUISettings, normalizeLoaderSettings, useTheme } from "./hooks/useTheme";
 import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
 import { attachImageFallbacks } from "./utils/imageFallback";
 import CardPreviewDialog from "./components/CardPreviewDialog";
+import CardEffectsStudio from "./components/CardEffectsStudio";
 import CertificateCard from "./components/CertificateCard";
 import CertificateShowcase from "./components/CertificateShowcase";
 import CertificatesIndex from "./components/CertificatesIndex";
@@ -404,6 +406,8 @@ function CardStudio({
   loaderSettings,
   layoutSettings,
   onLayoutApply,
+  effectsSettings,
+  onEffectsApply,
 }) {
   const appliedLoader = loaderSettings || DEFAULT_LOADER_SETTINGS;
   const [draftCardUI, setDraftCardUI] = useState(settings);
@@ -660,6 +664,15 @@ function CardStudio({
         cardUI={draftCardUI}
       />
 
+      <CardEffectsStudio
+        settings={effectsSettings}
+        onApply={onEffectsApply}
+        cardUI={draftCardUI}
+        previewProject={previewProject}
+        previewProjects={previewProjects}
+        previewCertificates={previewCertificates}
+      />
+
       <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
 
       <div className="card-studio-actions">
@@ -686,6 +699,7 @@ function CardStudio({
       <CardPreviewDialog
         open={previewOpen}
         cardUI={draftCardUI}
+        effects={effectsSettings}
         preset={{
           label: activePreset ? activePreset.label : (copy.previewCustomLabel || "Custom"),
           note: activePreset ? activePreset.note : (copy.previewCustomNote || "Your adjusted card style"),
@@ -716,6 +730,8 @@ function GuravvaProfilePopover({
   onLoaderChange,
   layoutSettings,
   onLayoutChange,
+  effectsSettings,
+  onEffectsChange,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
@@ -983,6 +999,8 @@ function GuravvaProfilePopover({
           loaderSettings={loaderSettings}
           layoutSettings={layoutSettings}
           onLayoutApply={onLayoutChange}
+          effectsSettings={effectsSettings}
+          onEffectsApply={onEffectsChange}
         />
       </div>
 
@@ -1026,6 +1044,8 @@ function SiteNav({
   onLoaderChange,
   layoutSettings,
   onLayoutChange,
+  effectsSettings,
+  onEffectsChange,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1102,6 +1122,8 @@ function SiteNav({
               onLoaderChange={onLoaderChange}
               layoutSettings={layoutSettings}
               onLayoutChange={onLayoutChange}
+              effectsSettings={effectsSettings}
+              onEffectsChange={onEffectsChange}
             />
           )}
         </div>
@@ -1173,6 +1195,7 @@ function PortfolioHome({
   onCardUIChange,
   onLoaderChange,
   onLayoutChange,
+  onEffectsChange,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1224,6 +1247,8 @@ function PortfolioHome({
         onLoaderChange={onLoaderChange}
         layoutSettings={settings.layout}
         onLayoutChange={onLayoutChange}
+        effectsSettings={settings.effects}
+        onEffectsChange={onEffectsChange}
       />
       <main>
         <section className="home-hero">
@@ -1318,7 +1343,7 @@ function PortfolioHome({
               <p className="section-note">{copy.projects.note}</p>
             </header>
             <div className={`lab-project-grid lab-home-grid${featuredGridClass}`}>
-              {featured.map((project) => <ProjectCard key={project.id} project={project} onNavigate={navigate} cardUI={settings.cardUI} />)}
+              {featured.map((project) => <ProjectCard key={project.id} project={project} onNavigate={navigate} cardUI={settings.cardUI} fx={settings.effects} />)}
             </div>
             <div className="home-featured-action">
               <a className="lab-button lab-button-secondary" href="/projects" onClick={(event) => navigate(event, "/projects")}>
@@ -1339,7 +1364,7 @@ function PortfolioHome({
             </header>
             <div className="lab-certificate-grid lab-home-certificate-grid">
               {certificates.map((certificate, index) => (
-                <CertificateCard key={certificate.slug} certificate={certificate} copy={site.certificatesPage} index={index} onNavigate={navigate} />
+                <CertificateCard key={certificate.slug} certificate={certificate} copy={site.certificatesPage} index={index} onNavigate={navigate} fx={settings.effects} />
               ))}
             </div>
             <div className="home-featured-action">
@@ -1419,6 +1444,7 @@ function App() {
     updateCardUISettings,
     updateLoaderSettings,
     updateLayoutSettings,
+    updateCardEffectsSettings,
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
@@ -1544,6 +1570,8 @@ function App() {
     onLoaderChange: updateLoaderSettings,
     layoutSettings: settings.layout,
     onLayoutChange: updateLayoutSettings,
+    effectsSettings: settings.effects,
+    onEffectsChange: updateCardEffectsSettings,
     previewCertificates: catalog.certificates,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
@@ -1568,13 +1596,14 @@ function App() {
         onCardUIChange={updateCardUISettings}
         onLoaderChange={updateLoaderSettings}
         onLayoutChange={updateLayoutSettings}
+        onEffectsChange={updateCardEffectsSettings}
       />
     );
   } else if (isCatalog) {
     page = (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="projects" />
-        <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} />
+        <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} />
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     );
@@ -1582,7 +1611,7 @@ function App() {
     page = (
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="certificates" />
-        <CertificatesIndex certificates={catalog.certificates} copy={site.certificatesPage} onNavigate={navigate} />
+        <CertificatesIndex certificates={catalog.certificates} copy={site.certificatesPage} onNavigate={navigate} cardEffects={settings.effects} />
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     );

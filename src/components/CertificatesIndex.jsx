@@ -1,6 +1,6 @@
 import CertificateCard from "./CertificateCard";
 
-export default function CertificatesIndex({ certificates, copy, onNavigate }) {
+export default function CertificatesIndex({ certificates, copy, onNavigate, cardEffects = {} }) {
   return (
     <main className="lab-main lab-certificates-index">
       <section className="lab-hero lab-certificates-hero">
@@ -34,6 +34,7 @@ export default function CertificatesIndex({ certificates, copy, onNavigate }) {
                 copy={copy}
                 index={index}
                 onNavigate={onNavigate}
+                fx={cardEffects}
               />
             ))}
           </div>

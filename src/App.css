@@ -645,6 +645,7 @@ select:focus-visible {
     "quick preview"
     "loader loader"
     "layout layout"
+    "effects effects"
     "fine fine"
     "actions actions";
   column-gap: 16px;
@@ -1229,6 +1230,7 @@ select:focus-visible {
       "quick"
       "loader"
       "layout"
+      "effects"
       "fine"
       "actions";
   }
