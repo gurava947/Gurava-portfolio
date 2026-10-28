@@ -149,6 +149,15 @@
     padding: 8px 12px;
   }
 
+  /* The menu is already laid out across the bar from here up, so the button that opens it has
+     nothing left to do. Bootstrap hides it through `.navbar-expand-lg .navbar-toggler`, but this
+     file's own `.food-munch-toggler { display: inline-flex }` is equally specific and loads later,
+     so the hide has to be restated here — otherwise an empty box sits beside the logo and the
+     56px bar is pushed to 94px by a 64px button. */
+  .food-munch-demo .food-munch-toggler {
+    display: none;
+  }
+
   .food-munch-demo .food-munch-navbar-container {
     align-items: center;
   }
