@@ -383,17 +383,27 @@ async function main() {
 
   const certificateDirectory = join(ASSET_ROOT, "certificates");
   mkdirSync(certificateDirectory, { recursive: true });
-  await writeOptimizedImage(join(SOURCE, "assets", "certificates", "static-website-certificate.png"), join(certificateDirectory, "static-website-certificate.webp"), 1400, 88);
-  await writeOptimizedImage(join(SOURCE, "assets", "certificates", "responsive-website-certificate.png"), join(certificateDirectory, "responsive-website-certificate.webp"), 1400, 88);
+  // Each certificate lives in catalog/source as the issued PDF plus a full-resolution render of its
+  // first page; the site ships the WebP and hands the PDF to the Download action.
+  const certificatePapers = [
+    "static-website-certificate",
+    "responsive-website-certificate",
+    "responsive-web-design-using-flexbox-certificate",
+    "javascript-essentials-certificate",
+    "build-your-own-dynamic-web-application-certificate",
+    "developer-foundations-certificate",
+    "introduction-to-databases-certificate",
+  ];
+  for (const name of certificatePapers) {
+    await writeOptimizedImage(join(SOURCE, "assets", "certificates", `${name}.png`), join(certificateDirectory, `${name}.webp`), 1400, 88);
+    copyFileSync(join(SOURCE, "assets", "certificates", `${name}.pdf`), join(certificateDirectory, `${name}.pdf`));
+  }
   await writeOptimizedImage(join(SOURCE, "assets", "certificates", "alumni.png"), join(certificateDirectory, "alumni.webp"), 1200, 84);
   const pythonCertificate = join(PUBLIC, "programming-foundations-with-python-certificate.png");
   if (existsSync(pythonCertificate)) {
     // The PNG stays for print/download links; pages render the much smaller WebP.
     await writeOptimizedImage(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.webp"), 1800, 90);
     copyFileSync(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.png"));
-  }
-  for (const name of ["static-website-certificate.pdf", "responsive-website-certificate.pdf"]) {
-    copyFileSync(join(SOURCE, "assets", "certificates", name), join(certificateDirectory, name));
   }
 
   const normalizedPythonPlayground = normalizeProject(pythonProject, "python", {

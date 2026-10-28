@@ -285,6 +285,7 @@
     "courseTitle": "Responsive Web Design using Flexbox Course",
     "certificateId": "NLOAEJANWA",
     "certificateUrl": "http://certificates.ccbp.in/intensive/flexbox?id=NLOAEJANWA",
+    "certificatePdfUrl": "/assets/certificates/responsive-web-design-using-flexbox-certificate.pdf",
     "shareMessage": "I've completed the Responsive Web Design using Flexbox Course.",
     "eyebrow": "Course",
     "issuer": "NxtWave Intensive",
@@ -346,7 +347,18 @@
         "icon": "components"
       }
     ],
-    "assets": []
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/responsive-web-design-using-flexbox-certificate.webp",
+        "alt_text": "Responsive Web Design using Flexbox certificate issued by NxtWave Intensive"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
   },
   {
     "slug": "javascript-essentials",
@@ -354,6 +366,7 @@
     "courseTitle": "JavaScript Essentials Course",
     "certificateId": "KRZHZUCIQR",
     "certificateUrl": "https://certificates.ccbp.in/intensive/javascript-essentials?id=KRZHZUCIQR",
+    "certificatePdfUrl": "/assets/certificates/javascript-essentials-certificate.pdf",
     "shareMessage": "I've completed the JavaScript Essentials Course.",
     "eyebrow": "Course",
     "issuer": "NxtWave Intensive",
@@ -419,7 +432,18 @@
         "icon": "dictionary"
       }
     ],
-    "assets": []
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/javascript-essentials-certificate.webp",
+        "alt_text": "JavaScript Essentials certificate issued by NxtWave Intensive"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
   },
   {
     "slug": "build-your-own-dynamic-web-application",
@@ -427,6 +451,7 @@
     "courseTitle": "Build Your Own Dynamic Web Application Course Exam",
     "certificateId": "RQSKZIIMOM",
     "certificateUrl": "https://certificates.ccbp.in/intensive/dynamic-web-application?id=RQSKZIIMOM",
+    "certificatePdfUrl": "/assets/certificates/build-your-own-dynamic-web-application-certificate.pdf",
     "shareMessage": "I've completed the Build Your Own Dynamic Web Application Course Exam.",
     "eyebrow": "Course",
     "issuer": "NxtWave Intensive",
@@ -500,7 +525,18 @@
         "icon": "repeat"
       }
     ],
-    "assets": []
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/build-your-own-dynamic-web-application-certificate.webp",
+        "alt_text": "Build Your Own Dynamic Web Application certificate issued by NxtWave Intensive"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
   },
   {
     "slug": "developer-foundations",
@@ -508,6 +544,7 @@
     "courseTitle": "Developer Foundations Course Exam",
     "certificateId": "PYQRKTTXVY",
     "certificateUrl": "https://certificates.ccbp.in/intensive/developer-foundations?id=PYQRKTTXVY",
+    "certificatePdfUrl": "/assets/certificates/developer-foundations-certificate.pdf",
     "shareMessage": "I've completed the Developer Foundations Course Exam.",
     "eyebrow": "Course",
     "issuer": "NxtWave Intensive",
@@ -565,7 +602,18 @@
         "icon": "chain"
       }
     ],
-    "assets": []
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/developer-foundations-certificate.webp",
+        "alt_text": "Developer Foundations certificate issued by NxtWave Intensive"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
   },
   {
     "slug": "introduction-to-databases",
@@ -573,6 +621,7 @@
     "courseTitle": "Introduction to Databases Course Exam",
     "certificateId": "EVDSNRDVMF",
     "certificateUrl": "https://certificates.ccbp.in/intensive/introduction-to-databases?id=EVDSNRDVMF",
+    "certificatePdfUrl": "/assets/certificates/introduction-to-databases-certificate.pdf",
     "shareMessage": "I've completed the Introduction to Databases Course Exam.",
     "eyebrow": "Course",
     "issuer": "NxtWave Intensive",
@@ -638,6 +687,17 @@
         "icon": "components"
       }
     ],
-    "assets": []
+    "assets": [
+      {
+        "role": "certificate",
+        "url": "/assets/certificates/introduction-to-databases-certificate.webp",
+        "alt_text": "Introduction to Databases certificate issued by NxtWave Intensive"
+      },
+      {
+        "role": "brand",
+        "url": "/nxtwave-certificate-card.png",
+        "alt_text": "NxtWave"
+      }
+    ]
   }
 ]
