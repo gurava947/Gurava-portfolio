@@ -285,6 +285,9 @@ export function useTheme() {
     root.dataset.look = look.preset;
     root.dataset.heroText = look.heroText;
     root.dataset.bgPattern = look.background;
+    root.dataset.lookGradient = look.gradient;
+    root.dataset.lookHeading = look.heading;
+    root.dataset.lookTextFx = String(look.textFx);
     root.dataset.logo3d = String(look.logo3d);
     root.dataset.featuredStrip = look.featured;
     Object.entries(getSiteLookVariables(look)).forEach(([name, value]) => root.style.setProperty(name, value));

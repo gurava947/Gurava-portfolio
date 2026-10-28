@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import CodePlate from "./ui/CodePlate";
 import "../styles/poster-rail.css";
 
 function monogram(title) {
@@ -62,10 +63,17 @@ export default function PosterRail({ projects = [], onNavigate, variant = "rail"
               href={project.route}
               onClick={(event) => navigate(event, project.route)}
             >
-              <span className="poster-card-media">
+              <span className={`poster-card-media${poster ? "" : " is-code"}`} data-collection={project.collection}>
                 {poster ? (
                   <img src={poster} alt="" loading="lazy" decoding="async" />
                 ) : (
+                  <CodePlate
+                    code={project.cardCode}
+                    output={project.cardOutput}
+                    language={project.language || project.collectionLabel}
+                  />
+                )}
+                {!poster && !project.cardCode && (
                   <span className="poster-card-monogram" aria-hidden="true">{monogram(project.title)}</span>
                 )}
               </span>

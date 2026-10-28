@@ -8,6 +8,12 @@
   --shelf-motion-glow: 0.7;
   --shelf-motion-scale: 1.008;
   --shelf-motion-fade-scale: 0.985;
+  /* The two numbers the card geometry is built from: how tall the frosted label panel is, and how
+   * much artwork band is left above it for the deck. Both are re-declared per breakpoint because
+   * the label wraps differently as the card narrows — see .collection-shelf-item and
+   * .collection-shelf-glass, which both size themselves from these instead of guessing. */
+  --shelf-glass-height: 178px;
+  --shelf-art-band: 158px;
   position: relative;
   margin-top: 28px;
 }
@@ -169,7 +175,8 @@
 .collection-shelf-item {
   --collection-accent: #7c6cf0;
   position: relative;
-  height: clamp(260px, 20vw, 320px);
+  /* Label panel plus artwork band, so the deck always has the room the tokens promise it. */
+  height: calc(var(--shelf-glass-height) + var(--shelf-art-band));
   flex: 0 0 var(--shelf-card-width);
   min-width: 0;
   scroll-snap-align: center;
@@ -298,28 +305,75 @@
   position: absolute;
   z-index: 0;
   inset: 0;
-  display: flex;
   overflow: hidden;
+  perspective: 900px;
   background:
     radial-gradient(120% 110% at 88% 0%, color-mix(in srgb, var(--collection-accent) 34%, transparent), transparent 62%),
     linear-gradient(155deg, #101827, #0b111a);
   transition: transform var(--shelf-motion-duration) cubic-bezier(0.2, 0.75, 0.3, 1);
 }
 
+/* A deck, not a row. The three previews are the same card pushed back and up-right behind the
+ * front one — the way a stacked pile of prints reads — so the collection shows depth instead of
+ * three tiles standing shoulder to shoulder. Each pane keeps its own rounded corner and rim
+ * light, which is what sells the "3D puzzle" edge where one pane overlaps the next. */
 .collection-shelf-art img {
-  width: 34%;
-  min-width: 0;
-  height: 100%;
-  flex: 1 1 0;
+  position: absolute;
+  bottom: calc(var(--shelf-glass-height) + 12px);
+  left: 9%;
+  width: 46%;
+  height: calc(var(--shelf-art-band) - 34px);
+  border-radius: 14px;
   object-fit: cover;
   object-position: top center;
-  opacity: 0.9;
-  transform: scale(1.01);
-  transition: transform var(--shelf-motion-duration) cubic-bezier(0.2, 0.75, 0.3, 1), opacity var(--shelf-motion-duration) ease;
+  transform-origin: 50% 100%;
+  box-shadow:
+    0 16px 26px -16px rgb(6 12 20 / 72%),
+    inset 0 0 0 1px rgb(255 255 255 / 24%);
+  transition:
+    transform var(--shelf-motion-duration) cubic-bezier(0.2, 0.75, 0.3, 1),
+    opacity var(--shelf-motion-duration) ease;
 }
 
-.collection-shelf-art img:nth-child(2) { opacity: 0.76; }
-.collection-shelf-art img:nth-child(3) { opacity: 0.6; }
+.collection-shelf-art img:nth-child(1) {
+  z-index: 3;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) rotateY(-9deg) rotateX(2deg);
+}
+
+.collection-shelf-art img:nth-child(2) {
+  z-index: 2;
+  opacity: 0.5;
+  transform: translate3d(26%, -14%, -34px) scale(0.9) rotateY(-9deg) rotateX(2deg);
+}
+
+.collection-shelf-art img:nth-child(3) {
+  z-index: 1;
+  opacity: 0.26;
+  transform: translate3d(52%, -28%, -68px) scale(0.8) rotateY(-9deg) rotateX(2deg);
+}
+
+/* Only one preview available: centre it instead of leaving a lopsided pile. */
+.collection-shelf-art img:only-child {
+  left: 50%;
+  width: 58%;
+  height: calc(var(--shelf-art-band) - 22px);
+  transform: translate3d(-50%, 0, 0) rotateY(-9deg) rotateX(2deg);
+}
+
+.collection-shelf-card:hover .collection-shelf-art img:nth-child(2),
+.collection-shelf-item:focus-within .collection-shelf-art img:nth-child(2),
+.collection-shelf-item.is-active .collection-shelf-art img:nth-child(2) {
+  opacity: 0.66;
+  transform: translate3d(36%, -21%, -34px) scale(0.9) rotateY(-6deg) rotateX(2deg);
+}
+
+.collection-shelf-card:hover .collection-shelf-art img:nth-child(3),
+.collection-shelf-item:focus-within .collection-shelf-art img:nth-child(3),
+.collection-shelf-item.is-active .collection-shelf-art img:nth-child(3) {
+  opacity: 0.42;
+  transform: translate3d(70%, -42%, -68px) scale(0.8) rotateY(-6deg) rotateX(2deg);
+}
 
 .collection-shelf-art::after {
   position: absolute;
@@ -332,11 +386,14 @@
 }
 
 .collection-shelf-terminal {
+  position: absolute;
+  inset: 0;
   display: flex;
-  width: 100%;
   flex-direction: column;
   gap: 9px;
-  padding: 18px 20px;
+  /* The label panel floats over the bottom of the art box, so the terminal keeps clear of it
+   * instead of running its output pill underneath the glass. */
+  padding: 16px 20px calc(var(--shelf-glass-height) + 12px);
   background:
     radial-gradient(120% 110% at 88% 0%, color-mix(in srgb, var(--collection-accent) 36%, transparent), transparent 62%),
     linear-gradient(155deg, #121a2b, #0a1019);
@@ -346,7 +403,20 @@
 
 .collection-shelf-terminal-bar {
   display: flex;
+  align-items: center;
   gap: 5px;
+  min-width: 0;
+}
+
+.collection-shelf-terminal-bar em {
+  margin-left: 7px;
+  overflow: hidden;
+  color: rgb(219 231 255 / 58%);
+  font-size: 0.6rem;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .collection-shelf-terminal-bar i {
@@ -408,6 +478,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  height: var(--shelf-glass-height);
   padding: 15px 18px 14px;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 42%);
@@ -812,8 +883,9 @@
     --shelf-card-width: clamp(300px, 48vw, 460px);
   }
 
-  .collection-shelf-item {
-    height: clamp(252px, 32vw, 300px);
+  .collection-shelf {
+    --shelf-glass-height: 176px;
+    --shelf-art-band: 142px;
   }
 }
 
@@ -831,8 +903,20 @@
     display: none;
   }
 
-  .collection-shelf-item {
-    height: 238px;
+  /* Narrow cards wrap the description onto more lines, so the label panel needs more of the card
+   * here — the deck shrinks with it rather than being squeezed behind the glass. */
+  .collection-shelf {
+    --shelf-glass-height: 172px;
+    --shelf-art-band: 124px;
+  }
+
+  .collection-shelf-glass {
+    padding: 12px 14px 11px;
+  }
+
+  .collection-shelf-art img {
+    left: 7%;
+    width: 44%;
   }
 
   .collection-shelf-track {
@@ -856,8 +940,9 @@
     --shelf-card-width: 84vw;
   }
 
-  .collection-shelf-item {
-    height: 228px;
+  .collection-shelf {
+    --shelf-glass-height: 168px;
+    --shelf-art-band: 116px;
   }
 
   .collection-shelf-label::before {

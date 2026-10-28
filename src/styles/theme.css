@@ -60,6 +60,50 @@
   --theme-card-image-bg: #e9eddf;
 }
 
+/* Rail density — how many cards a side-scrolling shelf shows at once.
+
+   Every scrollable rail in the app (the catalog's project shelf, the home poster rail, the
+   "same shelf" rail on a project page) reads these instead of hard-coding a viewport-relative
+   card width. A phone, a tablet and a desktop cannot show the same count: a card that is
+   comfortable six-across on a desktop is unreadable three-across on a phone, and a card sized
+   for a phone fills a whole desktop screen. So the count is fixed per device class and the type
+   scales down with it. --rail-cards is the visible count; the rail divides its own content box
+   by it, which is what keeps exactly that many cards on screen with no sliver of a seventh. */
+:root {
+  --rail-cards: 6;
+  --rail-media-height: 116px;
+  --rail-title-size: 0.84rem;
+  --rail-body-size: 0.68rem;
+  --rail-body-lines: 2;
+  --rail-body-display: block;
+  --rail-badge-display: inline-flex;
+}
+
+/* Tablet: four across. Cards are wider here than at the smallest desktop width, so the rail can
+   afford larger type and a fuller preview image. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  :root {
+    --rail-cards: 4;
+    --rail-media-height: 132px;
+    --rail-title-size: 0.92rem;
+    --rail-body-size: 0.74rem;
+    --rail-body-lines: 2;
+  }
+}
+
+/* Phone: three across, which is roughly a 115px card. Only the preview and the title survive at
+   that width, so everything else in the card is switched off rather than squashed to 6px. */
+@media (max-width: 767.98px) {
+  :root {
+    --rail-cards: 3;
+    --rail-media-height: 86px;
+    --rail-title-size: 0.68rem;
+    --rail-body-size: 0.56rem;
+    --rail-body-display: none;
+    --rail-badge-display: none;
+  }
+}
+
 html,
 body,
 #root {

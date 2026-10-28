@@ -414,7 +414,10 @@ async function main() {
     if (!existsSync(sourcePath)) {
       throw new Error(`Missing Python exercise source: ${seed.source}`);
     }
-    const initialCode = readFileSync(sourcePath, "utf8");
+    // Windows checkouts hand back solution.py with CRLF (core.autocrlf), and that text is shipped
+    // verbatim into the playground editor and the card snippet. Normalising here keeps the built
+    // catalog byte-identical on every machine instead of leaking "\r" into runnable source.
+    const initialCode = readFileSync(sourcePath, "utf8").replace(/\r\n?/g, "\n");
     if (!initialCode.trim()) {
       throw new Error(`Empty Python exercise source: ${seed.source}`);
     }
@@ -479,10 +482,12 @@ async function main() {
     counts[project.collection] = (counts[project.collection] || 0) + 1;
     return counts;
   }, {});
+  // The shelf card on the home page has to say more than a label: what is inside, how many, what
+  // comes next and what it is for. All of that lives beside the label in site.json so the copy has
+  // one source, and the live count is the only number the card is allowed to invent.
   const collections = ["python", "responsive", "static"].map((id) => ({
+    ...site.collectionsPage[id],
     id,
-    label: site.collectionsPage[id].label,
-    description: site.collectionsPage[id].description,
     count: collectionCounts[id] || 0,
   }));
 

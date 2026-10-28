@@ -100,6 +100,34 @@
   max-height: 132px;
 }
 
+/* With a code plate the frame has something worth showing, so it goes back to the full poster
+ * ratio the static and responsive builds get. */
+.lab-hero-poster.is-code {
+  aspect-ratio: 16 / 9;
+  max-height: 300px;
+}
+
+.lab-hero-poster .code-plate {
+  --plate-size: 0.8rem;
+  /* Flex, not the shared grid: the frame is much taller than a one-line program, and a `1fr`
+   * middle row would push the output to the far bottom edge while leaving the code stranded
+   * under the title bar. Auto margin on the output row keeps the code with the bar instead. */
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  inset: 12px;
+  border-radius: 14px;
+}
+
+.lab-hero-poster .code-plate-out {
+  margin-top: auto;
+}
+
+/* The plate's own bar already names the language, and the chip would sit on top of it. */
+.lab-hero-poster.is-code .lab-hero-poster-tag {
+  display: none;
+}
+
 .lab-hero-poster.is-placeholder .lab-hero-poster-monogram {
   font-size: clamp(1.5rem, 3.4vw, 2.2rem);
 }

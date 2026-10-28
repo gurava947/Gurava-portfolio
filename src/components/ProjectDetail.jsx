@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { LoaderOverlay, LoadSpinner } from "./LoadSpinner";
+import CodePlate from "./ui/CodePlate";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import HeroWords from "./HeroWords";
 import PosterRail from "./PosterRail";
@@ -404,10 +405,14 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
               <ul className="lab-hero-tech" aria-label={`${fullProject.title} technologies`}>
                 {(fullProject.technologies || []).map((technology) => <li key={technology}>{technology}</li>)}
               </ul>
-              <div className={`lab-hero-poster${posterSrc ? "" : " is-placeholder"}`}>
-                {posterSrc
-                  ? <img src={posterSrc} alt="" loading="lazy" />
-                  : <span className="lab-hero-poster-monogram" aria-hidden="true">{initials}</span>}
+              <div className={`lab-hero-poster${posterSrc ? "" : fullProject.cardCode ? " is-code" : " is-placeholder"}`}>
+                {posterSrc ? (
+                  <img src={posterSrc} alt="" loading="lazy" />
+                ) : fullProject.cardCode ? (
+                  <CodePlate code={fullProject.cardCode} output={fullProject.cardOutput} language={fullProject.language} />
+                ) : (
+                  <span className="lab-hero-poster-monogram" aria-hidden="true">{initials}</span>
+                )}
                 <span className="lab-hero-poster-tag" aria-hidden="true">{fullProject.collectionLabel || "Build"}</span>
               </div>
             </div>

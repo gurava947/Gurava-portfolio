@@ -1,9 +1,13 @@
 /* Unified catalog: home shelves, project cards, catalog controls, detail previews and certificates. */
 
+/* The page colour comes from <body>, and the Card Studio "Look" paints its wash and pattern on
+ * the fixed .site-look-layer, which sits between that body colour and the content. Painting an
+ * opaque background on the page wrappers here would bury that layer, which is why these three
+ * stay transparent — see src/styles/site-look.css. */
 .lab-page,
 .portfolio-home,
 .lab-main {
-  background: var(--theme-background);
+  background: transparent;
 }
 
 .lab-main {
@@ -227,6 +231,7 @@
 .site-footer-note {
   margin: 0;
   color: inherit;
+  font-family: 'DM Sans', 'DM Sans Fallback', 'Noto Sans Telugu', 'Nirmala UI', sans-serif;
   font-size: 0.8rem;
 }
 
@@ -252,10 +257,11 @@
   position: relative;
   overflow: clip;
   padding: clamp(56px, 6.5vw, 96px) 0 clamp(64px, 7.5vw, 104px);
+  /* Hero-local accent pools only. The base colour and the page wash belong to the Look layer,
+   * so this stays transparent below them. */
   background:
     radial-gradient(920px 520px at 90% -10%, color-mix(in srgb, var(--theme-primary) 13%, transparent), transparent 62%),
-    radial-gradient(700px 460px at -8% 108%, color-mix(in srgb, var(--theme-secondary) 10%, transparent), transparent 62%),
-    var(--theme-background);
+    radial-gradient(700px 460px at -8% 108%, color-mix(in srgb, var(--theme-secondary) 10%, transparent), transparent 62%);
 }
 
 .home-hero::before {
@@ -568,25 +574,27 @@
 
 /* Home sections */
 
+/* Full-bleed bands keep their surface colour as a film rather than a wall: at ~86% they still
+ * read as a distinct section against the hero, but the Look wash and pattern behind them stay
+ * legible, so a chosen gradient covers the whole page instead of only the top of it. */
 .home-collections-section,
 .home-certificates-section {
   padding: clamp(64px, 7vw, 100px) 0;
-  background: var(--theme-card-bg);
+  background: color-mix(in srgb, var(--theme-card-bg) 86%, transparent);
   color: var(--theme-text);
 }
 
 .theme-dark .home-collections-section,
 .theme-dark .home-certificates-section {
-  background: #0b1220;
+  background: color-mix(in srgb, #0b1220 82%, transparent);
 }
 
 .home-featured-section {
   padding: clamp(64px, 7vw, 100px) 0;
-  background: var(--theme-background);
 }
 
 .theme-dark .home-featured-section {
-  background: #070d16;
+  background: color-mix(in srgb, #070d16 72%, transparent);
 }
 
 .home-section-heading {
@@ -613,6 +621,46 @@
   font-size: 0.88rem;
   line-height: 1.65;
   text-align: right;
+}
+
+/* Count line under a section title — the number is the answer to "how much is in here". */
+.home-section-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin: 12px 0 0;
+  color: var(--theme-muted-text);
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+}
+
+.home-section-meta strong {
+  color: var(--theme-text);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 1.34rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* Credit band */
+
+.home-credits-section {
+  padding: clamp(64px, 7vw, 100px) 0;
+  background:
+    radial-gradient(110% 80% at 8% 0%, color-mix(in srgb, var(--look-wash-a, #7c6cf0) 11%, transparent), transparent 58%),
+    color-mix(in srgb, var(--theme-card-bg) 74%, transparent);
+  color: var(--theme-text);
+}
+
+.theme-dark .home-credits-section {
+  background:
+    radial-gradient(110% 80% at 8% 0%, color-mix(in srgb, var(--look-wash-a, #7c6cf0) 16%, transparent), transparent 58%),
+    color-mix(in srgb, #0a1018 78%, transparent);
+}
+
+.home-credits-accent {
+  color: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 82%, var(--theme-text));
+  font-style: normal;
 }
 
 .home-collection-grid {
@@ -2122,6 +2170,7 @@
 
   .home-collections-section,
   .home-certificates-section,
+  .home-credits-section,
   .home-featured-section {
     padding: 54px 0;
   }

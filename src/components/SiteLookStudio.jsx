@@ -3,11 +3,15 @@ import {
   BACKGROUND_PATTERNS,
   DEFAULT_SITE_LOOK,
   FEATURED_STYLES,
+  HEADLINE_STYLES,
   HERO_TEXT_STYLES,
+  LOOK_GRADIENTS,
   LOOK_PRESETS,
   getBackgroundPattern,
   getFeaturedStyle,
+  getHeadlineStyle,
   getHeroTextStyle,
+  getLookGradient,
   getLookPreset,
   getSiteLookVariables,
   normalizeSiteLook,
@@ -44,12 +48,14 @@ export default function SiteLookStudio({ settings, onApply }) {
   const [announcement, setAnnouncement] = useState("");
   const [previewKey, setPreviewKey] = useState(0);
   const appliedRef = useRef(applied);
-  const appliedKey = `${applied.preset}|${applied.heroText}|${applied.background}|${applied.logo3d}|${applied.featured}`;
+  const appliedKey = `${applied.preset}|${applied.heroText}|${applied.background}|${applied.gradient}|${applied.heading}|${applied.textFx}|${applied.logo3d}|${applied.featured}`;
   const dirty = !sameSiteLook(draft, applied);
   const atDefault = sameSiteLook(draft, DEFAULT_SITE_LOOK) && sameSiteLook(applied, DEFAULT_SITE_LOOK);
   const activePreset = getLookPreset(draft.preset);
   const activeHeroText = getHeroTextStyle(draft.heroText);
   const activeBackground = getBackgroundPattern(draft.background);
+  const activeGradient = getLookGradient(draft.gradient);
+  const activeHeadline = getHeadlineStyle(draft.heading);
   const activeFeatured = getFeaturedStyle(draft.featured);
 
   useEffect(() => {
@@ -88,7 +94,15 @@ export default function SiteLookStudio({ settings, onApply }) {
   };
 
   return (
-    <section className="card-studio-block look-studio" aria-labelledby="card-studio-look">
+    // The draft gradient rides on this section as a data-attribute, which is what the
+    // [data-look-gradient] rules in site-look.css match anywhere. Without it the background and
+    // headline tiles would keep previewing the *applied* colours, so choosing Sunset would not
+    // change the swatches that are supposed to sell it.
+    <section
+      className="card-studio-block look-studio"
+      aria-labelledby="card-studio-look"
+      data-look-gradient={draft.gradient}
+    >
       <div className="card-studio-block-head">
         <h3 id="card-studio-look">Site look</h3>
         <span>Previewed before Apply</span>
@@ -151,9 +165,69 @@ export default function SiteLookStudio({ settings, onApply }) {
             ))}
           </div>
         </div>
+
+        {/* The gradient is what makes a look read as "this page" instead of "these cards": the
+            pattern, the section washes and the card surfaces all mix from the same three stops. */}
+        <div className="look-studio-group">
+          <h4>Gradient colours</h4>
+          <div className="look-studio-options is-gradient" role="group" aria-label="Page gradient colours">
+            {LOOK_GRADIENTS.map((gradient) => (
+              <LookOptionCard
+                key={gradient.id}
+                active={draft.gradient === gradient.id}
+                label={gradient.label}
+                note={gradient.note}
+                ariaLabel={`${gradient.label} gradient`}
+                onClick={() => updateDraft({ gradient: gradient.id }, `${gradient.label} gradient previewed. Choose Apply look to keep it.`)}
+              >
+                <span className={`look-demo-gradient is-${gradient.id}`} />
+              </LookOptionCard>
+            ))}
+          </div>
+        </div>
+        {/* Each demo title carries its own data-look-heading, which is the only way six tiles can
+            preview six treatments at once: the page rules key off an ancestor, and <html> is an
+            ancestor of every tile. The studio never re-implements a look it is supposed to show. */}
+        <div className="look-studio-group">
+          <h4>Section headings</h4>
+          <div className="look-studio-options is-heading" role="group" aria-label="Section heading style">
+            {HEADLINE_STYLES.map((style) => (
+              <LookOptionCard
+                key={style.id}
+                active={draft.heading === style.id}
+                label={style.label}
+                note={style.note}
+                ariaLabel={`${style.label} heading style`}
+                onClick={() => updateDraft({ heading: style.id }, `${style.label} heading previewed. Choose Apply look to keep it.`)}
+              >
+                <span className="look-demo-heading">
+                  <span className="look-studio-demo-title" data-look-heading={style.id}>Built to last</span>
+                </span>
+              </LookOptionCard>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="look-studio-switch-row">
+        <div className="card-studio-quick-row">
+          <span className="card-studio-quick-label">Text reactions</span>
+          <div className="card-studio-segments" role="group" aria-label="Text load, hover and press reactions">
+            {[true, false].map((value) => (
+              <button
+                key={String(value)}
+                type="button"
+                className="card-studio-segment"
+                aria-label={`Text reactions ${value ? "on" : "off"}`}
+                aria-pressed={draft.textFx === value}
+                onClick={() => updateDraft({ textFx: value }, `Text reactions ${value ? "on" : "off"} previewed.`)}
+              >
+                {value ? "On" : "Off"}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="card-studio-quick-row">
           <span className="card-studio-quick-label">3D brand mark</span>
           <div className="card-studio-segments" role="group" aria-label="Three dimensional brand mark">
@@ -196,7 +270,7 @@ export default function SiteLookStudio({ settings, onApply }) {
         <div className="look-studio-preview-head">
           <span>Live preview</span>
           <strong>
-            {activePreset.label} · {activeHeroText.label} · {activeBackground.label} · {activeFeatured.label}
+            {activePreset.label} · {activeHeroText.label} · {activeBackground.label} · {activeGradient.label} · {activeHeadline.label} · {activeFeatured.label}
           </strong>
           <button type="button" className="look-studio-replay" onClick={() => setPreviewKey((current) => current + 1)}>
             Replay
@@ -207,6 +281,9 @@ export default function SiteLookStudio({ settings, onApply }) {
           className={`look-studio-stage is-${draft.preset}`}
           data-hero-text={draft.heroText}
           data-bg-pattern={draft.background}
+          data-look-gradient={draft.gradient}
+          data-look-heading={draft.heading}
+          data-look-text-fx={String(draft.textFx)}
           data-logo-3d={String(draft.logo3d)}
           style={getSiteLookVariables(draft)}
         >
@@ -218,6 +295,10 @@ export default function SiteLookStudio({ settings, onApply }) {
             ))}{" "}
             <span className="hero-word hero-word-accent" style={{ "--word-index": DEMO_WORDS.length }}>{DEMO_ACCENT}</span>
           </p>
+          {/* A section-scale heading and a passage of running text, so the two text layers can be
+              judged here the way they read on the page. */}
+          <span className="look-studio-demo-title" data-look-heading={draft.heading}>Three shelves, one catalog</span>
+          <span className="look-studio-demo-note">Hover this line — the highlight sweeps in without moving the text.</span>
           {/* Rail variants need a doubled track so the -50% scroll loop is seamless. */}
           <div className={`look-studio-strip is-${draft.featured}`} aria-hidden="true">
             <div className="look-studio-strip-track">

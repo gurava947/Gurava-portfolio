@@ -155,8 +155,12 @@
 /* Side-scrolling card rail */
 
 .lab-project-grid.is-card-rail {
+  /* Declared on the rail, not at :root, so the studio's own gap setting is still substituted
+   * here; the caps keep the count honest, since the card basis below divides by the same value. */
+  --rail-gap: clamp(8px, var(--portfolio-card-gap, 20px), 18px);
+  --rail-meta-display: flex;
   display: flex;
-  gap: var(--portfolio-card-gap, 20px);
+  gap: var(--rail-gap);
   overflow-x: auto;
   overflow-y: hidden;
   padding: 16px 4px 26px;
@@ -169,12 +173,141 @@
   scrollbar-width: thin;
 }
 
+/* Exactly --rail-cards tiles per view (3 on a phone, 4 on a tablet, 6 on a desktop) with no
+ * sliver of the next one, which is what makes the page-flip arrows and the progress bar line up
+ * with what the visitor actually sees. */
 .lab-project-grid.is-card-rail .lab-project-card {
   width: auto;
   max-width: none;
-  flex: 0 0 clamp(300px, 29vw, 400px);
+  flex: 0 0 calc((100% - (var(--rail-cards) - 1) * var(--rail-gap)) / var(--rail-cards));
+  min-width: 0;
   margin-inline: 0;
   scroll-snap-align: start;
+}
+
+/* Rail anatomy at streaming density. The card body is written for a tile ~400px wide; divided
+   six ways it is a third of that, so the secondary rows are switched off rather than squashed
+   into 6px type. Everything that stays is sized from the --rail-* tokens in theme.css so this
+   rail and the poster rail on the home page stay in step. */
+.lab-project-grid.is-card-rail .lab-card-media {
+  height: var(--rail-media-height);
+  margin: 6px 6px 0;
+  border-radius: 12px 12px 8px 8px;
+}
+
+/* A wide screenshot letterboxed into a 115px tile is unreadable; cropped to the tile it reads as
+ * a thumbnail. The rail overrides the studio's contain choice because the studio sets it for the
+ * full-width grid, where there is room for the whole page. */
+.lab-project-grid.is-card-rail .lab-project-card[data-image-fit="contain"] .lab-card-image {
+  padding: 0;
+  object-fit: cover;
+  filter: none;
+}
+
+.lab-project-grid.is-card-rail .lab-card-body {
+  gap: 6px;
+  padding: 9px 10px 11px;
+}
+
+.lab-project-grid.is-card-rail .lab-card-heading h3 {
+  overflow-wrap: anywhere;
+  font-size: calc(var(--rail-title-size) * var(--portfolio-card-font-scale, 1));
+}
+
+.lab-project-grid.is-card-rail .lab-card-description {
+  display: var(--rail-body-display);
+  overflow-wrap: anywhere;
+  font-size: calc(var(--rail-body-size) * var(--portfolio-card-font-scale, 1));
+  -webkit-line-clamp: var(--rail-body-lines);
+  line-clamp: var(--rail-body-lines);
+}
+
+.lab-project-grid.is-card-rail .lab-card-meta {
+  display: var(--rail-meta-display);
+}
+
+.lab-project-grid.is-card-rail .lab-card-category,
+.lab-project-grid.is-card-rail .lab-card-language {
+  min-height: 0;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 1px 7px;
+  font-size: calc(0.52rem * var(--portfolio-card-font-scale, 1));
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The tech chips and the footnote row are the two things that cannot shrink into a 115px tile
+ * without colliding, and neither carries information the title and preview do not. */
+.lab-project-grid.is-card-rail .lab-card-tech,
+.lab-project-grid.is-card-rail .lab-card-footnote {
+  display: none;
+}
+
+.lab-project-grid.is-card-rail .lab-card-collection,
+.lab-project-grid.is-card-rail .lab-card-live {
+  display: var(--rail-badge-display);
+  top: 7px;
+  gap: 4px;
+  padding: 3px 6px;
+  font-size: 0.46rem;
+  letter-spacing: 0.04em;
+}
+
+.lab-project-grid.is-card-rail .lab-card-collection {
+  left: 7px;
+}
+
+.lab-project-grid.is-card-rail .lab-card-live {
+  right: 7px;
+}
+
+/* The Python terminal preview needs the same squeeze or five code lines overflow an 86px box. */
+.lab-project-grid.is-card-rail .lab-card-terminal {
+  padding: 8px 9px 8px;
+  gap: 5px;
+}
+
+/* The title bar is dots + name + language in a row that cannot wrap. Two of those three items
+   have to give on a phone tile, and the language is the one the collection badge already says. */
+.lab-project-grid.is-card-rail .lab-card-terminal-bar {
+  gap: 4px;
+  font-size: 0.52rem;
+}
+
+.lab-project-grid.is-card-rail .lab-card-terminal-bar > span {
+  width: 5px;
+  height: 5px;
+  flex-basis: 5px;
+}
+
+.lab-project-grid.is-card-rail .lab-card-terminal-bar em {
+  min-width: 0;
+  flex: 1 1 auto;
+  margin-left: 2px;
+}
+
+.lab-project-grid.is-card-rail .lab-card-terminal-bar b {
+  display: none;
+}
+
+.lab-project-grid.is-card-rail .lab-card-code {
+  margin-top: 0;
+  font-size: var(--rail-body-size);
+  line-height: 1.5;
+}
+
+.lab-project-grid.is-card-rail .lab-card-output {
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: auto;
+  padding-top: 5px;
+}
+
+.lab-project-grid.is-card-rail .lab-card-output strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--rail-body-size);
 }
 
 .lab-project-grid.is-card-rail::-webkit-scrollbar {
@@ -636,12 +769,22 @@
   outline: none;
 }
 
+@media (min-width: 768px) {
+  /* The collection and runtime badges float over the top of the media box, which is exactly where
+   * the terminal's title bar sits. Below 768px the badges are switched off, so only the wider
+   * rails need the clearance. */
+  .lab-project-grid.is-card-rail .lab-card-terminal {
+    padding-top: 27px;
+  }
+}
+
 @media (max-width: 767.98px) {
   .lab-card-media { height: var(--portfolio-card-image-height-mobile, 150px); }
   .lab-card-body { padding: 14px 15px 15px; }
   .lab-card-heading h3 { font-size: calc(1.27rem * var(--portfolio-card-font-scale, 1)); }
-  .lab-project-grid.is-card-rail { gap: min(var(--portfolio-card-gap, 20px), 18px); padding-inline: 2px; margin-inline: -2px; }
-  .lab-project-grid.is-card-rail .lab-project-card { flex-basis: min(84vw, 360px); }
+  /* Phones spend the width on tiles, so the gutter has to be the first thing to give. */
+  .lab-project-grid.is-card-rail { --rail-gap: clamp(6px, var(--portfolio-card-gap, 20px), 10px); padding-inline: 2px; margin-inline: -2px; }
+  .lab-project-grid.is-card-rail .lab-card-meta { display: none; }
   .lab-card-rail-controls { display: none; }
   .lab-card-rail-fade { width: 26px; }
   .lab-card-rail-progress { margin-top: 6px; }
@@ -804,18 +947,82 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin: 0;
+  counter-reset: lab-fact;
 }
 
+/* Four facts, four gradients. Each card mixes its own pair of the look's wash stops, so the set
+ * changes when the Gradient colours control changes instead of being four hard-coded swatches. */
 .lab-facts > div {
-  padding: 16px;
+  --fact-a: var(--look-wash-a, var(--theme-primary));
+  --fact-b: var(--look-wash-b, var(--theme-primary));
+  position: relative;
+  counter-increment: lab-fact;
+  padding: 15px 16px 16px;
+  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--theme-border-color) var(--theme-border-opacity), transparent);
+  border-inline-start: 3px solid color-mix(in srgb, var(--fact-a) 62%, transparent);
   border-radius: 17px;
   background: color-mix(in srgb, var(--theme-card-bg) 68%, transparent);
   box-shadow: 0 6px 18px rgb(24 35 29 / 5%);
+  transition: transform 280ms cubic-bezier(0.2, 0.75, 0.3, 1), box-shadow 280ms ease, border-color 280ms ease;
 }
 
+.lab-facts > div:nth-child(2) {
+  --fact-a: var(--look-wash-b, var(--theme-primary));
+  --fact-b: var(--look-wash-c, var(--theme-primary));
+}
+
+.lab-facts > div:nth-child(3) {
+  --fact-a: var(--look-wash-c, var(--theme-primary));
+  --fact-b: var(--look-wash-a, var(--theme-primary));
+}
+
+.lab-facts > div:nth-child(4) {
+  --fact-a: var(--look-wash-a, var(--theme-primary));
+  --fact-b: var(--look-wash-c, var(--theme-primary));
+}
+
+.lab-facts > div::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(118% 104% at 100% 0%, color-mix(in srgb, var(--fact-a) 24%, transparent), transparent 60%),
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--fact-a) 15%, transparent),
+      color-mix(in srgb, var(--fact-b) 9%, transparent) 52%,
+      transparent);
+  content: "";
+  opacity: 0.94;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+
+.lab-facts > div::after {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 1;
+  color: color-mix(in srgb, var(--fact-a) 66%, var(--theme-muted-text));
+  content: counter(lab-fact, decimal-leading-zero);
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.lab-facts > div:hover {
+  border-color: color-mix(in srgb, var(--fact-a) 40%, transparent);
+  border-inline-start-color: color-mix(in srgb, var(--fact-a) 88%, transparent);
+  box-shadow: 0 18px 32px -22px rgb(9 18 14 / 55%), 0 6px 18px rgb(24 35 29 / 5%);
+  transform: translateY(-3px);
+}
+
+.lab-facts > div:hover::before { opacity: 1; }
+
 .lab-facts dt {
-  color: var(--theme-muted-text);
+  position: relative;
+  z-index: 1;
+  color: color-mix(in srgb, var(--fact-a) 62%, var(--theme-muted-text));
   font-size: 0.61rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -823,6 +1030,8 @@
 }
 
 .lab-facts dd {
+  position: relative;
+  z-index: 1;
   margin: 7px 0 0;
   overflow-wrap: anywhere;
   color: var(--theme-text);

@@ -6,8 +6,10 @@
 }
 
 .poster-rail-scroller {
+  /* --rail-cards comes from theme.css: 3 tiles on a phone, 4 on a tablet, 6 on a desktop. */
+  --rail-gap: clamp(8px, var(--portfolio-card-gap, 20px), 18px);
   display: flex;
-  gap: 16px;
+  gap: var(--rail-gap);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   padding: 22px 4px 26px;
@@ -51,7 +53,7 @@
 .poster-card {
   position: relative;
   display: block;
-  flex: 0 0 clamp(210px, 26vw, 268px);
+  flex: 0 0 calc((100% - (var(--rail-cards) - 1) * var(--rail-gap)) / var(--rail-cards));
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
@@ -65,7 +67,6 @@
 }
 
 .poster-rail.is-poster .poster-card {
-  flex-basis: clamp(258px, 32vw, 330px);
   aspect-ratio: 16 / 10;
 }
 
@@ -114,9 +115,37 @@
 
 .poster-card-monogram {
   font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
-  font-size: 3.4rem;
+  /* Scaled off the same token as the title so the placeholder keeps its proportion to the tile. */
+  font-size: calc(var(--rail-title-size) * var(--portfolio-card-font-scale, 1) * 2.4);
   font-weight: 700;
   color: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-muted-text));
+}
+
+/* The plate owns the upper part of the tile; the scrim band and title keep the lower part.
+ * Everything about how a plate looks lives in code-plate.css — this is only placement. */
+.poster-card-media .code-plate {
+  --plate-size: calc(var(--rail-body-size) * 0.95);
+  position: absolute;
+  inset: 11px 11px var(--poster-code-bottom, 33%);
+}
+
+/* The 16:10 poster tile spends more height on the title band, so the plate gives way to it. */
+.poster-rail.is-poster .poster-card-media .code-plate {
+  --poster-code-bottom: 40%;
+}
+
+@media (max-width: 767.98px) {
+  /* On a phone the tile is ~115px wide: the bar and the output row are the only parts that still
+   * read, so the code body is dropped rather than rendered as unreadable noise. */
+  .poster-card-media .code-plate {
+    --plate-size: 0.56rem;
+    inset: 6px 6px 30%;
+    gap: 4px;
+    padding: 5px 6px 6px;
+    grid-template-rows: auto auto;
+  }
+
+  .poster-card-media .code-plate-body { display: none; }
 }
 
 .poster-card-scrim {
@@ -138,17 +167,18 @@
   position: absolute;
   inset: auto 0 0;
   display: grid;
-  gap: 6px;
-  padding: 14px;
+  gap: 5px;
+  padding: 12px;
 }
 
 .poster-card-title {
   color: #fff;
   font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
-  font-size: 0.98rem;
+  font-size: calc(var(--rail-title-size) * var(--portfolio-card-font-scale, 1));
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
   text-shadow: 0 1px 14px rgb(3 6 12 / 65%);
 }
 
@@ -157,7 +187,7 @@
   flex-wrap: wrap;
   gap: 6px;
   color: rgb(255 255 255 / 72%);
-  font-size: 0.56rem;
+  font-size: calc(var(--rail-body-size) * 0.85);
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -181,13 +211,13 @@
 .poster-card:hover .poster-card-more,
 .poster-card:focus-visible .poster-card-more,
 .poster-card:focus-within .poster-card-more {
-  max-height: 130px;
+  max-height: 118px;
   opacity: 1;
 }
 
 .poster-card-description {
   color: rgb(255 255 255 / 82%);
-  font-size: 0.68rem;
+  font-size: calc(var(--rail-body-size) * var(--portfolio-card-font-scale, 1));
   line-height: 1.45;
 }
 
@@ -198,12 +228,12 @@
 }
 
 .poster-card-tech span {
-  padding: 3px 7px;
+  padding: 2px 6px;
   border: 1px solid rgb(255 255 255 / 26%);
   border-radius: 999px;
   background: rgb(255 255 255 / 10%);
   color: #fff;
-  font-size: 0.56rem;
+  font-size: calc(var(--rail-body-size) * 0.8);
   font-weight: 700;
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
@@ -274,7 +304,7 @@
 
 @media (hover: none) {
   .poster-card-more {
-    max-height: 130px;
+    max-height: 118px;
     opacity: 1;
   }
 
@@ -298,5 +328,33 @@
   .poster-card:hover,
   .poster-card:focus-visible {
     transform: none;
+  }
+}
+
+/* Phone: three tiles across leaves about 115px per card, so the tile carries the artwork and the
+ * title only. The hover detail block is dead weight here — a touch device shows it permanently
+ * (see the hover:none block above), and two lines of description at 8px would be noise. */
+@media (max-width: 767.98px) {
+  .poster-rail-scroller {
+    --rail-gap: clamp(6px, var(--portfolio-card-gap, 20px), 10px);
+  }
+
+  .poster-card-body {
+    padding: 8px;
+  }
+
+  .poster-card-more,
+  .poster-card-meta {
+    display: none;
+  }
+
+  .poster-rail.is-rail .poster-card-media img {
+    padding: 4px 4px 26%;
+  }
+
+  /* A 54px fade would swallow half of a 115px tile. */
+  .poster-rail::before,
+  .poster-rail::after {
+    width: 22px;
   }
 }

@@ -9,6 +9,7 @@ import "./styles/card-layouts.css";
 import "./styles/layout-patterns.css";
 import "./styles/card-effects.css";
 import "./styles/site-look.css";
+import "./styles/text-treatments.css";
 import { DEFAULT_CARD_UI_SETTINGS, DEFAULT_LOADER_SETTINGS, normalizeCardUISettings, normalizeLoaderSettings, useTheme } from "./hooks/useTheme";
 import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
@@ -20,6 +21,7 @@ import CertificateCard from "./components/CertificateCard";
 import { LoadSpinner } from "./components/LoadSpinner";
 import ProjectCard from "./components/ProjectCard";
 import GlassFolderCard from "./components/ui/GlassFolderCard";
+import CollectionCredits from "./components/ui/CollectionCredits";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import SiteLookStudio from "./components/SiteLookStudio";
@@ -1386,6 +1388,10 @@ function PortfolioHome({
               <div>
                 <p className="eyebrow">{copy.collections.eyebrow}</p>
                 <h2 className="section-title">{copy.collections.title}</h2>
+                <p className="home-section-meta">
+                  <strong>{String(catalog.counts.projects).padStart(3, "0")}</strong>
+                  {copy.collections.totalLabel?.replace("{count}", catalog.counts.projects) || `${catalog.counts.projects} builds across three shelves`}
+                </p>
               </div>
               <p className="section-note">{copy.collections.note}</p>
             </header>
@@ -1454,6 +1460,24 @@ function PortfolioHome({
             </div>
           </div>
         </section>
+
+        {/* Guarded because the catalog can render from a cached copy that predates this block. */}
+        {copy.credits && (
+          <section className="home-credits-section" id="credits">
+            <div className="container">
+              <header className="home-section-heading">
+                <div>
+                  <p className="eyebrow">{copy.credits.eyebrow}</p>
+                  <h2 className="section-title">
+                    {copy.credits.title} <em className="home-credits-accent">{copy.credits.titleAccent}</em>
+                  </h2>
+                </div>
+                <p className="section-note">{copy.credits.note}</p>
+              </header>
+              <CollectionCredits copy={copy.credits} />
+            </div>
+          </section>
+        )}
       </main>
       <SiteFooter site={site} onNavigate={navigate} />
     </div>
@@ -1825,7 +1849,17 @@ function App() {
     );
   }
 
-  return <>{viewError}{isLoading && !projects.length ? <AppGate loader={settings.loader} /> : page}</>;
+  // One fixed colour wash + pattern layer for the whole site, driven purely by the data-attributes
+  // useTheme puts on <html>. It sits behind every page rather than inside one, so a look change is
+  // visible on the catalog, the certificates and a 404 too — and so image surfaces are never
+  // tinted, because they paint over it.
+  return (
+    <>
+      <span className="site-look-layer" aria-hidden="true" />
+      {viewError}
+      {isLoading && !projects.length ? <AppGate loader={settings.loader} /> : page}
+    </>
+  );
 }
 
 export default App;

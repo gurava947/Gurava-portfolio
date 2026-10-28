@@ -1,0 +1,120 @@
+/*
+ * The code plate — one terminal-flavoured tile, two homes.
+ *
+ * PosterRail uses it as the artwork slot for a build with no screenshot, and the project detail
+ * hero uses it in place of the initials placeholder. Both are the same object, so the styling
+ * lives here once; a context only sets `--plate-size` and where the plate sits.
+ *
+ * The palette is deliberately fixed rather than theme-driven: a terminal is dark in a light theme
+ * too, and it sits on its own dark backdrop, so it never needs a light-mode variant.
+ */
+
+.code-plate {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 7px;
+  padding: 8px 9px;
+  overflow: hidden;
+  border: 1px solid rgb(148 163 184 / 22%);
+  border-radius: var(--plate-radius, 11px);
+  background: linear-gradient(163deg, #0c1420 0%, #141f2e 55%, #0b1320 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 7%), 0 16px 30px -22px rgb(3 8 14 / 85%);
+  color: #dbe7ef;
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: var(--plate-size, 0.7rem);
+  transition: border-color 320ms ease, box-shadow 320ms ease, transform 320ms cubic-bezier(0.2, 0.75, 0.3, 1);
+}
+
+.code-plate-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.code-plate-bar i {
+  width: 0.72em;
+  height: 0.72em;
+  border-radius: 50%;
+  background: #4c5a69;
+}
+
+.code-plate-bar i:nth-child(1) { background: #f17a68; }
+.code-plate-bar i:nth-child(2) { background: #f2c45c; }
+.code-plate-bar i:nth-child(3) { background: #66c89a; }
+
+.code-plate-bar b {
+  margin-left: auto;
+  overflow: hidden;
+  color: #9a8cc4;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.code-plate-body {
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #d7f5e4;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.code-plate-body::first-line { color: #c4b5fd; }
+
+.code-plate-out {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+  padding-top: 6px;
+  border-top: 1px solid rgb(148 163 184 / 18%);
+}
+
+.code-plate-out em {
+  color: #7f93a7;
+  font-size: 0.74em;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.code-plate-out strong {
+  overflow: hidden;
+  color: #eafff3;
+  font-size: 1.02em;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Lit by whichever card owns the plate, so hovering the tile brightens its artwork. The owners are
+ * named here because a shared component cannot ask an unknown ancestor for its hover state. */
+.poster-card:hover .code-plate,
+.poster-card:focus-visible .code-plate,
+.poster-card:focus-within .code-plate,
+.lab-hero-poster:hover .code-plate {
+  border-color: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 62%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%),
+    0 0 0 1px color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 22%, transparent),
+    0 22px 40px -24px rgb(3 8 14 / 90%);
+  transform: translateY(-3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-plate {
+    transition: none;
+  }
+
+  .poster-card:hover .code-plate,
+  .lab-hero-poster:hover .code-plate {
+    transform: none;
+  }
+}

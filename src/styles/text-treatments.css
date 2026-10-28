@@ -1,0 +1,332 @@
+/*
+ * Text treatments.
+
+ * Two independent layers live here:
+ *   1. `[data-look-heading]` — a treatment on the display headings (section titles and page h1s).
+ *      The hero title is deliberately excluded: it already has ten entrance motions of its own in
+ *      site-look.css, and stacking a second paint on it fights the shimmer's own background.
+ *   2. `[data-look-text-fx]` — load, hover and press feedback on running text. Prose blocks get a
+ *      permanent film so they read as "a passage", and every treated block answers the pointer
+ *      with a highlighter sweep so plain text never feels inert.
+
+ * Both carriers are written as bare attribute selectors, never `:root[...]`, because the Card
+ * Studio preview stage sets the same attributes on a plain <div> to preview a draft. The studio's
+ * option tiles go one step further and carry the attribute on the demo title *itself*: the page
+ * rules below only reach `.section-title` / `.lab-hero h1`, so six tiles can sit side by side
+ * showing six different treatments while <html> is set to whichever one is applied. And every
+ * rule animates `opacity`, `transform` or `background-size` only — nothing changes width, padding
+ * or margin on hover, because a reflowing paragraph under the cursor is what makes text feel jumpy.
+ */
+
+/* ---------- 1. Heading treatments ---------- */
+
+@keyframes look-heading-rule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes look-heading-glow {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
+}
+
+/* Underline: a rule that draws itself once and brightens on hover. */
+[data-look-heading="underline"] :is(.section-title, .lab-hero h1, .lab-section-heading h2),
+.look-studio-demo-title[data-look-heading="underline"] {
+  position: relative;
+  padding-bottom: 0.26em;
+}
+
+[data-look-heading="underline"] :is(.section-title, .lab-hero h1, .lab-section-heading h2)::after,
+.look-studio-demo-title[data-look-heading="underline"]::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: min(100%, 11em);
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg,
+    var(--look-wash-a, var(--theme-primary)),
+    color-mix(in srgb, var(--look-wash-c, var(--theme-primary)) 70%, transparent));
+  content: "";
+  transform-origin: 0 50%;
+  animation: look-heading-rule 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: width 420ms cubic-bezier(0.2, 0.75, 0.3, 1), filter 240ms ease;
+}
+
+[data-look-heading="underline"] :is(.section-title, .lab-hero h1, .lab-section-heading h2):hover::after,
+.look-studio-demo-title[data-look-heading="underline"]:hover::after {
+  width: 100%;
+  filter: saturate(1.35) brightness(1.08);
+}
+
+/* Marker: a soft swipe sitting behind the whole heading block. */
+[data-look-heading="marker"] :is(.section-title, .lab-hero h1, .lab-section-heading h2),
+.look-studio-demo-title[data-look-heading="marker"] {
+  padding-inline: 0.34em;
+  border-radius: 0.28em;
+  background-image: linear-gradient(94deg,
+    color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 26%, transparent),
+    color-mix(in srgb, var(--look-wash-c, var(--theme-primary)) 9%, transparent) 62%,
+    transparent);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+[data-look-heading="marker"] :is(.section-title, .lab-hero h1, .lab-section-heading h2):hover,
+.look-studio-demo-title[data-look-heading="marker"]:hover {
+  background-image: linear-gradient(94deg,
+    color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 40%, transparent),
+    color-mix(in srgb, var(--look-wash-b, var(--theme-primary)) 20%, transparent) 58%,
+    transparent);
+}
+
+/* Gradient fill: the heading is painted with the same three stops as the page wash. */
+[data-look-heading="gradient"] :is(.section-title, .lab-hero h1, .lab-section-heading h2),
+.look-studio-demo-title[data-look-heading="gradient"] {
+  background-image: linear-gradient(96deg,
+    var(--look-wash-a, var(--theme-primary)) 4%,
+    var(--look-wash-b, var(--theme-primary)) 48%,
+    var(--look-wash-c, var(--theme-primary)) 96%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Descendant spans (the accent word in a page title) have to opt out of their own colour or the
+ * clipped background never reaches them. */
+[data-look-heading="gradient"] :is(.section-title, .lab-hero h1, .lab-section-heading h2) :is(span, .hero-word),
+.look-studio-demo-title[data-look-heading="gradient"] :is(span, .hero-word) {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glow: a breathing halo behind the letters. */
+[data-look-heading="glow"] :is(.section-title, .lab-hero h1, .lab-section-heading h2),
+.look-studio-demo-title[data-look-heading="glow"] {
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 42%, transparent),
+    0 0 42px color-mix(in srgb, var(--look-wash-c, var(--theme-primary)) 24%, transparent);
+  animation: look-heading-glow 4200ms ease-in-out infinite;
+}
+
+[data-look-heading="glow"] :is(.section-title, .lab-hero h1, .lab-section-heading h2):hover,
+.look-studio-demo-title[data-look-heading="glow"]:hover {
+  animation-play-state: paused;
+  text-shadow:
+    0 0 22px color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 62%, transparent),
+    0 0 54px color-mix(in srgb, var(--look-wash-c, var(--theme-primary)) 34%, transparent);
+}
+
+/* Etched: a pressed edge — a light lip under the letters, or a dark one on a dark page. */
+[data-look-heading="etched"] :is(.section-title, .lab-hero h1, .lab-section-heading h2),
+.look-studio-demo-title[data-look-heading="etched"] {
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--theme-card-bg) 92%, white), 0 2px 10px rgb(12 20 30 / 16%);
+  transition: text-shadow 260ms ease;
+}
+
+[data-look-heading="etched"] :is(.section-title, .lab-hero h1, .lab-section-heading h2):hover,
+.look-studio-demo-title[data-look-heading="etched"]:hover {
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--theme-card-bg) 92%, white),
+    0 0 20px color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 34%, transparent);
+}
+
+/* The theme class sits on the page wrapper, which is a descendant of the carrier. */
+[data-look-heading="etched"] .theme-dark :is(.section-title, .lab-hero h1, .lab-section-heading h2),
+.theme-dark .look-studio-demo-title[data-look-heading="etched"] {
+  text-shadow: 0 1px 0 rgb(0 0 0 / 62%), 0 -1px 0 rgb(255 255 255 / 8%);
+}
+
+/* ---------- 2. Reactive text ---------- */
+
+@keyframes text-block-rise {
+  from { opacity: 0; transform: translate3d(0, 9px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The sweep is a background-size animation, so the box itself never moves. */
+[data-look-text-fx="true"] :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .lab-brief-note,
+  .lab-tests-note,
+  .lab-catalog-footnote,
+  .look-studio-note,
+  .look-studio-demo-note,
+  .collection-folder-copy p
+) {
+  padding-inline: 8px;
+  margin-inline: -8px;
+  border-radius: 10px;
+  background-image: linear-gradient(104deg,
+    color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 24%, transparent),
+    color-mix(in srgb, var(--look-wash-c, var(--theme-primary)) 15%, transparent));
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 0% 1.32em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 460ms cubic-bezier(0.2, 0.75, 0.3, 1), color 220ms ease;
+}
+
+/* Prose blocks keep a film of their own so a paragraph reads as a passage, not as floating text. */
+[data-look-text-fx="true"] :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .lab-brief-note,
+  .lab-tests-note,
+  .look-studio-demo-note
+) {
+  padding: 9px 12px;
+  margin-block: 4px;
+  margin-inline: 0;
+  border-inline-start: 2px solid color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 46%, transparent);
+  border-radius: 0 12px 12px 0;
+  /* A wash tint rather than a card tint: on a section that already sits on the card colour, a
+   * card-coloured film is invisible, which is what made this layer read as "nothing happened". */
+  background-color: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 7%, transparent);
+}
+
+/* The section note is right-aligned against the heading column, so a left rule would float away
+ * from the text it belongs to. */
+[data-look-text-fx="true"] .home-section-heading .section-note {
+  border-inline-start: 0;
+  border-radius: 12px;
+}
+
+[data-look-text-fx="true"] .theme-dark :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .lab-brief-note,
+  .lab-tests-note,
+  .look-studio-demo-note
+) {
+  background-color: rgb(255 255 255 / 4%);
+}
+
+[data-look-text-fx="true"] :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .lab-brief-note,
+  .lab-tests-note,
+  .lab-catalog-footnote,
+  .look-studio-note,
+  .look-studio-demo-note,
+  .collection-folder-copy p
+):hover {
+  background-size: 100% 100%;
+  color: var(--theme-text);
+}
+
+[data-look-text-fx="true"] :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .lab-brief-note,
+  .lab-tests-note,
+  .lab-catalog-footnote,
+  .look-studio-note,
+  .look-studio-demo-note,
+  .collection-folder-copy p
+):active {
+  background-size: 100% 100%;
+  background-image: linear-gradient(104deg,
+    color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 36%, transparent),
+    color-mix(in srgb, var(--look-wash-b, var(--theme-primary)) 24%, transparent));
+}
+
+/* Eyebrows answer too: they are the smallest text on a section, so they get tracking rather than
+ * a highlight box. */
+[data-look-text-fx="true"] :is(.eyebrow, .lab-eyebrow) {
+  transition: letter-spacing 320ms cubic-bezier(0.2, 0.75, 0.3, 1), color 220ms ease;
+}
+
+[data-look-text-fx="true"] :is(.eyebrow, .lab-eyebrow):hover {
+  letter-spacing: 0.2em;
+  color: var(--theme-primary);
+}
+
+/* Entrance: one rise per block. `both` keeps the final state, so a block whose animation never
+ * runs is still visible. */
+[data-look-text-fx="true"] :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .collection-folder-copy p
+) {
+  animation: text-block-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-look-text-fx="true"] :is(.home-hero-description, .lab-hero-summary) {
+  animation-delay: 180ms;
+}
+
+/* Scroll-driven where the browser supports it: the same rise, keyed to the block entering the
+ * viewport, so long pages assemble as you read them instead of all at load. */
+@supports (animation-timeline: view()) {
+  [data-look-text-fx="true"] :is(.section-note, .lab-section-note, .lab-lead, .lab-brief-note, .lab-tests-note, .collection-folder-copy p) {
+    animation-timeline: view();
+    animation-range: entry 2% cover 26%;
+    animation-fill-mode: both;
+  }
+}
+
+/* Studio previews are small, so the same treatments are trimmed to fit a 320px stage. */
+.look-studio-demo-title {
+  margin: 0;
+  color: var(--theme-text);
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
+  font-size: clamp(1.05rem, 2.6vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.look-studio-demo-note {
+  margin: 6px 0 0;
+  color: var(--theme-muted-text);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+/* ---------- 3. Motion opt-outs ---------- */
+
+:root[data-reduced-motion="true"] :is(.section-title, .lab-hero h1, .lab-section-heading h2, .look-studio-demo-title)::after,
+:root[data-reduced-motion="true"] :is(.section-title, .lab-hero h1, .lab-section-heading h2, .look-studio-demo-title),
+:root[data-reduced-motion="true"] :is(
+  .section-note,
+  .lab-section-note,
+  .home-hero-description,
+  .lab-hero-summary,
+  .lab-lead,
+  .lab-brief-note,
+  .lab-tests-note,
+  .collection-folder-copy p
+) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.section-title, .lab-hero h1, .lab-section-heading h2, .look-studio-demo-title)::after,
+  :is(.section-title, .lab-hero h1, .lab-section-heading h2, .look-studio-demo-title),
+  :is(.section-note, .lab-section-note, .home-hero-description, .lab-hero-summary, .lab-lead, .lab-brief-note, .lab-tests-note, .collection-folder-copy p) {
+    animation: none;
+  }
+}

@@ -282,11 +282,70 @@
   -webkit-line-clamp: 2;
 }
 
+/* What the shelf holds, what is coming, what it feels like — the card stops being a thumbnail
+ * and becomes an answer. Each row is a label plus its text, so the three cards scan as one
+ * table of contents rather than three paragraphs of prose. */
+.collection-folder-story {
+  display: grid;
+  gap: 11px;
+  margin: 2px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--theme-border-color) calc(var(--theme-border-opacity) * 0.8), transparent);
+}
+
+.collection-folder-story-row {
+  display: grid;
+  gap: 4px;
+}
+
+.collection-folder-story dt {
+  color: color-mix(in srgb, var(--folder-accent) 78%, var(--theme-muted-text));
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.collection-folder-story dd {
+  margin: 0;
+  color: var(--theme-text);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  opacity: 0.86;
+}
+
+.collection-folder-story dd ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.collection-folder-story dd li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.collection-folder-story dd li::before {
+  position: absolute;
+  top: 0.52em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--folder-accent) 62%, transparent);
+  content: "";
+  transform: rotate(45deg);
+}
+
 .collection-folder-action {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   margin-top: auto;
+  padding-top: 4px;
   color: var(--folder-accent);
   font-size: 0.64rem;
   font-weight: 800;

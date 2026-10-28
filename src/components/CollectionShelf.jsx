@@ -10,9 +10,19 @@ function previewsFor(projects, collectionId) {
   const images = inCollection
     .filter((project) => project.thumbnail || project.image)
     .slice(0, 3);
-  if (images.length) return { images, code: "", output: "" };
-  const coded = inCollection.find((project) => project.cardCode) || null;
-  return { images: [], code: coded?.cardCode || "", output: coded?.cardOutput || "" };
+  if (images.length) return { images, code: "", output: "", title: "" };
+  // A code-only collection still needs a card that says something: prefer a build that carries
+  // both a snippet and its output, then fall back to whichever one exists.
+  const withBoth = inCollection.find((project) => project.cardCode && project.cardOutput);
+  const withCode = inCollection.find((project) => project.cardCode);
+  const withOutput = inCollection.find((project) => project.cardOutput);
+  const coded = withBoth || withCode || withOutput || null;
+  return {
+    images: [],
+    code: coded?.cardCode || "",
+    output: coded?.cardOutput || "",
+    title: coded?.title || "",
+  };
 }
 
 function ShelfCard({ collection, index, total, previews, active, preview, idPrefix, onSelect, onCenter }) {
@@ -33,7 +43,7 @@ function ShelfCard({ collection, index, total, previews, active, preview, idPref
           ))
         ) : (
           <span className="collection-shelf-terminal">
-            <span className="collection-shelf-terminal-bar"><i /><i /><i /></span>
+            <span className="collection-shelf-terminal-bar"><i /><i /><i />{previews.title && <em>{previews.title}</em>}</span>
             <code>{previews.code}</code>
             {previews.output && <span className="collection-shelf-terminal-output">{previews.output}</span>}
           </span>
@@ -239,7 +249,7 @@ export default function CollectionShelf({
               collection={collection}
               index={index}
               total={collections.length}
-              previews={previewsById.get(collection.id) || { images: [], code: "", output: "" }}
+              previews={previewsById.get(collection.id) || { images: [], code: "", output: "", title: "" }}
               active={activeCollection === collection.id}
               preview
               idPrefix={idPrefix}
@@ -295,7 +305,7 @@ export default function CollectionShelf({
                 collection={collection}
                 index={index}
                 total={collections.length}
-                previews={previewsById.get(collection.id) || { images: [], code: "", output: "" }}
+                previews={previewsById.get(collection.id) || { images: [], code: "", output: "", title: "" }}
                 active={activeCollection === collection.id}
                 idPrefix={idPrefix}
                 onSelect={onSelect}

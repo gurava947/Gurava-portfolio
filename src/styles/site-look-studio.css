@@ -36,6 +36,28 @@
   gap: 8px;
 }
 
+/* Gradient swatches are pure colour, so they carry no copy that needs width — let more of
+ * them sit on a row and keep the studio column from scrolling sideways. */
+.look-studio-options.is-gradient {
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+}
+
+.look-studio-options.is-gradient .look-studio-option {
+  padding: 7px;
+}
+
+.look-studio-options.is-gradient .look-studio-option-copy {
+  gap: 1px;
+}
+
+.look-studio-options.is-gradient .look-studio-option-copy strong {
+  font-size: 0.68rem;
+}
+
+.look-studio-options.is-gradient .look-studio-option-copy small {
+  display: none;
+}
+
 .look-studio-option {
   position: relative;
   display: grid;
@@ -134,7 +156,7 @@
 }
 
 .look-studio-option .look-demo-text.is-shimmer i {
-  background: linear-gradient(100deg, currentColor 30%, color-mix(in srgb, var(--theme-primary) 90%, #fff) 50%, currentColor 70%);
+  background: linear-gradient(100deg, currentColor 30%, color-mix(in srgb, var(--look-wash-a) 90%, #fff) 50%, currentColor 70%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -144,6 +166,26 @@
 
 .look-studio-option .look-demo-text.is-static i {
   opacity: 0.55;
+}
+
+.look-studio-option .look-demo-text.is-cascade i {
+  animation: look-demo-cascade 2s ease-in-out infinite both;
+}
+
+.look-studio-option .look-demo-text.is-focus i {
+  animation: look-demo-focus 2.1s ease-in-out infinite both;
+}
+
+.look-studio-option .look-demo-text.is-slide i {
+  animation: look-demo-slide 1.9s ease-in-out infinite both;
+}
+
+.look-studio-option .look-demo-text.is-pop i {
+  animation: look-demo-pop 1.7s ease-in-out infinite both;
+}
+
+.look-studio-option .look-demo-text.is-neon i {
+  animation: look-demo-neon 2.4s ease-in-out infinite;
 }
 
 .look-demo-text i:nth-child(2) { animation-delay: 90ms; }
@@ -172,10 +214,36 @@
   to { background-position: -80% 0; }
 }
 
+@keyframes look-demo-cascade {
+  0%, 60%, 100% { transform: none; opacity: 1; }
+  20% { transform: translateY(-7px) rotate(-7deg); opacity: 0.2; }
+}
+
+@keyframes look-demo-focus {
+  0%, 65%, 100% { filter: none; opacity: 1; }
+  22% { filter: blur(4px); opacity: 0.25; }
+}
+
+@keyframes look-demo-slide {
+  0%, 60%, 100% { transform: none; opacity: 1; }
+  20% { transform: translateX(9px); opacity: 0.2; }
+}
+
+@keyframes look-demo-pop {
+  0%, 62%, 100% { transform: none; opacity: 1; }
+  18% { transform: scale(0.55); opacity: 0.2; }
+  36% { transform: scale(1.16); opacity: 1; }
+}
+
+@keyframes look-demo-neon {
+  0%, 100% { text-shadow: none; }
+  50% { text-shadow: 0 0 10px color-mix(in srgb, var(--look-wash-a) 85%, transparent), 0 0 20px color-mix(in srgb, var(--look-wash-c) 60%, transparent); }
+}
+
 .look-demo-pattern {
   display: block;
   height: 100%;
-  background: color-mix(in srgb, var(--theme-primary) 8%, transparent);
+  background: color-mix(in srgb, var(--look-wash-a) 8%, transparent);
 }
 
 .look-demo-pattern.is-grid {
@@ -186,21 +254,96 @@
 }
 
 .look-demo-pattern.is-dots {
-  background-image: radial-gradient(color-mix(in srgb, var(--theme-primary) 70%, transparent) 1.5px, transparent 1.7px);
+  background-image: radial-gradient(color-mix(in srgb, var(--look-wash-a) 70%, transparent) 1.5px, transparent 1.7px);
   background-size: 10px 10px;
 }
 
 .look-demo-pattern.is-beams {
-  background: linear-gradient(112deg, transparent 34%, color-mix(in srgb, var(--theme-primary) 55%, transparent) 50%, transparent 66%);
+  background: linear-gradient(112deg, transparent 34%, color-mix(in srgb, var(--look-wash-a) 55%, transparent) 50%, transparent 66%);
   filter: blur(3px);
 }
 
 .look-demo-pattern.is-mesh {
   background:
-    radial-gradient(60% 70% at 25% 30%, color-mix(in srgb, var(--theme-primary) 65%, transparent), transparent 70%),
-    radial-gradient(55% 60% at 78% 62%, color-mix(in srgb, var(--theme-accent) 55%, transparent), transparent 70%);
+    radial-gradient(60% 70% at 25% 30%, color-mix(in srgb, var(--look-wash-a) 65%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 78% 62%, color-mix(in srgb, var(--look-wash-c) 55%, transparent), transparent 70%);
   filter: blur(4px);
 }
+
+.look-demo-pattern.is-blueprint {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--look-wash-b) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--look-wash-b) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--look-wash-a) 45%, transparent) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, color-mix(in srgb, var(--look-wash-a) 45%, transparent) 1.5px, transparent 1.5px);
+  background-size: 6px 6px, 6px 6px, 30px 30px, 30px 30px;
+}
+
+.look-demo-pattern.is-diagonal {
+  background-image: repeating-linear-gradient(
+    58deg,
+    color-mix(in srgb, var(--look-wash-a) 55%, transparent) 0 1px,
+    transparent 1px 8px
+  );
+}
+
+.look-demo-pattern.is-rings {
+  background-image: repeating-radial-gradient(
+    circle at 88% 6%,
+    color-mix(in srgb, var(--look-wash-c) 55%, transparent) 0 1.5px,
+    transparent 1.5px 11px
+  );
+}
+
+.look-demo-pattern.is-stardust {
+  background-image:
+    radial-gradient(color-mix(in srgb, var(--look-wash-a) 75%, transparent) 1px, transparent 1.3px),
+    radial-gradient(color-mix(in srgb, var(--look-wash-c) 65%, transparent) 1.4px, transparent 1.8px),
+    radial-gradient(color-mix(in srgb, var(--look-wash-b) 55%, transparent) 1.8px, transparent 2.4px);
+  background-size: 9px 9px, 17px 17px, 27px 27px;
+  background-position: 0 0, 5px 7px, 12px 3px;
+}
+
+.look-demo-pattern.is-aurora {
+  background-image:
+    linear-gradient(94deg, transparent 8%, color-mix(in srgb, var(--look-wash-a) 60%, transparent) 20%, transparent 32%),
+    linear-gradient(86deg, transparent 38%, color-mix(in srgb, var(--look-wash-b) 55%, transparent) 50%, transparent 62%),
+    linear-gradient(98deg, transparent 66%, color-mix(in srgb, var(--look-wash-c) 55%, transparent) 78%, transparent 90%);
+}
+
+.look-demo-pattern.is-spotlight {
+  background: radial-gradient(58% 66% at 50% 34%, color-mix(in srgb, var(--look-wash-a) 62%, transparent), transparent 72%);
+}
+
+.look-demo-pattern.is-prism {
+  background-image: conic-gradient(from 0deg at 50% 45%,
+    color-mix(in srgb, var(--look-wash-a) 60%, transparent),
+    color-mix(in srgb, var(--look-wash-b) 55%, transparent) 30%,
+    color-mix(in srgb, var(--look-wash-c) 55%, transparent) 60%,
+    transparent 100%);
+}
+
+/* Gradient swatches: the same three stops the live wash mixes from, shown at full strength so the
+ * difference between two neighbouring options is visible at 46px tall. */
+.look-demo-gradient {
+  display: block;
+  height: 100%;
+  background: linear-gradient(118deg, var(--demo-a, var(--theme-primary)), var(--demo-b, var(--theme-secondary)) 52%, var(--demo-c, var(--theme-accent)));
+}
+
+.look-demo-gradient.is-theme {
+  --demo-a: var(--theme-primary);
+  --demo-b: var(--theme-secondary);
+  --demo-c: var(--theme-accent);
+}
+
+.look-demo-gradient.is-sunset { --demo-a: #ff7a45; --demo-b: #ffb347; --demo-c: #f0417b; }
+.look-demo-gradient.is-ocean { --demo-a: #1f6feb; --demo-b: #17b8a6; --demo-c: #4cc9f0; }
+.look-demo-gradient.is-forest { --demo-a: #2f8f5b; --demo-b: #14532d; --demo-c: #a3e635; }
+.look-demo-gradient.is-grape { --demo-a: #7c3aed; --demo-b: #4338ca; --demo-c: #d946ef; }
+.look-demo-gradient.is-ember { --demo-a: #f97316; --demo-b: #b91c1c; --demo-c: #facc15; }
+.look-demo-gradient.is-candy { --demo-a: #f472b6; --demo-b: #38bdf8; --demo-c: #a78bfa; }
+.look-demo-gradient.is-graphite { --demo-a: #94a3b8; --demo-b: #64748b; --demo-c: #cbd5e1; }
 
 /* The two switch rows sit side by side when the studio column is wide enough. The
  * featured strip has three choices, so its label column and segments must shrink
@@ -296,34 +439,103 @@
   z-index: 0;
   pointer-events: none;
   opacity: var(--look-pattern-opacity, 1);
+  /* The same three stops the live wash uses, so the stage shows the gradient choice as it will
+   * read on the page rather than as a flat swatch. */
+  background:
+    radial-gradient(120% 78% at 6% -12%, color-mix(in srgb, var(--look-wash-a) calc(var(--look-wash-strength) * 2.2), transparent), transparent 62%),
+    radial-gradient(96% 66% at 98% 4%, color-mix(in srgb, var(--look-wash-c) calc(var(--look-wash-strength) * 1.8), transparent), transparent 58%),
+    radial-gradient(120% 88% at 52% 112%, color-mix(in srgb, var(--look-wash-b) calc(var(--look-wash-strength) * 2.2), transparent), transparent 64%);
+}
+
+.look-studio-stage[data-bg-pattern="none"] .look-studio-stage-bg {
+  opacity: 0;
 }
 
 .look-studio-stage[data-bg-pattern="grid"] .look-studio-stage-bg {
   background-image:
-    linear-gradient(color-mix(in srgb, var(--theme-text) 12%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--theme-text) 12%, transparent) 1px, transparent 1px);
-  background-size: 26px 26px;
+    linear-gradient(color-mix(in srgb, var(--look-wash-a) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--look-wash-a) 12%, transparent) 1px, transparent 1px),
+    radial-gradient(120% 78% at 6% -12%, color-mix(in srgb, var(--look-wash-a) calc(var(--look-wash-strength) * 2.2), transparent), transparent 62%),
+    radial-gradient(120% 88% at 52% 112%, color-mix(in srgb, var(--look-wash-b) calc(var(--look-wash-strength) * 2.2), transparent), transparent 64%);
+  background-size: 26px 26px, 26px 26px, auto, auto;
   animation: look-grid-drift 34s linear infinite;
 }
 
 .look-studio-stage[data-bg-pattern="dots"] .look-studio-stage-bg {
-  background-image: radial-gradient(color-mix(in srgb, var(--theme-primary) 60%, transparent) 1.3px, transparent 1.5px);
+  background-image: radial-gradient(color-mix(in srgb, var(--look-wash-a) 60%, transparent) 1.3px, transparent 1.5px);
   background-size: 14px 14px;
 }
 
 .look-studio-stage[data-bg-pattern="beams"] .look-studio-stage-bg {
   background:
-    linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--theme-primary) 40%, transparent) 50%, transparent 60%);
+    linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--look-wash-a) 40%, transparent) 50%, transparent 60%);
   filter: blur(10px);
   animation: look-beam-sweep 18s ease-in-out infinite alternate;
 }
 
 .look-studio-stage[data-bg-pattern="mesh"] .look-studio-stage-bg {
   background:
-    radial-gradient(48% 60% at 22% 26%, color-mix(in srgb, var(--theme-primary) 45%, transparent), transparent 70%),
-    radial-gradient(44% 56% at 80% 70%, color-mix(in srgb, var(--theme-accent) 35%, transparent), transparent 70%);
+    radial-gradient(48% 60% at 22% 26%, color-mix(in srgb, var(--look-wash-a) 45%, transparent), transparent 70%),
+    radial-gradient(44% 56% at 80% 70%, color-mix(in srgb, var(--look-wash-c) 35%, transparent), transparent 70%);
   filter: blur(14px);
   animation: look-mesh-drift 26s ease-in-out infinite alternate;
+}
+
+.look-studio-stage[data-bg-pattern="blueprint"] .look-studio-stage-bg {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--look-wash-b) 40%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--look-wash-b) 40%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--look-wash-a) 32%, transparent) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, color-mix(in srgb, var(--look-wash-a) 32%, transparent) 1.5px, transparent 1.5px);
+  background-size: 9px 9px, 9px 9px, 45px 45px, 45px 45px;
+}
+
+.look-studio-stage[data-bg-pattern="diagonal"] .look-studio-stage-bg {
+  background-image: repeating-linear-gradient(
+    58deg,
+    color-mix(in srgb, var(--look-wash-a) 30%, transparent) 0 1px,
+    transparent 1px 14px
+  );
+}
+
+.look-studio-stage[data-bg-pattern="rings"] .look-studio-stage-bg {
+  background-image: repeating-radial-gradient(
+    circle at 88% 6%,
+    color-mix(in srgb, var(--look-wash-c) 34%, transparent) 0 1.5px,
+    transparent 1.5px 22px
+  );
+}
+
+.look-studio-stage[data-bg-pattern="stardust"] .look-studio-stage-bg {
+  background-image:
+    radial-gradient(color-mix(in srgb, var(--look-wash-a) 60%, transparent) 1px, transparent 1.3px),
+    radial-gradient(color-mix(in srgb, var(--look-wash-c) 50%, transparent) 1.4px, transparent 1.8px),
+    radial-gradient(color-mix(in srgb, var(--look-wash-b) 45%, transparent) 1.8px, transparent 2.4px);
+  background-size: 13px 13px, 24px 24px, 38px 38px;
+  background-position: 0 0, 7px 9px, 17px 4px;
+}
+
+.look-studio-stage[data-bg-pattern="aurora"] .look-studio-stage-bg {
+  background-image:
+    linear-gradient(94deg, transparent 6%, color-mix(in srgb, var(--look-wash-a) 38%, transparent) 18%, transparent 30%),
+    linear-gradient(86deg, transparent 38%, color-mix(in srgb, var(--look-wash-b) 32%, transparent) 50%, transparent 62%),
+    linear-gradient(98deg, transparent 66%, color-mix(in srgb, var(--look-wash-c) 32%, transparent) 78%, transparent 90%);
+  animation: look-aurora-lean 24s ease-in-out infinite alternate;
+}
+
+.look-studio-stage[data-bg-pattern="spotlight"] .look-studio-stage-bg {
+  background: radial-gradient(52% 60% at 50% 30%, color-mix(in srgb, var(--look-wash-a) 42%, transparent), transparent 70%);
+  animation: look-spotlight-breathe 16s ease-in-out infinite alternate;
+}
+
+.look-studio-stage[data-bg-pattern="prism"] .look-studio-stage-bg {
+  background: conic-gradient(from 0deg at 50% 45%,
+    color-mix(in srgb, var(--look-wash-a) 38%, transparent),
+    color-mix(in srgb, var(--look-wash-b) 32%, transparent) 28%,
+    color-mix(in srgb, var(--look-wash-c) 34%, transparent) 56%,
+    color-mix(in srgb, var(--look-wash-a) 38%, transparent) 86%,
+    transparent 100%);
+  animation: look-prism-turn 48s linear infinite;
 }
 
 .look-studio-mark {
@@ -389,12 +601,38 @@
 }
 
 .look-studio-stage[data-hero-text="shimmer"] .hero-word {
-  background: linear-gradient(100deg, currentColor 32%, color-mix(in srgb, var(--theme-primary) 85%, #fff) 50%, currentColor 68%);
+  background: linear-gradient(100deg, currentColor 32%, color-mix(in srgb, var(--look-wash-a) 85%, #fff) 50%, currentColor 68%);
   background-size: 240% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   animation: look-demo-shimmer 2.6s linear infinite;
+}
+
+/* The remaining motions reuse the exact page keyframes so what the stage shows is what
+ * the live hero does — only the selectors differ (stage vs :root). */
+.look-studio-stage[data-hero-text="cascade"] .hero-word {
+  animation: hero-word-cascade var(--look-hero-duration, 700ms) cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 65ms));
+}
+
+.look-studio-stage[data-hero-text="focus"] .hero-word {
+  animation: hero-word-focus var(--look-hero-duration, 640ms) ease-out both;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 75ms));
+}
+
+.look-studio-stage[data-hero-text="slide"] .hero-word {
+  animation: hero-word-slide var(--look-hero-duration, 560ms) cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 60ms));
+}
+
+.look-studio-stage[data-hero-text="pop"] .hero-word {
+  animation: hero-word-pop var(--look-hero-duration, 520ms) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 55ms));
+}
+
+.look-studio-stage[data-hero-text="neon"] .hero-word {
+  animation: hero-word-neon var(--look-hero-duration, 3200ms) ease-in-out infinite;
 }
 
 /* A miniature of the home featured strip so the Featured control previews what it swaps. */
@@ -416,7 +654,7 @@
   border: 1px solid color-mix(in srgb, var(--theme-text) 13%, transparent);
   border-radius: 9px;
   background:
-    linear-gradient(158deg, color-mix(in srgb, var(--theme-primary) 28%, transparent) 0%, color-mix(in srgb, var(--theme-text) 7%, transparent) 100%);
+    linear-gradient(158deg, color-mix(in srgb, var(--look-wash-a) 28%, transparent) 0%, color-mix(in srgb, var(--theme-text) 7%, transparent) 100%);
 }
 
 .look-studio-strip-card i {
@@ -475,4 +713,37 @@
   .look-studio-stage[data-bg-pattern] .look-studio-stage-bg {
     animation: none !important;
   }
+}
+
+/* ---------- Section heading tiles and stage demo ---------- */
+
+/* Heading previews are the real thing: each tile carries its own data-look-heading and renders
+ * .look-studio-demo-title, so text-treatments.css paints it. Nothing is faked in here. */
+.look-studio-options.is-heading {
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+}
+
+.look-demo-heading {
+  display: block;
+  padding: 2px 0;
+}
+
+.look-studio-option .look-studio-demo-title {
+  display: block;
+  font-size: 0.98rem;
+  line-height: 1.15;
+}
+
+.look-studio-stage .look-studio-demo-title {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 13px;
+  font-size: 1.06rem;
+}
+
+.look-studio-stage .look-studio-demo-note {
+  position: relative;
+  z-index: 1;
+  display: block;
 }

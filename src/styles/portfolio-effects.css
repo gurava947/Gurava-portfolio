@@ -4,11 +4,9 @@
   isolation: isolate;
   min-height: 100vh;
   color: var(--theme-text);
-  background:
-    radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--theme-primary) 18%, transparent), transparent 42%),
-    radial-gradient(ellipse at 90% 22%, color-mix(in srgb, var(--theme-secondary) 14%, transparent), transparent 36%),
-    var(--theme-background);
-  transition: color var(--theme-transition), background-color var(--theme-transition);
+  /* No background: the ambience these two radial washes used to paint is now the Look layer's
+   * job, so it can follow the visitor's gradient choice instead of being fixed to the theme. */
+  transition: color var(--theme-transition);
 }
 
 .portfolio-home::before {

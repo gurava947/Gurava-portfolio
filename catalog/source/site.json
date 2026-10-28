@@ -160,7 +160,13 @@
       "eyebrow": "Collections",
       "title": "Three ways of building",
       "note": "Jump into the shelf that matches the work you want to see.",
-      "action": "Browse the shelf"
+      "action": "Browse the shelf",
+      "purposeLabel": "Why this shelf exists",
+      "contentsLabel": "What is inside",
+      "nextLabel": "What gets added",
+      "experienceLabel": "How it feels to use",
+      "countLabel": "{count} builds",
+      "totalLabel": "builds across three shelves"
     },
     "projects": {
       "eyebrow": "Selected builds · {count}",
@@ -193,8 +199,35 @@
       "title": "No matching projects",
       "description": "Try another title, technology, category, or collection."
     },
+    "credits": {
+      "eyebrow": "Program & credit",
+      "title": "Built inside",
+      "titleAccent": "NXTWAVE CCBP 4.0",
+      "note": "Every project, brief and deadline in this catalog came out of the All Access CCBP 4.0 track. This shelf is the record of that practice.",
+      "highlightLabel": "Program",
+      "highlight": {
+        "name": "NXTWAVE",
+        "label": "All Access",
+        "program": "CCBP 4.0 · Full Stack Web Development",
+        "note": "The program that supplied every build on this page — its modules set the order, its briefs set the work."
+      },
+      "thanksLabel": "Special thanks",
+      "thanks": {
+        "name": "Mr. Rahul Athuloori",
+        "honorific": "Rahul sir",
+        "role": "NXTWAVE CCBP 4.0",
+        "quote": "ఆయన వల్ల ఇదంతా సాధ్యమైంది.",
+        "quoteTranslation": "Ayana valla idanta sadhyamaindi — every one of these builds became possible because of his guidance."
+      },
+      "madeWithLabel": "Made with",
+      "madeWith": {
+        "name": "గురువయ్య",
+        "transliteration": "Guruvayya",
+        "note": "The name behind every commit in this portfolio."
+      }
+    },
     "footer": {
-      "note": "Gurava made · NxtWave CCBP 4.0 powered by · Credit with Mr. Rahul sir.",
+      "note": "Made with గురువయ్య · Guruvayya · NXTWAVE CCBP 4.0 · Special thanks to Mr. Rahul Athuloori (Rahul sir).",
       "backToTop": "Back to top ↑"
     }
   },
@@ -234,15 +267,39 @@
   "collectionsPage": {
     "python": {
       "label": "Python",
-      "description": "Python 3.10 practice questions plus a real browser playground running through Pyodide."
+      "description": "Python 3.10 practice questions plus a real browser playground running through Pyodide.",
+      "purpose": "Logic first. Every Python brief from the CCBP 4.0 track, solved and runnable without a local setup.",
+      "contents": [
+        "Python 3.10 practice questions, one card per brief",
+        "A live Pyodide playground — edit the code and run it in the browser",
+        "Expected output, the idea behind the problem and a score per build"
+      ],
+      "next": "Data-structure sets and the remaining worksheet modules as each one is completed.",
+      "experience": "Open a card, read the problem, run the code right there — no download, no environment."
     },
     "static": {
       "label": "Static Web",
-      "description": "39 supplied static-site builds covering HTML, CSS, Bootstrap, layouts, and page composition."
+      "description": "39 supplied static-site builds covering HTML, CSS, Bootstrap, layouts, and page composition.",
+      "purpose": "Page composition. HTML and CSS from an empty file to a finished, section-by-section page.",
+      "contents": [
+        "HTML structure, CSS selectors and the box model, in module order",
+        "Bootstrap components — navbars, cards, carousels, grids",
+        "Full multi-section pages built from the supplied briefs"
+      ],
+      "next": "An accessibility pass and a small design-system pass over the components that repeat.",
+      "experience": "Jump from a thumbnail to the running page, then back to the shelf without losing position."
     },
     "responsive": {
       "label": "Responsive Web",
-      "description": "35 supplied responsive sections and full-page builds using Bootstrap grids, flex layouts, and breakpoints."
+      "description": "35 supplied responsive sections and full-page builds using Bootstrap grids, flex layouts, and breakpoints.",
+      "purpose": "Layout under pressure. The same section measured across mobile, tablet and desktop.",
+      "contents": [
+        "Bootstrap grid behaviour and flex rules, section by section",
+        "Breakpoint work shown across three device widths",
+        "Full responsive pages built from the supplied briefs"
+      ],
+      "next": "The remaining component sections from the responsive module and more full-page builds.",
+      "experience": "Switch devices on the card and watch the layout reflow instead of reading about it."
     }
   },
   "detail": {

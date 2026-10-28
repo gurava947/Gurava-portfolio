@@ -2,7 +2,7 @@ import { useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import SiteLookStudio from "./SiteLookStudio";
-import { DEFAULT_SITE_LOOK } from "../config/siteLook";
+import { DEFAULT_SITE_LOOK, HEADLINE_STYLES } from "../config/siteLook";
 
 function Harness({ onApply, initialSettings }) {
   const [settings, setSettings] = useState(initialSettings);
@@ -73,6 +73,34 @@ describe("SiteLookStudio", () => {
     expect(stage()).toHaveAttribute("data-logo-3d", "false");
     expect(stage().style.getPropertyValue("--look-logo-depth")).toBe("0");
     expect(stage().querySelector(".look-studio-mark")).not.toHaveClass("is-3d");
+  });
+
+  it("previews a section heading style and only ships it on Apply look", () => {
+    const { onApply, stage, container } = renderStudio();
+
+    expect(stage()).toHaveAttribute("data-look-heading", "underline");
+    // Every tile paints itself with the real text-treatments.css rules, so the studio cannot drift
+    // from the page it is previewing.
+    expect(container.querySelectorAll(".look-demo-heading")).toHaveLength(HEADLINE_STYLES.length);
+
+    fireEvent.click(screen.getByRole("button", { name: "Marker heading style" }));
+
+    expect(stage()).toHaveAttribute("data-look-heading", "marker");
+    expect(onApply).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: /Apply look/i }));
+    expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, heading: "marker" });
+  });
+
+  it("switches the text reaction layer off on its own", () => {
+    const { stage } = renderStudio();
+
+    expect(stage()).toHaveAttribute("data-look-text-fx", "true");
+
+    fireEvent.click(screen.getByRole("button", { name: "Text reactions off" }));
+
+    expect(stage()).toHaveAttribute("data-look-text-fx", "false");
+    expect(stage()).toHaveAttribute("data-look-heading", "underline");
   });
 
   it("previews the featured strip layout and only the rail variant loops the mini shelf", () => {
