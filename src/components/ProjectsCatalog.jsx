@@ -3,6 +3,7 @@ import CollectionShelf from "./CollectionShelf";
 import ProjectCard from "./ProjectCard";
 import ProjectSlider from "./ProjectSlider";
 import { DEFAULT_SHELF_MOTION } from "../config/cardMotion";
+import { DEFAULT_SHELF_3D } from "../config/shelf3d";
 import { getOrderedCollections } from "../config/collections";
 import { CARD_LAYOUTS } from "../utils/cardStyle";
 import { filterProjects, pageNumbers, paginateProjects, PROJECTS_PER_PAGE, PROJECTS_PER_RAIL_PAGE, sortProjects } from "../utils/catalogFilters";
@@ -197,7 +198,7 @@ export function SelectField({ id, label, icon, value, options, onChange }) {
   );
 }
 
-export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {}, shelfMotion = DEFAULT_SHELF_MOTION }) {
+export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {}, shelfMotion = DEFAULT_SHELF_MOTION, shelf3d = DEFAULT_SHELF_3D }) {
   const [filters, setFilters] = useState(() => parseFilters(routeSearch));
   const deferredQuery = useDeferredValue(filters.query);
   const gridRef = useRef(null);
@@ -277,6 +278,7 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
             onSelect={(collection) => update({ collection })}
             label={copy.collectionLabel}
             motion={shelfMotion}
+            shelf3d={shelf3d}
           />
         </div>
       </section>

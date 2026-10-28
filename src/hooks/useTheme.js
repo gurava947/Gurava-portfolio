@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { applyCardStyleVariables, CARD_LAYOUTS } from "../utils/cardStyle";
 import { DEFAULT_CARD_EFFECTS, normalizeCardEffects } from "../config/cardEffects";
 import { DEFAULT_SHELF_MOTION, normalizeShelfMotion } from "../config/cardMotion";
+import { DEFAULT_SHELF_3D, normalizeShelf3d } from "../config/shelf3d";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
 import { DEFAULT_SITE_LOOK, getSiteLookVariables, normalizeSiteLook } from "../config/siteLook";
 import { DEFAULT_PLAYGROUND_THEME, normalizePlaygroundTheme } from "../config/themeSync";
@@ -162,6 +163,7 @@ export const DEFAULT_THEME_SETTINGS = {
   layout: DEFAULT_LAYOUT_SETTINGS,
   effects: DEFAULT_CARD_EFFECTS,
   motion: DEFAULT_SHELF_MOTION,
+  shelf3d: DEFAULT_SHELF_3D,
   look: DEFAULT_SITE_LOOK,
   playgroundTheme: DEFAULT_PLAYGROUND_THEME,
 };
@@ -218,6 +220,7 @@ function getInitialSettings() {
         layout: normalizeLayoutSettings(parsed?.layout),
         effects: normalizeCardEffects(parsed?.effects),
         motion: normalizeShelfMotion(parsed?.motion),
+        shelf3d: normalizeShelf3d(parsed?.shelf3d),
         look: normalizeSiteLook(parsed?.look),
         playgroundTheme: normalizePlaygroundTheme(parsed?.playgroundTheme),
       };
@@ -281,6 +284,7 @@ export function useTheme() {
     root.dataset.cardFxIntensity = effects.intensity;
     const motion = normalizeShelfMotion(settings.motion);
     root.dataset.shelfMotion = motion.preset;
+    const shelf3d = normalizeShelf3d(settings.shelf3d);
     const look = normalizeSiteLook(settings.look);
     root.dataset.look = look.preset;
     root.dataset.heroText = look.heroText;
@@ -297,7 +301,7 @@ export function useTheme() {
     try {
       window.localStorage.setItem(
         THEME_STORAGE_KEY,
-        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, look, playgroundTheme }),
+        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, shelf3d, look, playgroundTheme }),
       );
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
@@ -439,6 +443,13 @@ export function useTheme() {
       look: normalizeSiteLook({ ...normalizeSiteLook(current.look), ...changes }),
     }));
   };
+  const updateShelf3dSettings = (changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      shelf3d: normalizeShelf3d({ ...normalizeShelf3d(current.shelf3d), ...changes }),
+    }));
+  };
   const updatePlaygroundThemeSettings = (changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
@@ -457,6 +468,7 @@ export function useTheme() {
     updateLayoutSettings,
     updateCardEffectsSettings,
     updateShelfMotionSettings,
+    updateShelf3dSettings,
     updateSiteLookSettings,
     updatePlaygroundThemeSettings,
   };

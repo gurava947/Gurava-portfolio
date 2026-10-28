@@ -9,6 +9,7 @@ import {
   normalizeShelfMotion,
   sameShelfMotion,
 } from "../config/cardMotion";
+import { DEFAULT_SHELF_3D } from "../config/shelf3d";
 import "../styles/card-motion-studio.css";
 
 const INTENSITY_LABELS = { subtle: "Subtle", medium: "Medium", strong: "Strong" };
@@ -26,7 +27,7 @@ function MotionSwatch({ preset }) {
   );
 }
 
-export default function CardMotionStudio({ settings, onApply, collections = [], projects = [] }) {
+export default function CardMotionStudio({ settings, onApply, collections = [], projects = [], shelf3d = DEFAULT_SHELF_3D }) {
   const applied = normalizeShelfMotion(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -171,6 +172,7 @@ export default function CardMotionStudio({ settings, onApply, collections = [], 
           collections={collections}
           projects={projects}
           motion={draft}
+          shelf3d={shelf3d}
         />
         <p className="motion-studio-preview-note">
           Hover a sample to test the draft. The live shelf is isolated from this preview; only Apply motion changes it.

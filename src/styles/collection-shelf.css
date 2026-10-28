@@ -14,6 +14,11 @@
    * .collection-shelf-glass, which both size themselves from these instead of guessing. */
   --shelf-glass-height: 216px;
   --shelf-art-band: 260px;
+  /* 3D Settings restates the total card height; the artwork band then takes whatever the frosted
+   * label panel leaves, floored so a very short card still shows a usable print. With no override
+   * the two tokens above decide both numbers, exactly as before. */
+  --shelf-card-total-height: var(--shelf-3d-card-height, calc(var(--shelf-glass-height) + var(--shelf-art-band)));
+  --shelf-art-height: max(112px, calc(var(--shelf-card-total-height) - var(--shelf-glass-height)));
   position: relative;
   margin-top: 28px;
 }
@@ -136,10 +141,16 @@
 }
 
 .collection-shelf-track {
-  --shelf-gap: clamp(16px, 1.8vw, 26px);
+  --shelf-gap: var(--shelf-3d-gap, clamp(16px, 1.8vw, 26px));
   /* One window at a time, the way the phone already does it: the card takes the track up to a
    * readable measure instead of the row dividing itself into ever narrower tiles. */
-  --shelf-card-width: min(100%, 720px);
+  --shelf-card-width: var(--shelf-3d-card-width, min(100%, 720px));
+  /* A 3D grid shares the row between the chosen columns; one column leaves the measure above
+   * untouched, which is what keeps the shipped shelf identical. */
+  --shelf-tile-width: min(
+    var(--shelf-card-width),
+    calc((100% - (var(--shelf-3d-columns, 1) - 1) * var(--shelf-gap)) / var(--shelf-3d-columns, 1))
+  );
   display: flex;
   gap: var(--shelf-gap);
   padding: 24px 18px 40px;
@@ -179,8 +190,8 @@
   --collection-accent: #7c6cf0;
   position: relative;
   /* Label panel plus artwork band, so the deck always has the room the tokens promise it. */
-  height: calc(var(--shelf-glass-height) + var(--shelf-art-band));
-  flex: 0 0 var(--shelf-card-width);
+  height: calc(var(--shelf-glass-height) + var(--shelf-art-height));
+  flex: 0 0 var(--shelf-tile-width);
   min-width: 0;
   scroll-snap-align: center;
   isolation: isolate;
@@ -309,7 +320,7 @@
   z-index: 0;
   inset: 0;
   overflow: hidden;
-  perspective: 900px;
+  perspective: var(--shelf-3d-perspective, 900px);
   background:
     radial-gradient(120% 110% at 88% 0%, color-mix(in srgb, var(--collection-accent) 34%, transparent), transparent 62%),
     linear-gradient(155deg, #101827, #0b111a);
@@ -325,7 +336,7 @@
   bottom: calc(var(--shelf-glass-height) + 12px);
   left: 9%;
   width: 46%;
-  height: calc(var(--shelf-art-band) - 34px);
+  height: calc(var(--shelf-art-height) - 34px);
   border-radius: 14px;
   object-fit: cover;
   object-position: top center;
@@ -341,41 +352,41 @@
 .collection-shelf-art img:nth-child(1) {
   z-index: 3;
   opacity: 1;
-  transform: translate3d(0, 0, 0) rotateY(-9deg) rotateX(2deg);
+  transform: translate3d(0, 0, 0) rotateY(var(--shelf-3d-tilt, -9deg)) rotateX(var(--shelf-3d-lift, 2deg));
 }
 
 .collection-shelf-art img:nth-child(2) {
   z-index: 2;
   opacity: 0.5;
-  transform: translate3d(26%, -14%, -34px) scale(0.9) rotateY(-9deg) rotateX(2deg);
+  transform: translate3d(26%, -14%, var(--shelf-3d-depth, -34px)) scale(0.9) rotateY(var(--shelf-3d-tilt, -9deg)) rotateX(var(--shelf-3d-lift, 2deg));
 }
 
 .collection-shelf-art img:nth-child(3) {
   z-index: 1;
   opacity: 0.26;
-  transform: translate3d(52%, -28%, -68px) scale(0.8) rotateY(-9deg) rotateX(2deg);
+  transform: translate3d(52%, -28%, calc(var(--shelf-3d-depth, -34px) * 2)) scale(0.8) rotateY(var(--shelf-3d-tilt, -9deg)) rotateX(var(--shelf-3d-lift, 2deg));
 }
 
 /* Only one preview available: centre it instead of leaving a lopsided pile. */
 .collection-shelf-art img:only-child {
   left: 50%;
   width: 58%;
-  height: calc(var(--shelf-art-band) - 22px);
-  transform: translate3d(-50%, 0, 0) rotateY(-9deg) rotateX(2deg);
+  height: calc(var(--shelf-art-height) - 22px);
+  transform: translate3d(-50%, 0, 0) rotateY(var(--shelf-3d-tilt, -9deg)) rotateX(var(--shelf-3d-lift, 2deg));
 }
 
 .collection-shelf-card:hover .collection-shelf-art img:nth-child(2),
 .collection-shelf-item:focus-within .collection-shelf-art img:nth-child(2),
 .collection-shelf-item.is-active .collection-shelf-art img:nth-child(2) {
   opacity: 0.66;
-  transform: translate3d(36%, -21%, -34px) scale(0.9) rotateY(-6deg) rotateX(2deg);
+  transform: translate3d(36%, -21%, var(--shelf-3d-depth, -34px)) scale(0.9) rotateY(var(--shelf-3d-tilt-open, -6deg)) rotateX(var(--shelf-3d-lift, 2deg));
 }
 
 .collection-shelf-card:hover .collection-shelf-art img:nth-child(3),
 .collection-shelf-item:focus-within .collection-shelf-art img:nth-child(3),
 .collection-shelf-item.is-active .collection-shelf-art img:nth-child(3) {
   opacity: 0.42;
-  transform: translate3d(70%, -42%, -68px) scale(0.8) rotateY(-6deg) rotateX(2deg);
+  transform: translate3d(70%, -42%, calc(var(--shelf-3d-depth, -34px) * 2)) scale(0.8) rotateY(var(--shelf-3d-tilt-open, -6deg)) rotateX(var(--shelf-3d-lift, 2deg));
 }
 
 .collection-shelf-art::after {
@@ -648,14 +659,25 @@
 }
 
 .collection-shelf.is-preview .collection-shelf-track {
+  --shelf-gap: calc(var(--shelf-3d-gap, 22px) * 0.42);
+  --shelf-card-width: min(100%, calc(var(--shelf-3d-card-width, 720px) * 0.42));
   padding: 18px 8px 28px;
   margin: -6px -4px;
-  gap: 10px;
+}
+
+/* One 0.42 scale for the whole miniature — width, height and spacing. The label panel keeps its
+ * real type because a 42%-sized headline would be unreadable, so it takes a fixed measure and the
+ * artwork band gets whatever the scaled card leaves over: a taller card visibly means more print,
+ * which is the thing the Studio is actually adjusting. */
+.collection-shelf.is-preview {
+  --shelf-card-total-height: calc(var(--shelf-3d-card-height, 476px) * 0.42);
+  --shelf-glass-height: 100px;
+  --shelf-art-height: max(76px, calc(var(--shelf-card-total-height) - var(--shelf-glass-height)));
 }
 
 .collection-shelf.is-preview .collection-shelf-item {
-  height: 196px;
-  flex-basis: clamp(210px, 42%, 300px);
+  height: calc(var(--shelf-glass-height) + var(--shelf-art-height));
+  flex-basis: min(100%, calc(var(--shelf-3d-card-width, 720px) * 0.42));
 }
 
 .collection-shelf.is-preview .collection-shelf-card {
@@ -665,6 +687,12 @@
 .collection-shelf.is-preview .collection-shelf-glass {
   padding: 10px 12px 10px;
   gap: 2px;
+}
+
+/* The miniature's panel is short, and the label is a flex column — without this the name and the
+ * count line get squeezed to a few pixels tall instead of simply running out of room. */
+.collection-shelf.is-preview .collection-shelf-glass > * {
+  flex: 0 0 auto;
 }
 
 .collection-shelf.is-preview .collection-shelf-name {
@@ -902,11 +930,51 @@
     0 -14px 30px -24px rgb(0 0 0 / 80%);
 }
 
+/* 3D Settings — the grid layout, the card models and the display switches.
+   Nothing here reaches a visitor who never opened the Studio: with the shipped defaults the shelf
+   carries no data-shelf-3d-* attribute and no --shelf-3d-* property, so it renders through the
+   rules above exactly as it always did. */
+
+.collection-shelf[data-shelf-3d-grid="true"] .collection-shelf-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(var(--shelf-3d-rows, 1), minmax(0, auto));
+  grid-auto-columns: var(--shelf-tile-width);
+  align-content: start;
+}
+
+.collection-shelf[data-shelf-3d-grid="true"] .collection-shelf-item {
+  width: auto;
+  flex: none;
+}
+
+/* Rear panes off (the "single frame" model): the front print takes the centred measure that a
+   one-image collection already uses, so both read as a single framed print. */
+.collection-shelf[data-shelf-3d-panes="off"] .collection-shelf-art img:nth-child(2),
+.collection-shelf[data-shelf-3d-panes="off"] .collection-shelf-art img:nth-child(3) {
+  display: none;
+}
+
+.collection-shelf[data-shelf-3d-panes="off"] .collection-shelf-art img:nth-child(1) {
+  left: 50%;
+  width: 58%;
+  height: calc(var(--shelf-art-height) - 22px);
+  transform: translate3d(-50%, 0, 0) rotateY(var(--shelf-3d-tilt, -9deg)) rotateX(var(--shelf-3d-lift, 2deg));
+}
+
+.collection-shelf[data-shelf-3d-reflection="off"] .collection-shelf-reflection {
+  display: none;
+}
+
+.collection-shelf[data-shelf-3d-stack="off"] .collection-shelf-stack {
+  display: none;
+}
+
 /* Tablet and small laptop — the same single sliding window, stepped down so it still has air on
    both sides and the card keeps its proportions instead of turning into a banner. */
 @media (max-width: 1199.98px) {
   .collection-shelf-track {
-    --shelf-card-width: min(100%, 620px);
+    --shelf-card-width: var(--shelf-3d-card-width, min(100%, 620px));
   }
 
   .collection-shelf {
@@ -921,7 +989,7 @@
 @media (min-width: 1600px) {
   .collection-shelf-track {
     --shelf-per-view: min(4, var(--shelf-items, 4));
-    --shelf-card-width: calc((100% - (var(--shelf-per-view) - 1) * var(--shelf-gap)) / var(--shelf-per-view));
+    --shelf-card-width: var(--shelf-3d-card-width, calc((100% - (var(--shelf-per-view) - 1) * var(--shelf-gap)) / var(--shelf-per-view)));
   }
 
   .collection-shelf {
@@ -958,15 +1026,25 @@
   }
 
   .collection-shelf-track {
-    --shelf-gap: 14px;
-    --shelf-card-width: 100%;
+    --shelf-gap: var(--shelf-3d-gap, 14px);
+    --shelf-card-width: var(--shelf-3d-card-width, 100%);
+    /* A phone is one window wide, full stop: the grid columns fold back into a single lane. */
+    --shelf-3d-columns: 1;
+    --shelf-3d-rows: 1;
     padding: 16px 12px 24px;
     margin: -8px -4px -8px;
   }
 
-  .collection-shelf-item {
+  .collection-shelf-item,
+  .collection-shelf[data-shelf-3d-grid="true"] .collection-shelf-item {
     width: 100%;
-    flex: 0 0 100%;
+    flex: 0 0 var(--shelf-tile-width);
+  }
+
+  .collection-shelf[data-shelf-3d-grid="true"] .collection-shelf-track {
+    display: flex;
+    grid-template-rows: none;
+    grid-auto-columns: auto;
   }
 
   .collection-shelf-glass {
@@ -1009,7 +1087,7 @@
 
 @media (max-width: 479.98px) {
   .collection-shelf-track {
-    --shelf-card-width: 100%;
+    --shelf-card-width: var(--shelf-3d-card-width, 100%);
   }
 
   .collection-shelf {

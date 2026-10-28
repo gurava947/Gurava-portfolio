@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { DEFAULT_SHELF_MOTION, getShelfMotionStyles, normalizeShelfMotion } from "../config/cardMotion";
+import { DEFAULT_SHELF_3D, getShelf3dAttributes, getShelf3dStyles, normalizeShelf3d } from "../config/shelf3d";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/collection-shelf.css";
 
@@ -104,9 +105,11 @@ export default function CollectionShelf({
   onSelect,
   label = "Collection",
   motion = DEFAULT_SHELF_MOTION,
+  shelf3d = DEFAULT_SHELF_3D,
   preview = false,
 }) {
   const settings = normalizeShelfMotion(motion);
+  const geometry = normalizeShelf3d(shelf3d);
   const [scrollState, setScrollState] = useState({ start: true, end: true, progress: 0, fraction: 1 });
   const trackRef = useRef(null);
   const frameRef = useRef(0);
@@ -258,12 +261,19 @@ export default function CollectionShelf({
     stepShelf(forwards ? 1 : -1);
   };
 
-  const style = getShelfMotionStyles(settings);
+  const style = { ...getShelfMotionStyles(settings), ...getShelf3dStyles(geometry) };
+  const shelf3dAttributes = getShelf3dAttributes(geometry);
   const stateClass = `${settings.preset !== "studio" ? " has-motion" : ""}${preview ? " is-preview" : ""}`;
 
   if (preview) {
     return (
-      <div className={`collection-shelf${stateClass}`} data-shelf-motion={settings.preset} style={style} data-preview="true">
+      <div
+        className={`collection-shelf${stateClass}`}
+        data-shelf-motion={settings.preset}
+        style={style}
+        data-preview="true"
+        {...shelf3dAttributes}
+      >
         <div className="collection-shelf-track" aria-hidden="true" inert>
           {collections.map((collection, index) => (
             <ShelfCard
@@ -287,6 +297,7 @@ export default function CollectionShelf({
       className={`collection-shelf${stateClass}`}
       data-shelf-motion={settings.preset}
       style={{ ...style, "--shelf-items": collections.length }}
+      {...shelf3dAttributes}
     >
       <div className="collection-shelf-window">
         <div className="collection-shelf-head">

@@ -26,6 +26,7 @@ import CollectionCredits from "./components/ui/CollectionCredits";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import SiteLookStudio from "./components/SiteLookStudio";
+import Shelf3DStudio from "./components/Shelf3DStudio";
 import PosterRail from "./components/PosterRail";
 import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
@@ -444,6 +445,8 @@ function CardStudio({
   onEffectsApply,
   motionSettings,
   onMotionApply,
+  shelf3dSettings,
+  onShelf3dApply,
   lookSettings,
   onLookApply,
   shelfCollections = [],
@@ -723,6 +726,15 @@ function CardStudio({
         onApply={onMotionApply}
         collections={shelfCollections}
         projects={shelfProjects}
+        shelf3d={shelf3dSettings}
+      />
+
+      <Shelf3DStudio
+        settings={shelf3dSettings}
+        onApply={onShelf3dApply}
+        collections={shelfCollections}
+        projects={shelfProjects}
+        motion={motionSettings}
       />
 
       <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
@@ -786,6 +798,8 @@ function GuravvaProfilePopover({
   onEffectsChange,
   motionSettings,
   onMotionChange,
+  shelf3dSettings,
+  onShelf3dChange,
   lookSettings,
   onLookChange,
   shelfCollections,
@@ -1073,6 +1087,8 @@ function GuravvaProfilePopover({
           onEffectsApply={onEffectsChange}
           motionSettings={motionSettings}
           onMotionApply={onMotionChange}
+          shelf3dSettings={shelf3dSettings}
+          onShelf3dApply={onShelf3dChange}
           lookSettings={lookSettings}
           onLookApply={onLookChange}
           shelfCollections={shelfCollections}
@@ -1213,6 +1229,8 @@ function SiteNav({
   onEffectsChange,
   motionSettings,
   onMotionChange,
+  shelf3dSettings,
+  onShelf3dChange,
   lookSettings,
   onLookChange,
   shelfCollections,
@@ -1297,6 +1315,8 @@ function SiteNav({
               onEffectsChange={onEffectsChange}
               motionSettings={motionSettings}
               onMotionChange={onMotionChange}
+              shelf3dSettings={shelf3dSettings}
+              onShelf3dChange={onShelf3dChange}
               lookSettings={lookSettings}
               onLookChange={onLookChange}
               shelfCollections={shelfCollections}
@@ -1374,6 +1394,7 @@ function PortfolioHome({
   onLayoutChange,
   onEffectsChange,
   onMotionChange,
+  onShelf3dChange,
   onLookChange,
 }) {
   const copy = site.home;
@@ -1432,6 +1453,8 @@ function PortfolioHome({
         onEffectsChange={onEffectsChange}
         motionSettings={settings.motion}
         onMotionChange={onMotionChange}
+        shelf3dSettings={settings.shelf3d}
+        onShelf3dChange={onShelf3dChange}
         lookSettings={settings.look}
         onLookChange={onLookChange}
         shelfCollections={catalog.collections}
@@ -1653,6 +1676,7 @@ function App() {
     updateLayoutSettings,
     updateCardEffectsSettings,
     updateShelfMotionSettings,
+    updateShelf3dSettings,
     updateSiteLookSettings,
     updatePlaygroundThemeSettings,
   } = useTheme();
@@ -1825,6 +1849,8 @@ function App() {
     onEffectsChange: updateCardEffectsSettings,
     motionSettings: settings.motion,
     onMotionChange: updateShelfMotionSettings,
+    shelf3dSettings: settings.shelf3d,
+    onShelf3dChange: updateShelf3dSettings,
     lookSettings: settings.look,
     onLookChange: updateSiteLookSettings,
     shelfCollections: catalog.collections,
@@ -1855,6 +1881,7 @@ function App() {
         onLayoutChange={updateLayoutSettings}
         onEffectsChange={updateCardEffectsSettings}
         onMotionChange={updateShelfMotionSettings}
+        onShelf3dChange={updateShelf3dSettings}
         onLookChange={updateSiteLookSettings}
       />
     );
@@ -1863,7 +1890,7 @@ function App() {
       <div className={pageClass} id="top">
         <SiteNav {...navProps} activeNav="projects" />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
-          <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} />
+          <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} shelf3d={settings.shelf3d} />
         </Suspense>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
