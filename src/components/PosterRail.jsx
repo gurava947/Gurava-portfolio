@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import CodePlate from "./ui/CodePlate";
+import useFeaturedAxis from "../hooks/useFeaturedAxis";
 import "../styles/poster-rail.css";
 
 function monogram(title) {
@@ -16,20 +17,10 @@ function monogram(title) {
 // expands the card over its neighbours, the way a streaming rail works.
 //
 // The rail runs in whichever direction the visitor picked in Card Studio -> Site look
-// (`<html data-featured-axis>`), and the same card design serves both. Vertical is the shipped
-// default: cards stack top to bottom and the device count from theme.css (--rail-cards — 3 on a
-// phone, 4 on a tablet, 6 on a desktop) divides the height of the band instead of its width, so
-// the number of builds on screen stays exactly what that device is meant to show.
-const AXIS_ATTRIBUTE = "data-featured-axis";
-
-function readAxis() {
-  if (typeof document === "undefined") return "vertical";
-  return document.documentElement.dataset.featuredAxis === "horizontal" ? "horizontal" : "vertical";
-}
-
+// (`<html data-featured-axis>`), and the same card design serves both. See useFeaturedAxis.
 export default function PosterRail({ projects = [], onNavigate, variant = "rail", eyebrow = "Rail" }) {
   const scrollerRef = useRef(null);
-  const [axis, setAxis] = useState(readAxis);
+  const axis = useFeaturedAxis();
   const [edges, setEdges] = useState({ start: false, end: true });
   const vertical = axis === "vertical";
 
@@ -52,13 +43,8 @@ export default function PosterRail({ projects = [], onNavigate, variant = "rail"
     return undefined;
   }, [measure, projects.length]);
 
-  // Switching direction in the studio re-measures against the other axis; without this the
-  // arrows keep the enabled/disabled state the previous direction left behind.
-  useEffect(() => {
-    const observer = new MutationObserver(() => setAxis(readAxis()));
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: [AXIS_ATTRIBUTE] });
-    return () => observer.disconnect();
-  }, []);
+  // Switching direction re-creates `measure` against the other axis, which re-runs the effect
+  // above, so the arrows never keep the enabled/disabled state the previous direction left behind.
 
   const scrollByPage = (direction) => {
     const node = scrollerRef.current;

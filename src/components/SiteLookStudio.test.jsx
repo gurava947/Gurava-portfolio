@@ -121,7 +121,7 @@ describe("SiteLookStudio", () => {
     expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, featured: "rail" });
   });
 
-  it("previews the shuffle direction and only enables it for a strip that can turn", () => {
+  it("previews the shuffle direction and only ships it on Apply look", () => {
     const { onApply, container } = renderStudio({
       initialSettings: { ...DEFAULT_SITE_LOOK, featured: "rail" },
     });
@@ -139,11 +139,19 @@ describe("SiteLookStudio", () => {
     expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, featured: "rail", axis: "horizontal" });
   });
 
-  it("disables the direction control while the featured strip is a grid", () => {
+  it("keeps the direction usable when the featured strip is a grid", () => {
     const { container } = renderStudio();
 
     expect(container.querySelector(".look-studio-strip")).toHaveClass("is-grid");
-    expect(screen.getByRole("button", { name: "Vertical" })).toBeDisabled();
+    // The catalogue rail and the collection shelf turn with it too, so a grid home page still
+    // has a direction to choose.
+    const horizontal = screen.getByRole("button", { name: "Horizontal" });
+    expect(horizontal).toBeEnabled();
+
+    fireEvent.click(horizontal);
+
+    expect(horizontal).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Vertical" })).toHaveAttribute("aria-pressed", "false");
   });
 
   it("discards an unsaved preview through Cancel", () => {

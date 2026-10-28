@@ -1014,3 +1014,141 @@
     transform: none;
   }
 }
+
+/* Vertical shuffle — the same stacked glass windows, running downward.
+
+   The track is given a definite height, so the card height can be derived from it: the band minus
+   the gaps, shared between as many cards as this device is meant to show (--rail-cards: 3 on a
+   phone, 4 on a tablet, 6 on a desktop) or as many collections as exist, whichever is smaller.
+   Every internal measurement of a card already comes from --shelf-glass-height and
+   --shelf-art-band, so re-deriving those two from the card height moves the label panel, the
+   stacked deck and the terminal preview with it — nothing here is a second design. */
+
+.collection-shelf[data-axis="vertical"] {
+  --shelf-gap: clamp(12px, 1.5vw, 18px);
+  --shelf-band: clamp(400px, 72vh, 860px);
+  --shelf-visible: max(1, min(var(--rail-cards), var(--shelf-items, 3)));
+  --shelf-item-height: calc((var(--shelf-band) - (var(--shelf-visible) - 1) * var(--shelf-gap)) / var(--shelf-visible));
+  --shelf-glass-height: min(calc(var(--shelf-item-height) * 0.52), 170px);
+  --shelf-art-band: calc(var(--shelf-item-height) - var(--shelf-glass-height));
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-track {
+  flex-direction: column;
+  height: var(--shelf-band);
+  gap: var(--shelf-gap);
+  padding: 12px 16px 12px 12px;
+  margin: -10px -4px -10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-padding-block: 10px;
+  overscroll-behavior-y: contain;
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-track::-webkit-scrollbar {
+  width: 8px;
+  height: auto;
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-item {
+  width: 100%;
+  height: var(--shelf-item-height);
+  flex: 0 0 var(--shelf-item-height);
+}
+
+/* The label panel is the part that has to survive being halved: the name keeps its weight, the
+   blurb gives up a line, and the deck shrinks with the card instead of hiding behind the glass. */
+.collection-shelf[data-axis="vertical"] .collection-shelf-glass {
+  padding: 11px 15px 10px;
+  gap: 3px;
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-name {
+  font-size: clamp(1.02rem, 1.5vw, 1.34rem);
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-desc {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-reflection {
+  bottom: -10px;
+  height: 20px;
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-fade {
+  top: auto;
+  right: 0;
+  bottom: auto;
+  left: 0;
+  width: auto;
+  height: 44px;
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-fade.is-start {
+  top: 0;
+  background: linear-gradient(180deg, var(--theme-background), color-mix(in srgb, var(--theme-background) 52%, transparent) 42%, transparent);
+}
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-fade.is-end {
+  bottom: 0;
+  background: linear-gradient(0deg, var(--theme-background), color-mix(in srgb, var(--theme-background) 52%, transparent) 42%, transparent);
+}
+
+/* A vertical collection card is wide and short — 1340×204 on a desktop instead of 520×336 — so
+ * the label panel and the deck stop stacking on top of each other and stand side by side: the
+ * frosted glass holds the left, the pile of prints sits to its right. Nothing about either half
+ * changes; only where they sit. On a phone the card is narrow enough that the original bottom
+ * panel still fits, so it keeps it. */
+
+.collection-shelf[data-axis="vertical"] .collection-shelf-desc {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .collection-shelf[data-axis="vertical"] .collection-shelf-desc {
+    display: -webkit-box;
+  }
+
+  .collection-shelf[data-axis="vertical"] .collection-shelf-glass {
+    top: 9px;
+    right: auto;
+    bottom: 9px;
+    left: 9px;
+    width: min(44%, 560px);
+    height: auto;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  .collection-shelf[data-axis="vertical"] .collection-shelf-art img {
+    top: auto;
+    bottom: 14px;
+    left: 48%;
+    width: min(26%, 300px);
+    height: calc(100% - 28px);
+  }
+
+  .collection-shelf[data-axis="vertical"] .collection-shelf-art img:only-child {
+    left: 64%;
+    width: min(30%, 340px);
+    height: calc(100% - 24px);
+  }
+
+  .collection-shelf[data-axis="vertical"] .collection-shelf-terminal {
+    top: 12px;
+    right: auto;
+    bottom: 12px;
+    left: 48%;
+    width: min(30%, 330px);
+    gap: 6px;
+    padding: 12px 14px;
+  }
+
+  .collection-shelf[data-axis="vertical"] .collection-shelf-terminal code {
+    -webkit-line-clamp: 3;
+    font-size: 0.66rem;
+  }
+}

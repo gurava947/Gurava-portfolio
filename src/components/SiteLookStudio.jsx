@@ -272,15 +272,14 @@ export default function SiteLookStudio({ settings, onApply }) {
             downward, and the device count (3 / 4 / 6) follows whichever axis is picked. */}
         <div className="card-studio-quick-row">
           <span className="card-studio-quick-label">Shuffle direction</span>
-          <div className="card-studio-segments" role="group" aria-label="Featured builds direction">
+          <div className="card-studio-segments" role="group" aria-label="Shuffle direction">
             {FEATURED_AXES.map((axis) => (
               <button
                 key={axis.id}
                 type="button"
                 className="card-studio-segment"
                 aria-pressed={draft.axis === axis.id}
-                title={draft.featured === "grid" ? "Direction applies to the rail strips; the grid already stacks." : axis.note}
-                disabled={draft.featured === "grid"}
+                title={axis.note}
                 onClick={() => updateDraft({ axis: axis.id }, `${axis.label} shuffle previewed. Choose Apply look to keep it.`)}
               >
                 {axis.label}

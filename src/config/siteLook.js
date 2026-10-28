@@ -73,8 +73,8 @@ export const FEATURED_STYLES = [
 // desktop) divides the height of the band instead of its width. Horizontal stays available for
 // the classic side-scrolling row.
 export const FEATURED_AXES = [
-  { id: "vertical", label: "Vertical", note: "Cards stack downward — 3 on a phone, 4 on a tablet, 6 on a desktop." },
-  { id: "horizontal", label: "Horizontal", note: "The classic side-scrolling row." },
+  { id: "vertical", label: "Vertical", note: "Every shuffle — the featured strip, the collection shelf and the catalogue rail — stacks downward, showing 3 cards on a phone, 4 on a tablet and 6 on a desktop." },
+  { id: "horizontal", label: "Horizontal", note: "The same cards in the classic side-scrolling row, three to six of them wide." },
 ];
 
 // Section headings (not the hero title, which has its own motion group). Each of these is a
