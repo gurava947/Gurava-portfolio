@@ -173,9 +173,9 @@
   scrollbar-width: thin;
 }
 
-/* Exactly --rail-cards tiles per view (3 on a phone, 4 on a tablet, 6 on a desktop) with no
- * sliver of the next one, which is what makes the page-flip arrows and the progress bar line up
- * with what the visitor actually sees. */
+/* Exactly --rail-cards tiles per view (3 on a phone or medium screen, 4 on a large one,
+ * 6 on a desktop) with no sliver of the next one, which is what makes the page-flip arrows
+ * and the progress bar line up with what the visitor actually sees. */
 .lab-project-grid.is-card-rail .lab-project-card {
   width: auto;
   max-width: none;

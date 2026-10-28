@@ -6,7 +6,8 @@
 }
 
 .poster-rail-scroller {
-  /* --rail-cards comes from theme.css: 3 tiles on a phone, 4 on a tablet, 6 on a desktop. */
+  /* --rail-cards comes from theme.css: 3 tiles on a phone or medium screen, 4 on a
+     large one, 6 on a desktop. */
   --rail-gap: clamp(8px, var(--portfolio-card-gap, 20px), 18px);
   display: flex;
   gap: var(--rail-gap);
@@ -363,9 +364,9 @@
    Vertical shuffle.
 
    Same cards, same artwork, same hover expansion — only the axis changes. The
-   scroller turns into a column with a definite height, and `--rail-cards` (3 on a
-   phone, 4 on a tablet, 6 on a desktop — theme.css) now divides that height instead
-   of the width, so the device still gets exactly the number of builds it was given,
+   scroller turns into a column with a definite height, and `--rail-cards` (3 on a phone or
+   medium, 4 on a large screen, 6 on a desktop — theme.css) now divides that height instead of
+   the width, so the device still gets exactly the number of builds it was given,
    stacked downward. Because a card is full-bleed wide here, the title and the detail
    block sit side by side along the bottom instead of fighting for a narrow column,
    and the type can be larger than the horizontal rail can afford.

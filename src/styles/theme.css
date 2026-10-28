@@ -79,8 +79,10 @@
   --rail-badge-display: inline-flex;
 }
 
-/* Tablet: four across. Cards are wider here than at the smallest desktop width, so the rail can
-   afford larger type and a fuller preview image. */
+/* Tablet and small laptop: four across. Cards are wider here than at the smallest desktop width, so
+   the rail can afford larger type and a fuller preview image. The count only applies from 992px up —
+   the medium band below overrides it, while the type and media measures keep running across the
+   whole band. */
 @media (min-width: 768px) and (max-width: 1199.98px) {
   :root {
     --rail-cards: 4;
@@ -88,6 +90,15 @@
     --rail-title-size: 0.92rem;
     --rail-body-size: 0.74rem;
     --rail-body-lines: 2;
+  }
+}
+
+/* Medium: three across, the same count a phone gets. Four tiles in this range leave a card too
+   narrow for its own title, and the extra width is better spent on the preview. Declared after the
+   tablet band above so the equal-specificity :root rule wins; only the count steps here. */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  :root {
+    --rail-cards: 3;
   }
 }
 
