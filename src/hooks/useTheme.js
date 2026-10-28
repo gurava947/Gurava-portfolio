@@ -3,6 +3,7 @@ import { applyCardStyleVariables, CARD_LAYOUTS } from "../utils/cardStyle";
 import { DEFAULT_CARD_EFFECTS, normalizeCardEffects } from "../config/cardEffects";
 import { DEFAULT_SHELF_MOTION, normalizeShelfMotion } from "../config/cardMotion";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
+import { DEFAULT_SITE_LOOK, getSiteLookVariables, normalizeSiteLook } from "../config/siteLook";
 
 export const THEME_STORAGE_KEY = "portfolio-theme-settings";
 export const THEME_MODES = ["dark", "light"];
@@ -163,6 +164,7 @@ export const DEFAULT_THEME_SETTINGS = {
   layout: DEFAULT_LAYOUT_SETTINGS,
   effects: DEFAULT_CARD_EFFECTS,
   motion: DEFAULT_SHELF_MOTION,
+  look: DEFAULT_SITE_LOOK,
 };
 
 const themePresets = {
@@ -217,6 +219,7 @@ function getInitialSettings() {
         layout: normalizeLayoutSettings(parsed?.layout),
         effects: normalizeCardEffects(parsed?.effects),
         motion: normalizeShelfMotion(parsed?.motion),
+        look: normalizeSiteLook(parsed?.look),
       };
     }
     if (window.localStorage.getItem("portfolio-theme") === "dark") {
@@ -278,9 +281,19 @@ export function useTheme() {
     root.dataset.cardFxIntensity = effects.intensity;
     const motion = normalizeShelfMotion(settings.motion);
     root.dataset.shelfMotion = motion.preset;
+    const look = normalizeSiteLook(settings.look);
+    root.dataset.look = look.preset;
+    root.dataset.heroText = look.heroText;
+    root.dataset.bgPattern = look.background;
+    root.dataset.logo3d = String(look.logo3d);
+    root.dataset.featuredStrip = look.featured;
+    Object.entries(getSiteLookVariables(look)).forEach(([name, value]) => root.style.setProperty(name, value));
 
     try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion }));
+      window.localStorage.setItem(
+        THEME_STORAGE_KEY,
+        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, look }),
+      );
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
       console.error("Unable to persist theme mode.", error);
@@ -414,6 +427,13 @@ export function useTheme() {
       motion: normalizeShelfMotion({ ...normalizeShelfMotion(current.motion), ...changes }),
     }));
   };
+  const updateSiteLookSettings = (changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      look: normalizeSiteLook({ ...normalizeSiteLook(current.look), ...changes }),
+    }));
+  };
 
   return {
     settings,
@@ -425,5 +445,6 @@ export function useTheme() {
     updateLayoutSettings,
     updateCardEffectsSettings,
     updateShelfMotionSettings,
+    updateSiteLookSettings,
   };
 }

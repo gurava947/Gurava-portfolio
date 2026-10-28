@@ -8,6 +8,7 @@ import "./styles/unified.css";
 import "./styles/card-layouts.css";
 import "./styles/layout-patterns.css";
 import "./styles/card-effects.css";
+import "./styles/site-look.css";
 import { DEFAULT_CARD_UI_SETTINGS, DEFAULT_LOADER_SETTINGS, normalizeCardUISettings, normalizeLoaderSettings, useTheme } from "./hooks/useTheme";
 import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
@@ -21,6 +22,9 @@ import ProjectCard from "./components/ProjectCard";
 import GlassFolderCard from "./components/ui/GlassFolderCard";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
+import SiteLookStudio from "./components/SiteLookStudio";
+import PosterRail from "./components/PosterRail";
+import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
@@ -421,6 +425,8 @@ function CardStudio({
   onEffectsApply,
   motionSettings,
   onMotionApply,
+  lookSettings,
+  onLookApply,
   shelfCollections = [],
   shelfProjects = [],
 }) {
@@ -670,6 +676,11 @@ function CardStudio({
         </div>
       </section>
 
+      <SiteLookStudio
+        settings={lookSettings}
+        onApply={onLookApply}
+      />
+
       <LayoutStudio
         settings={layoutSettings}
         onApply={onLayoutApply}
@@ -756,6 +767,8 @@ function GuravvaProfilePopover({
   onEffectsChange,
   motionSettings,
   onMotionChange,
+  lookSettings,
+  onLookChange,
   shelfCollections,
   shelfProjects,
 }) {
@@ -1029,6 +1042,8 @@ function GuravvaProfilePopover({
           onEffectsApply={onEffectsChange}
           motionSettings={motionSettings}
           onMotionApply={onMotionChange}
+          lookSettings={lookSettings}
+          onLookApply={onLookChange}
           shelfCollections={shelfCollections}
           shelfProjects={shelfProjects}
         />
@@ -1078,6 +1093,8 @@ function SiteNav({
   onEffectsChange,
   motionSettings,
   onMotionChange,
+  lookSettings,
+  onLookChange,
   shelfCollections,
   shelfProjects,
 }) {
@@ -1160,6 +1177,8 @@ function SiteNav({
               onEffectsChange={onEffectsChange}
               motionSettings={motionSettings}
               onMotionChange={onMotionChange}
+              lookSettings={lookSettings}
+              onLookChange={onLookChange}
               shelfCollections={shelfCollections}
               shelfProjects={shelfProjects}
             />
@@ -1235,6 +1254,7 @@ function PortfolioHome({
   onLayoutChange,
   onEffectsChange,
   onMotionChange,
+  onLookChange,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1292,6 +1312,8 @@ function PortfolioHome({
         onEffectsChange={onEffectsChange}
         motionSettings={settings.motion}
         onMotionChange={onMotionChange}
+        lookSettings={settings.look}
+        onLookChange={onLookChange}
         shelfCollections={catalog.collections}
         shelfProjects={catalog.projects}
       />
@@ -1301,7 +1323,11 @@ function PortfolioHome({
             <div className="home-hero-grid">
               <div className="home-hero-copy">
                 <p className="eyebrow hero-eyebrow"><span className="availability-dot" /> {copy.hero.eyebrow}</p>
-                <h1 className="hero-title home-hero-title">{copy.hero.title}<br /><span className="hero-title-accent">{copy.hero.titleAccent}</span></h1>
+                <h1 className="hero-title home-hero-title">
+                  <HeroWords text={copy.hero.title} />
+                  <br />
+                  <span className="hero-title-accent"><HeroWords text={copy.hero.titleAccent} offset={copy.hero.title.split(" ").length} /></span>
+                </h1>
                 <p className="hero-description home-hero-description">{copy.hero.description}</p>
                 <div className="home-hero-actions">
                   <a className="btn btn-dark rounded-pill hero-cta" href="/projects" onClick={(event) => navigate(event, "/projects")}>
@@ -1387,9 +1413,18 @@ function PortfolioHome({
               </div>
               <p className="section-note">{copy.projects.note}</p>
             </header>
-            <div className={`lab-project-grid lab-home-grid${featuredGridClass}`}>
-              {featured.map((project) => <ProjectCard key={project.id} project={project} onNavigate={navigate} cardUI={settings.cardUI} fx={settings.effects} />)}
-            </div>
+            {settings.look.featured === "grid" ? (
+              <div className={`lab-project-grid lab-home-grid${featuredGridClass}`}>
+                {featured.map((project) => <ProjectCard key={project.id} project={project} onNavigate={navigate} cardUI={settings.cardUI} fx={settings.effects} />)}
+              </div>
+            ) : (
+              <PosterRail
+                projects={featured}
+                onNavigate={navigate}
+                variant={settings.look.featured}
+                eyebrow={copy.projects.title}
+              />
+            )}
             <div className="home-featured-action">
               <a className="lab-button lab-button-secondary" href="/projects" onClick={(event) => navigate(event, "/projects")}>
                 {copy.projects.action.replace("{count}", String(catalog.counts.projects))} <span aria-hidden="true">→</span>
@@ -1491,6 +1526,7 @@ function App() {
     updateLayoutSettings,
     updateCardEffectsSettings,
     updateShelfMotionSettings,
+    updateSiteLookSettings,
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
@@ -1624,6 +1660,17 @@ function App() {
   const projectIndex = projectSummary ? sortedProjects.findIndex((project) => project.id === projectSummary.id) : -1;
   const previousProject = projectIndex > 0 ? sortedProjects[projectIndex - 1] : null;
   const nextProject = projectIndex >= 0 && projectIndex < sortedProjects.length - 1 ? sortedProjects[projectIndex + 1] : null;
+  // The detail page shelf stays useful even for a small collection by back-filling with
+  // neighbouring builds once the same-shelf ones run out.
+  const sameShelf = projectIndex >= 0
+    ? sortedProjects.filter((item) => item.id !== projectSummary.id && item.collection === projectSummary.collection)
+    : [];
+  const relatedProjects = projectIndex >= 0
+    ? [
+      ...sameShelf,
+      ...sortedProjects.filter((item) => item.id !== projectSummary.id && item.collection !== projectSummary.collection),
+    ].slice(0, 10)
+    : [];
   const nextTheme = settings.mode === "dark" ? "light" : "dark";
   const cardPreviewProject = projects.find((project) => project.thumbnail || project.image) || projects[0] || null;
   const cardPreviewProjects = sortedProjects
@@ -1647,6 +1694,8 @@ function App() {
     onEffectsChange: updateCardEffectsSettings,
     motionSettings: settings.motion,
     onMotionChange: updateShelfMotionSettings,
+    lookSettings: settings.look,
+    onLookChange: updateSiteLookSettings,
     shelfCollections: catalog.collections,
     shelfProjects: catalog.projects,
     previewCertificates: catalog.certificates,
@@ -1675,6 +1724,7 @@ function App() {
         onLayoutChange={updateLayoutSettings}
         onEffectsChange={updateCardEffectsSettings}
         onMotionChange={updateShelfMotionSettings}
+        onLookChange={updateSiteLookSettings}
       />
     );
   } else if (isCatalog) {
@@ -1736,6 +1786,8 @@ function App() {
             onBack={(event) => goBackTo(event, "/projects")}
             previousProject={previousProject}
             nextProject={nextProject}
+            relatedProjects={relatedProjects}
+            featuredVariant={settings.look.featured === "rail" ? "rail" : "poster"}
             copy={site.detail}
             loader={settings.loader}
           />

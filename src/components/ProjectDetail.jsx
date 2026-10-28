@@ -1,6 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { LoaderOverlay, LoadSpinner } from "./LoadSpinner";
 import { ProjectWorkspace } from "./ProjectWorkspace";
+import HeroWords from "./HeroWords";
+import PosterRail from "./PosterRail";
+import "../styles/project-detail-look.css";
 
 function resultOutput(result) {
   if (!result) return "";
@@ -365,7 +368,7 @@ function ReactAbout({ project, copy }) {
   );
 }
 
-export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader }) {
+export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader, relatedProjects = [], featuredVariant = "poster" }) {
   const fullProject = detail || project;
   const data = fullProject.data || {};
   const eyebrow = [...new Set([fullProject.collectionLabel, fullProject.category].filter(Boolean))].join(" · ");
@@ -382,10 +385,13 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
     if (onNavigate) onNavigate(event, destination);
   };
   const previewDevices = devices?.[fullProject.deviceSet] || devices?.static || [];
+  const posterSrc = fullProject.thumbnail || fullProject.image || "";
+  const initials = String(fullProject.title || "").split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase();
 
   return (
     <main className="lab-main">
       <section className="lab-hero lab-detail-hero">
+        <span className="lab-hero-glow" aria-hidden="true" />
         <div className="lab-workspace-wide">
           <a className="lab-back-link" href="/projects" onClick={(event) => (onBack ? onBack(event) : navigate(event, "/projects"))}>
             <span aria-hidden="true">←</span> {copy.backToCatalog}
@@ -393,11 +399,17 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
           <div className="lab-hero-grid">
             <div className="lab-hero-copy">
               <p className="lab-eyebrow">{eyebrow}</p>
-              <h1>{fullProject.title}</h1>
+              <h1><HeroWords text={fullProject.title} /></h1>
               <p className="lab-hero-summary">{fullProject.description}</p>
               <ul className="lab-hero-tech" aria-label={`${fullProject.title} technologies`}>
                 {(fullProject.technologies || []).map((technology) => <li key={technology}>{technology}</li>)}
               </ul>
+              <div className={`lab-hero-poster${posterSrc ? "" : " is-placeholder"}`}>
+                {posterSrc
+                  ? <img src={posterSrc} alt="" loading="lazy" />
+                  : <span className="lab-hero-poster-monogram" aria-hidden="true">{initials}</span>}
+                <span className="lab-hero-poster-tag" aria-hidden="true">{fullProject.collectionLabel || "Build"}</span>
+              </div>
             </div>
             <dl className="lab-facts" aria-label={`${fullProject.title} project facts`}>
               {facts.map((fact) => (
@@ -426,6 +438,26 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
           <ReactPreview project={fullProject} devices={previewDevices} copy={copy} loader={loader} />
           <ReactAbout project={fullProject} copy={copy} />
         </>
+      )}
+
+      {relatedProjects.length > 0 && (
+        <section className="lab-section lab-related-section" aria-labelledby="lab-related-title">
+          <div className="lab-workspace-wide">
+            <header className="lab-section-heading">
+              <div>
+                <p className="lab-eyebrow">Same shelf</p>
+                <h2 id="lab-related-title">More from {fullProject.collectionLabel || "this collection"}</h2>
+              </div>
+              <p className="lab-section-note">Slide through the rest of the collection, or use the arrows.</p>
+            </header>
+            <PosterRail
+              projects={relatedProjects}
+              onNavigate={onNavigate}
+              variant={featuredVariant}
+              eyebrow={`${fullProject.collectionLabel || "Collection"} builds`}
+            />
+          </div>
+        </section>
       )}
 
       {!isLoading && detail && (previousProject || nextProject) && (

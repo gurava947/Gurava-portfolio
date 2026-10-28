@@ -1,0 +1,214 @@
+/* Project detail presentation layer. It sits on top of the shipped project-lab styles
+ * and only adds: a lit hero band, the staggered headline, the tilted build poster,
+ * scroll-revealed sections and the same-shelf rail. */
+
+.lab-detail-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 58px 0 46px;
+}
+
+/* Each headline word is its own span so the Look studio can stagger it; the detail
+ * title must keep the plain hero colour rather than inheriting any accent rule. */
+.lab-detail-hero .hero-word {
+  color: inherit;
+}
+
+.lab-hero-glow {
+  position: absolute;
+  top: -46%;
+  right: -12%;
+  left: -12%;
+  z-index: -1;
+  height: 150%;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 46% at 18% 34%, color-mix(in srgb, var(--theme-primary) 22%, transparent), transparent 68%),
+    radial-gradient(46% 42% at 84% 22%, color-mix(in srgb, var(--theme-accent) 18%, transparent), transparent 66%);
+  filter: blur(38px);
+  animation: lab-hero-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes lab-hero-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1.02); }
+  to { transform: translate3d(3%, 2%, 0) scale(1.09); }
+}
+
+/* ---------- Tech chips ---------- */
+
+.lab-detail-hero .lab-hero-tech li {
+  animation: lab-chip-in 520ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+.lab-detail-hero .lab-hero-tech li:nth-child(1) { animation-delay: 260ms; }
+.lab-detail-hero .lab-hero-tech li:nth-child(2) { animation-delay: 320ms; }
+.lab-detail-hero .lab-hero-tech li:nth-child(3) { animation-delay: 380ms; }
+.lab-detail-hero .lab-hero-tech li:nth-child(4) { animation-delay: 440ms; }
+.lab-detail-hero .lab-hero-tech li:nth-child(5) { animation-delay: 500ms; }
+.lab-detail-hero .lab-hero-tech li:nth-child(n + 6) { animation-delay: 560ms; }
+
+@keyframes lab-chip-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Build poster ---------- */
+
+.lab-hero-poster {
+  position: relative;
+  display: grid;
+  max-height: 300px;
+  margin-top: 30px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
+  border-radius: 20px;
+  background:
+    linear-gradient(150deg, color-mix(in srgb, var(--theme-primary) 16%, var(--theme-card-bg)) 0%, var(--theme-card-bg) 74%);
+  box-shadow: 0 34px 62px -36px rgb(9 18 14 / 52%);
+  transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+  transition: transform 460ms cubic-bezier(0.2, 0.75, 0.3, 1), box-shadow 460ms ease;
+}
+
+.lab-hero-poster:hover {
+  box-shadow: 0 44px 74px -34px rgb(9 18 14 / 58%);
+  transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(-4px);
+}
+
+.lab-hero-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The thumbnails are full page screenshots, so the top of the page is the recognisable part. */
+  object-position: top center;
+}
+
+.lab-hero-poster-monogram {
+  place-self: center;
+  color: color-mix(in srgb, var(--theme-primary) 52%, var(--theme-muted-text));
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+/* Python practice builds ship without screenshots, so the monogram slab stays a
+ * caption-height strip instead of a large empty frame. */
+.lab-hero-poster.is-placeholder {
+  aspect-ratio: 16 / 5;
+  max-height: 132px;
+}
+
+.lab-hero-poster.is-placeholder .lab-hero-poster-monogram {
+  font-size: clamp(1.5rem, 3.4vw, 2.2rem);
+}
+
+.lab-hero-poster-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 11px;
+  border: 1px solid rgb(255 255 255 / 26%);
+  border-radius: 999px;
+  background: rgb(8 12 20 / 52%);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* ---------- Same-shelf rail ---------- */
+
+.lab-related-section .lab-section-heading {
+  margin-bottom: 4px;
+}
+
+/* ---------- Scroll revealed sections ---------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .lab-main > section:not(.lab-detail-hero) {
+      animation: lab-section-rise linear both;
+      animation-range: entry 2% entry 34%;
+      animation-timeline: view();
+    }
+  }
+}
+
+@keyframes lab-section-rise {
+  from { opacity: 0.25; transform: translate3d(0, 26px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Dark cinematic direction ---------- */
+
+/* Cinematic turns the hero into a poster band. The theme tokens have to flip together —
+ * swapping only the card background would leave dark text sitting on a dark fact card. */
+:root[data-look="cinematic"] .lab-detail-hero {
+  --theme-text: #eef1ff;
+  --theme-muted-text: #a8b0cf;
+  --theme-card-bg: #121527;
+  --theme-card-text: #eef1ff;
+  border-bottom: 1px solid rgb(148 163 216 / 18%);
+  background:
+    radial-gradient(900px 520px at 84% -12%, color-mix(in srgb, var(--theme-accent) 30%, transparent), transparent 62%),
+    radial-gradient(760px 480px at 4% 106%, color-mix(in srgb, var(--theme-primary) 26%, transparent), transparent 60%),
+    linear-gradient(180deg, #0a0c17 0%, #0e1122 68%, #12152a 100%);
+}
+
+:root[data-look="cinematic"] .lab-detail-hero .lab-hero-summary,
+:root[data-look="cinematic"] .lab-detail-hero .lab-facts dt {
+  color: var(--theme-muted-text);
+}
+
+:root[data-look="cinematic"] .lab-detail-hero h1,
+:root[data-look="cinematic"] .lab-detail-hero .lab-facts dd {
+  color: #fff;
+}
+
+:root[data-look="cinematic"] .lab-hero-glow {
+  background:
+    radial-gradient(52% 46% at 18% 34%, color-mix(in srgb, var(--theme-primary) 34%, transparent), transparent 68%),
+    radial-gradient(46% 42% at 84% 22%, color-mix(in srgb, var(--theme-accent) 26%, transparent), transparent 66%);
+}
+
+:root[data-look="cinematic"] .lab-hero-poster {
+  border-color: rgb(148 163 216 / 24%);
+  box-shadow: 0 36px 66px -34px rgb(0 0 0 / 78%);
+}
+
+/* ---------- Motion off switches ---------- */
+
+:root[data-reduced-motion="true"] .lab-hero-glow,
+:root[data-reduced-motion="true"] .lab-hero-poster,
+:root[data-reduced-motion="true"] .lab-detail-hero .lab-hero-tech li,
+:root[data-reduced-motion="true"] .lab-main > section,
+:root[data-animation="none"] .lab-hero-glow,
+:root[data-animation="none"] .lab-hero-poster,
+:root[data-animation="none"] .lab-detail-hero .lab-hero-tech li,
+:root[data-animation="none"] .lab-main > section {
+  animation: none !important;
+}
+
+:root[data-reduced-motion="true"] .lab-detail-hero .lab-hero-tech li,
+:root[data-animation="none"] .lab-detail-hero .lab-hero-tech li {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-hero-glow,
+  .lab-hero-poster,
+  .lab-detail-hero .lab-hero-tech li,
+  .lab-main > section {
+    animation: none !important;
+  }
+
+  .lab-hero-poster {
+    transform: none;
+  }
+}

@@ -1,0 +1,478 @@
+/* Card Studio controls for the Look group. The preview stage carries its own
+ * data-attributes so a draft can animate without touching the live page. */
+
+/* The studio column tracks are fixed fractions, so this block has to be allowed to
+ * shrink below its content width — otherwise the option grids push past the dialog. */
+.card-studio > .look-studio {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.look-studio-note {
+  margin: 0 0 12px;
+  color: var(--theme-muted-text);
+  font-size: 0.73rem;
+  line-height: 1.5;
+}
+
+.look-studio-groups {
+  display: grid;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.look-studio-group > h4 {
+  margin: 0 0 8px;
+  color: var(--theme-muted-text);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.look-studio-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.look-studio-option {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 10%, transparent);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--theme-text) 3%, transparent);
+  color: var(--theme-card-text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.look-studio-option:hover {
+  border-color: color-mix(in srgb, var(--theme-primary) 42%, transparent);
+  transform: translateY(-1px);
+}
+
+.look-studio-option.is-active {
+  border-color: color-mix(in srgb, var(--theme-primary) 62%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 9%, transparent);
+}
+
+.look-studio-option:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.look-studio-option-preview {
+  display: block;
+  height: 46px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--theme-text) 5%, transparent);
+}
+
+.look-studio-option-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.look-studio-option-copy strong {
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.look-studio-option-copy small {
+  color: var(--theme-muted-text);
+  font-size: 0.63rem;
+  line-height: 1.35;
+}
+
+.look-studio-option-check {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--theme-primary);
+  color: #fff;
+  font-size: 0.55rem;
+}
+
+/* ---------- Option previews ---------- */
+
+.look-demo-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 3px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--theme-card-text);
+}
+
+.look-demo-text i {
+  font-style: normal;
+}
+
+.look-studio-option .look-demo-text.is-rise i {
+  animation: look-demo-rise 1.6s ease-in-out infinite both;
+}
+
+.look-studio-option .look-demo-text.is-mask i {
+  animation: look-demo-mask 1.9s ease-in-out infinite both;
+}
+
+.look-studio-option .look-demo-text.is-wave i {
+  animation: look-demo-wave 1.8s ease-in-out infinite;
+}
+
+.look-studio-option .look-demo-text.is-shimmer i {
+  background: linear-gradient(100deg, currentColor 30%, color-mix(in srgb, var(--theme-primary) 90%, #fff) 50%, currentColor 70%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: look-demo-shimmer 2.2s linear infinite;
+}
+
+.look-studio-option .look-demo-text.is-static i {
+  opacity: 0.55;
+}
+
+.look-demo-text i:nth-child(2) { animation-delay: 90ms; }
+.look-demo-text i:nth-child(3) { animation-delay: 180ms; }
+.look-demo-text i:nth-child(4) { animation-delay: 270ms; }
+.look-demo-text i:nth-child(5) { animation-delay: 360ms; }
+
+@keyframes look-demo-rise {
+  0%, 55%, 100% { transform: none; opacity: 1; }
+  18% { transform: translateY(6px); opacity: 0.15; }
+}
+
+@keyframes look-demo-mask {
+  0%, 60%, 100% { clip-path: none; transform: none; }
+  20% { clip-path: inset(0 100% 0 0); transform: translateX(-3px); }
+}
+
+@keyframes look-demo-wave {
+  0%, 100% { transform: none; }
+  40% { transform: translateY(-4px); }
+  70% { transform: translateY(2px); }
+}
+
+@keyframes look-demo-shimmer {
+  from { background-position: 180% 0; }
+  to { background-position: -80% 0; }
+}
+
+.look-demo-pattern {
+  display: block;
+  height: 100%;
+  background: color-mix(in srgb, var(--theme-primary) 8%, transparent);
+}
+
+.look-demo-pattern.is-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--theme-text) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--theme-text) 22%, transparent) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.look-demo-pattern.is-dots {
+  background-image: radial-gradient(color-mix(in srgb, var(--theme-primary) 70%, transparent) 1.5px, transparent 1.7px);
+  background-size: 10px 10px;
+}
+
+.look-demo-pattern.is-beams {
+  background: linear-gradient(112deg, transparent 34%, color-mix(in srgb, var(--theme-primary) 55%, transparent) 50%, transparent 66%);
+  filter: blur(3px);
+}
+
+.look-demo-pattern.is-mesh {
+  background:
+    radial-gradient(60% 70% at 25% 30%, color-mix(in srgb, var(--theme-primary) 65%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 78% 62%, color-mix(in srgb, var(--theme-accent) 55%, transparent), transparent 70%);
+  filter: blur(4px);
+}
+
+/* The two switch rows sit side by side when the studio column is wide enough. The
+ * featured strip has three choices, so its label column and segments must shrink
+ * instead of pushing the dialog wider (the shared quick-row uses a fixed 58px label). */
+.look-studio-switch-row {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.look-studio-switch-row > .card-studio-quick-row {
+  min-width: 0;
+  margin: 0;
+  grid-template-columns: minmax(64px, auto) minmax(0, 1fr);
+}
+
+.look-studio-switch-row .card-studio-segments {
+  min-width: 0;
+  grid-auto-columns: minmax(0, 1fr);
+}
+
+.look-studio-switch-row .card-studio-segment {
+  min-width: 0;
+  padding: 3px 2px;
+  line-height: 1.15;
+}
+
+@media (min-width: 1100px) {
+  .look-studio-switch-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Preview stage ---------- */
+
+.look-studio-preview {
+  margin-top: 14px;
+}
+
+.look-studio-preview-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.look-studio-preview-head > span {
+  color: var(--theme-muted-text);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.look-studio-preview-head > strong {
+  margin-left: auto;
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.look-studio-replay {
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--theme-muted-text);
+  font-size: 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.look-studio-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 168px;
+  padding: 22px 20px 26px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 10%, transparent);
+  border-radius: 16px;
+  background: var(--theme-background);
+  color: var(--theme-text);
+}
+
+.look-studio-stage.is-cinematic {
+  --theme-text: #eef1ff;
+  --theme-muted-text: #a8b0cf;
+  background: linear-gradient(180deg, #0a0c17 0%, #12152a 100%);
+}
+
+.look-studio-stage-bg {
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--look-pattern-opacity, 1);
+}
+
+.look-studio-stage[data-bg-pattern="grid"] .look-studio-stage-bg {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--theme-text) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--theme-text) 12%, transparent) 1px, transparent 1px);
+  background-size: 26px 26px;
+  animation: look-grid-drift 34s linear infinite;
+}
+
+.look-studio-stage[data-bg-pattern="dots"] .look-studio-stage-bg {
+  background-image: radial-gradient(color-mix(in srgb, var(--theme-primary) 60%, transparent) 1.3px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+.look-studio-stage[data-bg-pattern="beams"] .look-studio-stage-bg {
+  background:
+    linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--theme-primary) 40%, transparent) 50%, transparent 60%);
+  filter: blur(10px);
+  animation: look-beam-sweep 18s ease-in-out infinite alternate;
+}
+
+.look-studio-stage[data-bg-pattern="mesh"] .look-studio-stage-bg {
+  background:
+    radial-gradient(48% 60% at 22% 26%, color-mix(in srgb, var(--theme-primary) 45%, transparent), transparent 70%),
+    radial-gradient(44% 56% at 80% 70%, color-mix(in srgb, var(--theme-accent) 35%, transparent), transparent 70%);
+  filter: blur(14px);
+  animation: look-mesh-drift 26s ease-in-out infinite alternate;
+}
+
+.look-studio-mark {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 11px;
+  background: radial-gradient(circle at 28% 20%, #f472b6 0%, #db2777 46%, #9f1239 100%);
+  color: #fff;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.look-studio-mark.is-3d {
+  transform-style: preserve-3d;
+  box-shadow: 0 12px 22px rgb(190 24 93 / 34%), -6px 9px 0 -3px rgb(159 18 57 / 32%);
+  text-shadow: 0 1px 0 rgb(255 255 255 / 45%), 0 3px 6px rgb(60 6 30 / 45%);
+  animation: look-mark-tilt 6s ease-in-out infinite;
+}
+
+@keyframes look-mark-tilt {
+  0%, 100% { transform: rotateX(8deg) rotateY(-10deg); }
+  50% { transform: rotateX(-6deg) rotateY(12deg) translateY(-2px); }
+}
+
+.look-studio-stage-title {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.look-studio-stage .hero-word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.look-studio-stage .hero-word-accent {
+  color: var(--theme-primary);
+}
+
+.look-studio-stage[data-hero-text="rise"] .hero-word {
+  animation: hero-word-rise var(--look-hero-duration, 620ms) cubic-bezier(0.2, 0.75, 0.3, 1) both;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 55ms));
+}
+
+.look-studio-stage[data-hero-text="mask"] .hero-word {
+  animation: hero-word-mask var(--look-hero-duration, 560ms) cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 70ms));
+}
+
+.look-studio-stage[data-hero-text="wave"] .hero-word {
+  animation: hero-word-wave var(--look-hero-duration, 2600ms) ease-in-out infinite;
+  animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 90ms));
+}
+
+.look-studio-stage[data-hero-text="shimmer"] .hero-word {
+  background: linear-gradient(100deg, currentColor 32%, color-mix(in srgb, var(--theme-primary) 85%, #fff) 50%, currentColor 68%);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: look-demo-shimmer 2.6s linear infinite;
+}
+
+/* A miniature of the home featured strip so the Featured control previews what it swaps. */
+.look-studio-strip {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+.look-studio-strip-track {
+  display: flex;
+  gap: 7px;
+}
+
+.look-studio-strip-card {
+  position: relative;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 13%, transparent);
+  border-radius: 9px;
+  background:
+    linear-gradient(158deg, color-mix(in srgb, var(--theme-primary) 28%, transparent) 0%, color-mix(in srgb, var(--theme-text) 7%, transparent) 100%);
+}
+
+.look-studio-strip-card i {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-text) 20%, transparent);
+}
+
+.look-studio-strip.is-grid .look-studio-strip-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.look-studio-strip.is-grid .look-studio-strip-card {
+  width: auto;
+  height: 46px;
+}
+
+.look-studio-strip.is-rail .look-studio-strip-card {
+  width: 42px;
+  height: 60px;
+}
+
+.look-studio-strip.is-poster .look-studio-strip-card {
+  width: 92px;
+  height: 44px;
+}
+
+.look-studio-strip.is-rail .look-studio-strip-track,
+.look-studio-strip.is-poster .look-studio-strip-track {
+  width: max-content;
+  animation: look-strip-slide 9s linear infinite;
+}
+
+@keyframes look-strip-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.look-studio-preview-note {
+  margin: 8px 0 0;
+  color: var(--theme-muted-text);
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .look-studio-option .look-demo-text i,
+  .look-studio-mark.is-3d,
+  .look-studio-stage .hero-word,
+  .look-studio-strip .look-studio-strip-track,
+  .look-studio-stage[data-bg-pattern] .look-studio-stage-bg {
+    animation: none !important;
+  }
+}
