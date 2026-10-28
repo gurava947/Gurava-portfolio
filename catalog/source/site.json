@@ -218,14 +218,11 @@
         "honorific": "Rahul sir",
         "role": "CEO · NXTWAVE / NIAT",
         "messageLabel": "A note of thanks",
-        "message": "ఆయన వల్ల ఇదంతా సాధ్యమైంది.",
-        "messageTranslation": "Ayana valla idanta sadhyamaindi — this portfolio became possible because of his support and the opportunity he created.",
+        "message": "Rahul sir, thank you for the trust, the opportunity and the standard you set. This portfolio is the record of what that made possible.",
         "messageBy": "Guravaiah K"
       },
-      "madeWithLabel": "Made with",
       "madeWith": {
-        "name": "గురువయ్య",
-        "transliteration": "Guravaiah K",
+        "name": "Guravaiah K",
         "note": "The name behind every commit in this portfolio."
       }
     },
@@ -234,7 +231,7 @@
       "contactLabel": "Get in touch",
       "contactNote": "Open to full-stack opportunities, code reviews and collaborations.",
       "followLabel": "Elsewhere",
-      "note": "Made with గురువయ్య by Guravaiah K · built inside NXTWAVE CCBP 4.0, with thanks to Mr. Atthuluri Rahul (Rahul sir), CEO of NXTWAVE / NIAT.",
+      "note": "Guravaiah K · built inside NXTWAVE CCBP 4.0, with thanks to Mr. Atthuluri Rahul (Rahul sir), CEO of NXTWAVE / NIAT.",
       "backToTop": "Back to top ↑"
     }
   },

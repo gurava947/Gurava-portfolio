@@ -154,15 +154,10 @@
 }
 
 .home-credit-epigraph {
+  color: color-mix(in srgb, var(--credit-accent) 76%, var(--theme-text));
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   font-weight: 600;
-  color: color-mix(in srgb, var(--credit-accent) 76%, var(--theme-text));
-}
-
-.home-credit-translated {
-  color: var(--theme-muted-text);
-  font-size: 0.74rem;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .home-credit-signature {
@@ -171,13 +166,6 @@
   font-size: 0.74rem;
   font-weight: 700;
   opacity: 0.86;
-}
-
-/* Telugu needs its own face — the Latin stack has no Telugu glyphs, so without this the browser
- * silently falls back to a system UI font that does not match the rest of the band. */
-.home-credit-telugu {
-  font-family: 'Noto Sans Telugu', 'Nirmala UI', 'Gautami', sans-serif;
-  line-height: 1.5;
 }
 
 .home-credit-maker {

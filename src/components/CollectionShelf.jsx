@@ -1,14 +1,9 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { DEFAULT_SHELF_MOTION, getShelfMotionStyles, normalizeShelfMotion } from "../config/cardMotion";
-import useFeaturedAxis from "../hooks/useFeaturedAxis";
-import useMediaQuery from "../hooks/useMediaQuery";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/collection-shelf.css";
 
-const SCROLL_KEYS = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
-// Below this the shelf stops being a row of windows and becomes one card at a time, which is the
-// only shape that keeps the label panel readable on a phone.
-const PHONE_QUERY = "(max-width: 767.98px)";
+const SCROLL_KEYS = ["ArrowLeft", "ArrowRight", "Home", "End"];
 
 function previewsFor(projects, collectionId) {
   const inCollection = projects.filter((project) => project.collection === collectionId);
@@ -117,13 +112,9 @@ export default function CollectionShelf({
   const frameRef = useRef(0);
   const idPrefix = useId().replace(/:/g, "");
   const hintId = `${idPrefix}-shelf-hint`;
-  // Same site-wide shuffle direction as the poster rail: the collection cards keep their stacked
-  // glass design and just run downward instead of sideways. A phone overrides that to a
-  // side-scrolling row of full-width cards, because a stacked column there is three thin strips.
-  const featuredAxis = useFeaturedAxis();
-  const phone = useMediaQuery(PHONE_QUERY);
-  const axis = phone ? "horizontal" : featuredAxis;
-  const vertical = axis === "vertical";
+  // One window at a time, sliding sideways. The phone shape carries all the way up because it is
+  // the only one that keeps the label panel the size of its text; the stylesheet widens the card on
+  // larger screens and, once there is real room for it, lets up to four windows share the row.
   const previewsById = useMemo(() => {
     const map = new Map();
     collections.forEach((collection) => map.set(collection.id, previewsFor(projects, collection.id)));
@@ -133,9 +124,9 @@ export default function CollectionShelf({
   const syncEdges = () => {
     const node = trackRef.current;
     if (!node) return;
-    const visible = vertical ? node.clientHeight : node.clientWidth;
-    const total = vertical ? node.scrollHeight : node.scrollWidth;
-    const position = vertical ? node.scrollTop : node.scrollLeft;
+    const visible = node.clientWidth;
+    const total = node.scrollWidth;
+    const position = node.scrollLeft;
     const max = total - visible;
     const start = position <= 2;
     const end = position + visible >= total - 2;
@@ -166,8 +157,8 @@ export default function CollectionShelf({
       window.removeEventListener("resize", syncEdges);
       observer?.disconnect();
     };
-    // Edge state only depends on the track, the number of cards and which way it scrolls.
-  }, [preview, collections.length, vertical]);
+    // Edge state only depends on the track and the number of cards.
+  }, [preview, collections.length]);
 
   useEffect(() => () => {
     if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
@@ -188,43 +179,38 @@ export default function CollectionShelf({
     if (!item) return;
     const trackRect = node.getBoundingClientRect();
     const itemRect = item.getBoundingClientRect();
-    const box = vertical ? "height" : "width";
-    const edge = vertical ? "top" : "left";
-    const position = (vertical ? node.scrollTop : node.scrollLeft)
-      + (itemRect[edge] + itemRect[box] / 2)
-      - (trackRect[edge] + trackRect[box] / 2);
+    const position = node.scrollLeft
+      + (itemRect.left + itemRect.width / 2)
+      - (trackRect.left + trackRect.width / 2);
     if (typeof node.scrollTo === "function") {
-      node.scrollTo(vertical ? { top: position, behavior } : { left: position, behavior });
+      node.scrollTo({ left: position, behavior });
       return;
     }
     try {
-      if (vertical) node.scrollTop = position;
-      else node.scrollLeft = position;
+      node.scrollLeft = position;
     } catch {
       // Non-browser test environments expose a read-only scroll position.
     }
-  }, [vertical]);
+  }, []);
 
   const nearestIndex = useCallback(() => {
     const node = trackRef.current;
     if (!node) return 0;
     const items = Array.from(node.querySelectorAll(".collection-shelf-item"));
     const rect = node.getBoundingClientRect();
-    const center = vertical
-      ? rect.top + (node.clientHeight || rect.height) / 2
-      : rect.left + (node.clientWidth || rect.width) / 2;
+    const center = rect.left + (node.clientWidth || rect.width) / 2;
     let nearest = 0;
     let nearestDistance = Number.POSITIVE_INFINITY;
     items.forEach((item, index) => {
       const box = item.getBoundingClientRect();
-      const distance = Math.abs((vertical ? box.top + box.height / 2 : box.left + box.width / 2) - center);
+      const distance = Math.abs((box.left + box.width / 2) - center);
       if (distance < nearestDistance) {
         nearest = index;
         nearestDistance = distance;
       }
     });
     return nearest;
-  }, [vertical]);
+  }, []);
 
   const stepShelf = (direction) => {
     const lastIndex = Math.max(collections.length - 1, 0);
@@ -245,18 +231,18 @@ export default function CollectionShelf({
     const frame = window.requestAnimationFrame(() => {
       const node = trackRef.current;
       if (!node) return;
-      const extent = vertical ? node.scrollHeight - node.clientHeight : node.scrollWidth - node.clientWidth;
+      const extent = node.scrollWidth - node.clientWidth;
       if (extent <= 2) return;
       didCenterOnLoad.current = true;
       centerCard(Math.floor(collections.length / 2), "auto");
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [preview, activeCollection, collections.length, centerCard, vertical]);
+  }, [preview, activeCollection, collections.length, centerCard]);
 
   const handleKeyDown = (event) => {
     if (!SCROLL_KEYS.includes(event.key)) return;
-    const forwards = vertical ? event.key === "ArrowDown" : event.key === "ArrowRight";
-    const backwards = vertical ? event.key === "ArrowUp" : event.key === "ArrowLeft";
+    const forwards = event.key === "ArrowRight";
+    const backwards = event.key === "ArrowLeft";
     if (event.key === "Home") {
       event.preventDefault();
       centerCard(0);
@@ -300,7 +286,6 @@ export default function CollectionShelf({
     <div
       className={`collection-shelf${stateClass}`}
       data-shelf-motion={settings.preset}
-      data-axis={axis}
       style={{ ...style, "--shelf-items": collections.length }}
     >
       <div className="collection-shelf-window">
@@ -352,28 +337,24 @@ export default function CollectionShelf({
               className="collection-shelf-button"
               onClick={() => stepShelf(-1)}
               disabled={scrollState.start}
-              aria-label={vertical ? "Scroll collections up" : "Scroll collections left"}
+              aria-label="Scroll collections left"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
-                ? <path d="m6 14.5 6-6 6 6" />
-                : <path d="m14.5 6-6 6 6 6" />}</svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6" /></svg>
             </button>
             <button
               type="button"
               className="collection-shelf-button"
               onClick={() => stepShelf(1)}
               disabled={scrollState.end}
-              aria-label={vertical ? "Scroll collections down" : "Scroll collections right"}
+              aria-label="Scroll collections right"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
-                ? <path d="m6 9.5 6 6 6-6" />
-                : <path d="m9.5 6 6 6-6 6" />}</svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
             </button>
           </div>
         </div>
       </div>
       <p id={hintId} className="visually-hidden">
-        Use the {vertical ? "up and down arrow" : "left and right arrow"} keys to move between collections.
+        Use the left and right arrow keys to move between collections.
       </p>
     </div>
   );

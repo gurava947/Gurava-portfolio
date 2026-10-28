@@ -22,8 +22,8 @@ export default function CollectionCredits({ copy }) {
         <span className="home-credit-rule" aria-hidden="true" />
       </article>
 
-      {/* The thanks band is written in the builder's voice, never in his. The message is set as an
-       * epigraph with its own label and signature so nothing here reads as a quote he gave. */}
+      {/* The thanks band is written in the builder's voice, never in his: the message below is his
+       * own sentence of gratitude addressed to Rahul sir, not a line quoted from him. */}
       <article className="home-credit-card is-mentor">
         <span className="home-credit-label">{copy.thanksLabel || "Special thanks"}</span>
         <h3>{mentor.name}</h3>
@@ -33,22 +33,18 @@ export default function CollectionCredits({ copy }) {
         {(mentor.message || mentor.quote) && (
           <p className="home-credit-message">
             <span className="home-credit-message-label">{mentor.messageLabel || "A note of thanks"}</span>
-            <span className="home-credit-epigraph home-credit-telugu" aria-hidden="true">
-              {mentor.message || mentor.quote}
-            </span>
-            {(mentor.messageTranslation || mentor.quoteTranslation) && (
-              <span className="home-credit-translated">{mentor.messageTranslation || mentor.quoteTranslation}</span>
-            )}
+            <span className="home-credit-epigraph">{mentor.message || mentor.quote}</span>
             <span className="home-credit-signature">
-              — {mentor.messageBy || copy.madeWith?.transliteration || "the builder"}
+              — {mentor.messageBy || maker.name || "the builder"}
             </span>
           </p>
         )}
       </article>
 
+      {/* The maker credit is the name on its own — no "made with" phrase in front of it. */}
       <article className="home-credit-card is-maker">
-        <span className="home-credit-label">{copy.madeWithLabel || "Made with"}</span>
-        <p className="home-credit-maker home-credit-telugu">{maker.name}</p>
+        {copy.madeWithLabel && <span className="home-credit-label">{copy.madeWithLabel}</span>}
+        <p className="home-credit-maker">{maker.name}</p>
         {maker.transliteration && <p className="home-credit-sub">{maker.transliteration}</p>}
         {maker.note && <p className="home-credit-note">{maker.note}</p>}
       </article>

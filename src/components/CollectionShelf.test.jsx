@@ -14,20 +14,13 @@ const projects = [
   { id: "sw-one", collection: "static", thumbnail: "/thumb-static.jpg" },
 ];
 
-// The shelf measures whichever way it runs. Both directions are laid out on the same numbers —
-// a 1000px band, cards 400 long starting at 300 and stepping 420 — so centring produces the same
-// scroll offsets and only the property names change.
-const AXES = {
-  horizontal: {
-    visible: "clientWidth", total: "scrollWidth", position: "scrollLeft", prop: "left",
-    forwards: "ArrowRight", backwards: "ArrowLeft", edge: "left", extent: "width",
-    button: (side) => `Scroll collections ${side === 1 ? "right" : "left"}`,
-  },
-  vertical: {
-    visible: "clientHeight", total: "scrollHeight", position: "scrollTop", prop: "top",
-    forwards: "ArrowDown", backwards: "ArrowUp", edge: "top", extent: "height",
-    button: (side) => `Scroll collections ${side === 1 ? "down" : "up"}`,
-  },
+// The shelf measures the way it runs: sideways, one window at a time. Every card is laid out on the
+// same numbers — a 1000px band, cards 400 long starting at 300 and stepping 420 — so centring
+// produces predictable scroll offsets.
+const GEOMETRY = {
+  visible: "clientWidth", total: "scrollWidth", position: "scrollLeft", prop: "left",
+  edge: "left", extent: "width",
+  button: (side) => `Scroll collections ${side === 1 ? "right" : "left"}`,
 };
 
 function rectFor(overrides) {
@@ -35,22 +28,16 @@ function rectFor(overrides) {
   return { ...base, ...overrides };
 }
 
-function stubShelfGeometry(axis, container, track) {
-  const geometry = AXES[axis];
-  const sideways = geometry.edge === "left";
-  Object.defineProperty(track, geometry.visible, { configurable: true, value: 1000 });
-  track.getBoundingClientRect = () => rectFor(sideways ? { width: 1000, height: 0 } : { width: 0, height: 1000 });
+function stubShelfGeometry(container, track) {
+  Object.defineProperty(track, GEOMETRY.visible, { configurable: true, value: 1000 });
+  track.getBoundingClientRect = () => rectFor({ width: 1000, height: 0 });
   container.querySelectorAll(".collection-shelf-item").forEach((item, index) => {
     const start = 300 + index * 420;
-    item.getBoundingClientRect = () => (sideways
-      ? rectFor({ left: start, right: start + 400, width: 400, height: 0, x: start })
-      : rectFor({ top: start, bottom: start + 400, width: 0, height: 400, y: start }));
+    item.getBoundingClientRect = () => rectFor({ left: start, right: start + 400, width: 400, height: 0, x: start });
   });
 }
 
-function renderShelf(overrides = {}, axis = "vertical") {
-  if (axis === "vertical") delete document.documentElement.dataset.featuredAxis;
-  else document.documentElement.dataset.featuredAxis = axis;
+function renderShelf(overrides = {}) {
   const onSelect = vi.fn();
   const view = render(
     <CollectionShelf
@@ -61,7 +48,7 @@ function renderShelf(overrides = {}, axis = "vertical") {
       {...overrides}
     />,
   );
-  return { onSelect, axis, geometry: AXES[axis], ...view };
+  return { onSelect, geometry: GEOMETRY, ...view };
 }
 
 afterEach(() => {
@@ -83,13 +70,14 @@ describe("CollectionShelf", () => {
     expect(container.querySelectorAll(".collection-shelf-reflection")).toHaveLength(3);
   });
 
-  it("stacks downward by default and carries the card count to the stylesheet", () => {
+  it("slides sideways whatever the site-wide shuffle direction says, and carries the count", () => {
+    document.documentElement.dataset.featuredAxis = "vertical";
     const { container } = renderShelf();
     const shelf = container.querySelector(".collection-shelf");
 
-    expect(shelf).toHaveAttribute("data-axis", "vertical");
+    expect(shelf).not.toHaveAttribute("data-axis");
     expect(shelf.style.getPropertyValue("--shelf-items")).toBe("3");
-    expect(screen.getByText(/up and down arrow keys/i)).toBeInTheDocument();
+    expect(screen.getByText(/left and right arrow keys/i)).toBeInTheDocument();
   });
 
   it("selects a collection and clears the filter when it is pressed again", () => {
@@ -116,50 +104,44 @@ describe("CollectionShelf", () => {
   });
 
   it("centers the shelf cards with arrow, Home and End keys", () => {
-    const { container, geometry, axis, rerender } = renderShelf({}, "horizontal");
+    const { container, geometry } = renderShelf();
     const track = screen.getByRole("region", { name: "Project collections" });
     const scrollTo = vi.fn();
     track.scrollTo = scrollTo;
-    stubShelfGeometry(axis, container, track);
+    stubShelfGeometry(container, track);
 
-    fireEvent.keyDown(track, { key: geometry.forwards });
-    expect(scrollTo).toHaveBeenLastCalledWith({ [geometry.prop]: 420, behavior: "smooth" });
+    fireEvent.keyDown(track, { key: "ArrowRight" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 420, behavior: "smooth" });
 
-    fireEvent.keyDown(track, { key: geometry.backwards });
-    expect(scrollTo).toHaveBeenLastCalledWith({ [geometry.prop]: 0, behavior: "smooth" });
+    fireEvent.keyDown(track, { key: "ArrowLeft" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
 
     fireEvent.keyDown(track, { key: "Home" });
-    expect(scrollTo).toHaveBeenLastCalledWith({ [geometry.prop]: 0, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
 
     fireEvent.keyDown(track, { key: "End" });
-    expect(scrollTo).toHaveBeenLastCalledWith({ [geometry.prop]: 840, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 840, behavior: "smooth" });
 
     expect(container.querySelector(".collection-shelf-track")).toHaveAttribute("tabindex", "0");
   });
 
-  it("centres downward with the same keys when the shuffle runs vertically", () => {
-    const { container, geometry, axis } = renderShelf();
+  it("ignores the arrows that used to belong to the vertical shuffle", () => {
+    const { container } = renderShelf();
     const track = screen.getByRole("region", { name: "Project collections" });
     const scrollTo = vi.fn();
     track.scrollTo = scrollTo;
-    stubShelfGeometry(axis, container, track);
+    stubShelfGeometry(container, track);
 
-    fireEvent.keyDown(track, { key: geometry.forwards });
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: 420, behavior: "smooth" });
-
-    fireEvent.keyDown(track, { key: geometry.backwards });
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: "smooth" });
-
-    fireEvent.keyDown(track, { key: "End" });
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: 840, behavior: "smooth" });
+    fireEvent.keyDown(track, { key: "ArrowDown" });
+    expect(scrollTo).not.toHaveBeenCalled();
   });
 
   it("centers the active collection card when a selection changes", () => {
-    const { container, geometry, axis, rerender } = renderShelf({}, "horizontal");
+    const { container, geometry, rerender } = renderShelf();
     const track = screen.getByRole("region", { name: "Project collections" });
     const scrollTo = vi.fn();
     track.scrollTo = scrollTo;
-    stubShelfGeometry(axis, container, track);
+    stubShelfGeometry(container, track);
 
     rerender(
       <CollectionShelf
@@ -175,11 +157,11 @@ describe("CollectionShelf", () => {
   });
 
   it("centers the middle card on load when the shelf overflows", async () => {
-    const { container, geometry, axis, rerender } = renderShelf({}, "horizontal");
+    const { container, geometry } = renderShelf();
     const track = screen.getByRole("region", { name: "Project collections" });
     const scrollTo = vi.fn();
     track.scrollTo = scrollTo;
-    stubShelfGeometry(axis, container, track);
+    stubShelfGeometry(container, track);
     Object.defineProperty(track, geometry.total, { configurable: true, value: 1800 });
 
     await waitFor(() => {
@@ -188,7 +170,7 @@ describe("CollectionShelf", () => {
   });
 
   it("enables the scroll buttons only when the shelf overflows", async () => {
-    const { geometry, axis } = renderShelf({}, "vertical");
+    const { geometry } = renderShelf();
     const track = screen.getByRole("region", { name: "Project collections" });
     Object.defineProperty(track, geometry.visible, { configurable: true, value: 900 });
     Object.defineProperty(track, geometry.total, { configurable: true, value: 1800 });
@@ -201,7 +183,7 @@ describe("CollectionShelf", () => {
       expect(screen.getByRole("button", { name: geometry.button(1) })).toBeEnabled();
     });
     expect(screen.getByRole("button", { name: geometry.button(-1) })).toBeDisabled();
-    expect(track.closest(".collection-shelf")).toHaveAttribute("data-axis", axis);
+    expect(screen.queryByRole("button", { name: /Scroll collections (up|down)/ })).not.toBeInTheDocument();
   });
 
   it("puts the back and forward controls at the bottom of the shelf, beside the progress rail", () => {
@@ -213,29 +195,6 @@ describe("CollectionShelf", () => {
     expect(foot.querySelector(".collection-shelf-progress")).not.toBeNull();
     // Nothing is left in the head above the cards, so the control can never sit on top of one.
     expect(container.querySelector(".collection-shelf-head .collection-shelf-button")).toBeNull();
-  });
-
-  it("runs one card at a time sideways on a phone, whatever the shuffle direction says", () => {
-    const original = window.matchMedia;
-    window.matchMedia = (query) => ({
-      media: query,
-      matches: query.includes("max-width: 767"),
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      addListener: () => {},
-      removeListener: () => {},
-    });
-
-    try {
-      const { container } = renderShelf();
-      const shelf = container.querySelector(".collection-shelf");
-
-      expect(shelf).toHaveAttribute("data-axis", "horizontal");
-      expect(screen.getByRole("button", { name: "Scroll collections right" })).toBeInTheDocument();
-      expect(screen.queryByText(/up and down arrow keys/i)).not.toBeInTheDocument();
-    } finally {
-      window.matchMedia = original;
-    }
   });
 
   it("renders a non-interactive sample in preview mode", () => {

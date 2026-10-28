@@ -18,12 +18,10 @@ const copy = {
     honorific: "Rahul sir",
     role: "CEO · NXTWAVE / NIAT",
     messageLabel: "A note of thanks",
-    message: "ఆయన వల్ల ఇదంతా సాధ్యమైంది.",
-    messageTranslation: "this portfolio became possible because of his support",
+    message: "Rahul sir, thank you for the trust, the opportunity and the standard you set.",
     messageBy: "Guravaiah K",
   },
-  madeWithLabel: "Made with",
-  madeWith: { name: "గురువయ్య", transliteration: "Guravaiah K", note: "The name behind every commit." },
+  madeWith: { name: "Guravaiah K", note: "The name behind every commit." },
 };
 
 describe("CollectionCredits", () => {
@@ -35,20 +33,30 @@ describe("CollectionCredits", () => {
     expect(screen.getByText("All Active Full Stack Developers")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Mr. Atthuluri Rahul" })).toBeInTheDocument();
     expect(screen.getByText("Rahul sir · CEO · NXTWAVE / NIAT")).toBeInTheDocument();
-    expect(screen.getByText("గురువయ్య")).toBeInTheDocument();
+    expect(screen.getByText("Guravaiah K", { selector: ".home-credit-maker" })).toBeInTheDocument();
     expect(container.querySelectorAll(".home-credit-card")).toHaveLength(3);
   });
 
-  // The thanks band must never read as a statement the CEO made: it is an epigraph written by the
-  // builder, so it carries its own label and signature instead of blockquote semantics.
+  // The thanks band must never read as a statement the CEO made: it is a note written by the
+  // builder and addressed to him, so it carries its own label and signature instead of
+  // blockquote semantics.
   it("frames the thanks message as the builder's own note, not a quote from him", () => {
-    render(<CollectionCredits copy={copy} />);
+    const { container } = render(<CollectionCredits copy={copy} />);
 
     expect(screen.queryByRole("blockquote")).not.toBeInTheDocument();
     expect(screen.getByText("A note of thanks")).toBeInTheDocument();
-    expect(screen.getByText("ఆయన వల్ల ఇదంతా సాధ్యమైంది.")).toBeInTheDocument();
-    expect(screen.getByText("this portfolio became possible because of his support")).toBeInTheDocument();
+    expect(screen.getByText(copy.thanks.message)).toBeInTheDocument();
     expect(screen.getByText("— Guravaiah K")).toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/[\u0C00-\u0C7F]/);
+  });
+
+  it("credits the maker by name alone", () => {
+    const { container } = render(<CollectionCredits copy={copy} />);
+    const maker = container.querySelector(".is-maker");
+
+    expect(maker).toHaveTextContent("Guravaiah K");
+    expect(maker.querySelector(".home-credit-label")).not.toBeInTheDocument();
+    expect(screen.queryByText("Made with")).not.toBeInTheDocument();
   });
 
   it("omits optional lines the catalog does not supply", () => {
@@ -67,7 +75,6 @@ describe("CollectionCredits", () => {
     // The band keeps its label and the maker's own name as the author, rather than inventing one.
     expect(screen.getByText("A note of thanks")).toBeInTheDocument();
     expect(screen.getByText("— Guravaiah K")).toBeInTheDocument();
-    expect(container.querySelector(".home-credit-translated")).not.toBeInTheDocument();
   });
 
   it("renders nothing without copy", () => {
