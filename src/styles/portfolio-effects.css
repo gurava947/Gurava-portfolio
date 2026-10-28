@@ -358,8 +358,16 @@
   color: var(--theme-on-primary);
 }
 
+/* The universal selector does not reach pseudo-elements, so a `*`-only rule left every
+ * ::before/::after decoration animating after the visitor asked for reduced motion — the
+ * full-viewport blurred blob drift being the expensive one. Naming them explicitly is what
+ * actually stops the compositor work. */
 [data-animation="none"] *,
-[data-reduced-motion="true"] * {
+[data-animation="none"] *::before,
+[data-animation="none"] *::after,
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
   scroll-behavior: auto !important;
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;

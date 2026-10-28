@@ -111,7 +111,7 @@
   justify-content: center;
   height: 100%;
   gap: 3px;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--theme-card-text);
@@ -336,7 +336,7 @@
   border-radius: 11px;
   background: radial-gradient(circle at 28% 20%, #f472b6 0%, #db2777 46%, #9f1239 100%);
   color: #fff;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -357,7 +357,7 @@
   position: relative;
   z-index: 1;
   margin: 12px 0 0;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.04em;

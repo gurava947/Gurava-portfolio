@@ -30,7 +30,7 @@ html {
 body {
   color: var(--ink);
   background: var(--paper);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans', 'DM Sans Fallback', sans-serif;
 }
 
 img {
@@ -132,7 +132,7 @@ select:focus-visible {
   gap: 12px;
   min-width: 0;
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.05em;
@@ -170,7 +170,7 @@ select:focus-visible {
   background: radial-gradient(circle at 28% 20%, #f472b6 0%, #db2777 46%, #9f1239 100%);
   box-shadow: 0 8px 18px rgba(190, 24, 93, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.06rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -305,7 +305,7 @@ select:focus-visible {
   background: linear-gradient(145deg, var(--theme-primary), var(--theme-secondary));
   box-shadow: 0 10px 22px color-mix(in srgb, var(--theme-primary) 28%, transparent), inset 0 1px 0 rgb(255 255 255 / 30%);
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.16rem;
   font-weight: 800;
 }
@@ -332,7 +332,7 @@ select:focus-visible {
   margin: 0;
   overflow: hidden;
   color: var(--theme-card-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -773,7 +773,7 @@ select:focus-visible {
 .card-studio-block-head h3 {
   margin: 0;
   color: var(--theme-card-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: -0.025em;
@@ -859,7 +859,7 @@ select:focus-visible {
 
 .card-studio-preset-copy strong {
   color: var(--theme-card-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -1815,7 +1815,7 @@ select:focus-visible {
 .hero-title,
 .section-title,
 .detail-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-weight: 600;
   letter-spacing: -0.065em;
 }
@@ -2054,7 +2054,7 @@ select:focus-visible {
   align-items: baseline;
   gap: 3px;
   color: var(--hero-muted);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -2116,7 +2116,7 @@ select:focus-visible {
 .hero-slide-title {
   margin: 0;
   color: var(--hero-ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.62rem, 2.1vw, 1.95rem);
   font-weight: 600;
   letter-spacing: -0.045em;
@@ -2212,7 +2212,7 @@ select:focus-visible {
 
 .hero-slide-outline li span {
   color: var(--hero-tag-ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -2223,7 +2223,7 @@ select:focus-visible {
   top: 2px;
   right: 0;
   color: var(--hero-mark);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 4.4rem;
   font-weight: 600;
   letter-spacing: -0.08em;
@@ -2265,7 +2265,7 @@ select:focus-visible {
 .hero-slide-terminal-bar span {
   margin-left: auto;
   color: #87987d;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -2337,7 +2337,7 @@ select:focus-visible {
   flex: 1 1 auto;
   overflow: hidden;
   color: var(--hero-muted);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.015em;
@@ -2440,7 +2440,7 @@ select:focus-visible {
 }
 
 .art-card-number {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(4rem, 8vw, 6rem);
   font-weight: 600;
   letter-spacing: -0.12em;
@@ -2658,7 +2658,7 @@ select:focus-visible {
   max-width: 780px;
   margin: 0 0 clamp(18px, 2vw, 24px);
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(2.15rem, 4.4vw, 3.65rem);
   letter-spacing: -0.06em;
   line-height: 0.98;
@@ -2701,7 +2701,7 @@ select:focus-visible {
 
 .achievement-project strong {
   color: #203b1f;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(2.1rem, 3vw, 2.7rem);
   letter-spacing: -0.09em;
   line-height: 0.8;
@@ -2771,7 +2771,7 @@ select:focus-visible {
 .performance-metric strong {
   overflow: hidden;
   color: #f4f7ee;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.45rem, 2.2vw, 1.9rem);
   letter-spacing: -0.05em;
   line-height: 1;
@@ -2833,7 +2833,7 @@ select:focus-visible {
 }
 
 .achievement-cta span {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-variant-emoji: text;
   transition: transform 180ms ease;
 }
@@ -3108,7 +3108,7 @@ select:focus-visible {
 
 .project-overlay-title {
   margin: 0 0 8px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: -0.04em;
@@ -3152,7 +3152,7 @@ select:focus-visible {
 }
 
 .project-card-title {
-  font-family: var(--portfolio-card-title-font-family, 'Space Grotesk', sans-serif);
+  font-family: var(--portfolio-card-title-font-family, 'Space Grotesk', 'Space Grotesk Fallback', sans-serif);
   font-size: calc(1.25rem * var(--portfolio-card-font-scale, 1));
   font-weight: var(--portfolio-card-font-weight, 600);
   letter-spacing: -0.035em;
@@ -3173,7 +3173,7 @@ select:focus-visible {
 
 .footer-brand {
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   text-decoration: none;
@@ -3552,7 +3552,7 @@ select:focus-visible {
   margin: 0;
   padding: 0;
   color: var(--theme-card-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: -0.025em;

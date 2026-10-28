@@ -1,0 +1,102 @@
+/* Metric-matched local fallbacks for the two Google fonts the site chrome uses.
+ *
+ * Without these, text first paints in Arial and then reflows when the webfont arrives —
+ * one measurable layout shift at ~3.2s on a throttled connection (0.041 CLS on the home
+ * page; with the font hosts blocked it is 0.000). Each face below is Arial, nudged so its
+ * ascent, descent and average character width match the webfont, so the swap no longer
+ * changes any box height. Steady-state rendering is untouched: these faces only apply for
+ * the moment before "Space Grotesk"/"DM Sans" finish loading.
+ *
+ * Numbers came from out/font-metrics.json, measured in Chrome against this exact fallback:
+ *   advance width ratio vs Arial -> size-adjust
+ *   webfont ascent / descent over the em -> ascent-override / descent-override
+ * Re-run perf-check/measure-font-metrics.mjs after any font stack change.
+ */
+
+@font-face {
+  font-family: "Space Grotesk Fallback";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Arial");
+  size-adjust: 108.63%;
+  ascent-override: 98.5%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Space Grotesk Fallback";
+  font-style: normal;
+  font-weight: 500;
+  src: local("Arial");
+  size-adjust: 108.43%;
+  ascent-override: 98.5%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Space Grotesk Fallback";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Arial");
+  size-adjust: 101.68%;
+  ascent-override: 98.5%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Space Grotesk Fallback";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Arial");
+  size-adjust: 101.63%;
+  ascent-override: 98.5%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "DM Sans Fallback";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Arial");
+  size-adjust: 104.63%;
+  ascent-override: 99%;
+  descent-override: 31%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "DM Sans Fallback";
+  font-style: normal;
+  font-weight: 500;
+  src: local("Arial");
+  size-adjust: 106.3%;
+  ascent-override: 99%;
+  descent-override: 31%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "DM Sans Fallback";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Arial");
+  size-adjust: 101.75%;
+  ascent-override: 99%;
+  descent-override: 31%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "DM Sans Fallback";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Arial");
+  size-adjust: 103.21%;
+  ascent-override: 99%;
+  descent-override: 31%;
+  line-gap-override: 0%;
+}

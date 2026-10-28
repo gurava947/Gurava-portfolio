@@ -24,7 +24,7 @@
   background: var(--portfolio-card-background, var(--theme-card-bg));
   box-shadow: var(--portfolio-card-shadow, 0 12px 30px rgb(24 35 29 / 9%));
   color: var(--portfolio-card-custom-text-color, var(--theme-card-text));
-  font-family: var(--portfolio-card-font-family, 'DM Sans', sans-serif);
+  font-family: var(--portfolio-card-font-family, 'DM Sans', 'DM Sans Fallback', sans-serif);
   font-size: var(--portfolio-card-font-size, 16px);
   font-weight: var(--portfolio-card-font-weight, 400);
   transition:
@@ -480,7 +480,7 @@
 .lab-card-heading h3 {
   margin: 0;
   color: inherit;
-  font-family: var(--portfolio-card-title-font-family, 'Space Grotesk', sans-serif);
+  font-family: var(--portfolio-card-title-font-family, 'Space Grotesk', 'Space Grotesk Fallback', sans-serif);
   font-size: calc(1.42rem * var(--portfolio-card-font-scale, 1));
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -726,7 +726,7 @@
 .lab-hero h1 {
   margin: 0 0 20px;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(3.4rem, 8vw, 6.2rem);
   font-weight: 700;
   letter-spacing: -0.065em;
@@ -826,7 +826,7 @@
   margin: 7px 0 0;
   overflow-wrap: anywhere;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.02rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -856,7 +856,7 @@
 .lab-section-heading h2 {
   margin: 0;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.7rem, 3vw, 2.3rem);
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -1244,7 +1244,7 @@
 
 .lab-test-number {
   color: var(--theme-muted-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -1256,7 +1256,7 @@
   margin: 0;
   overflow: hidden;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -1371,7 +1371,7 @@
 .lab-brief-section h3 {
   margin: 0 0 8px;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.025em;
@@ -1470,7 +1470,7 @@
 .lab-instructions li::before {
   flex: 0 0 auto;
   color: var(--theme-primary);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1502,7 +1502,7 @@
 .lab-app-heading h1 {
   margin: 0;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.35rem, 2.2vw, 1.8rem);
   font-weight: 700;
   letter-spacing: -0.035em;
@@ -1589,7 +1589,7 @@
 .lab-preview-side h1 {
   margin: 0 0 16px;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(2.8rem, 6vw, 4.8rem);
   font-weight: 700;
   letter-spacing: -0.06em;

@@ -1001,7 +1001,7 @@
 
 .layout-preview-title {
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -1015,7 +1015,7 @@
 
 .layout-preview-subtitle {
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -1271,7 +1271,7 @@
 .layout-preview-count strong {
   overflow: hidden;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.62rem;
   font-weight: 700;
   text-overflow: ellipsis;

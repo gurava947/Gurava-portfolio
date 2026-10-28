@@ -87,7 +87,7 @@
 .lab-hero-poster-monogram {
   place-self: center;
   color: color-mix(in srgb, var(--theme-primary) 52%, var(--theme-muted-text));
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
   font-size: clamp(2.4rem, 6vw, 4rem);
   font-weight: 700;
   letter-spacing: -0.04em;

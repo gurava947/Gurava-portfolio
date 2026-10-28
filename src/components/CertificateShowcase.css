@@ -201,7 +201,7 @@
   max-width: 16ch;
   margin: 0;
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(2.55rem, 4.6vw, 5.2rem);
   letter-spacing: -0.058em;
   line-height: 0.99;
@@ -508,7 +508,7 @@
 .certificate-meta-recipient dd {
   margin: 0;
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.35rem, 2.1vw, 1.7rem);
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -578,7 +578,7 @@
 .alumni-recognition h3 {
   margin: 0;
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.8rem, 2.7vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -667,7 +667,7 @@
 
 .certificate-attempt-heading > strong {
   color: #f4f8ee;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.2rem, 1.5vw, 1.45rem);
   letter-spacing: -0.03em;
   line-height: 1.15;
@@ -751,7 +751,7 @@
   border-radius: 11px;
   background: linear-gradient(145deg, rgba(207, 232, 143, 0.28), rgba(143, 191, 86, 0.12));
   color: #ecf7d4;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1;
@@ -765,7 +765,7 @@
 
 .certificate-attempt-score-value {
   color: #f6f9f0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.2rem;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -819,7 +819,7 @@
 
 .certificate-attempt-count strong {
   color: #f2f7ea;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.95rem;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
@@ -885,7 +885,7 @@
 
 .certificate-score-ring-inner strong {
   color: #f6f1de;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.9rem, 3vw, 2.6rem);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.05em;
@@ -923,7 +923,7 @@
 .certificate-score-chip strong {
   margin-left: auto;
   color: #f6ebc8;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.45rem;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
@@ -969,7 +969,7 @@
 .certificate-score-fact dd {
   margin: 0;
   color: #eef4e6;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.15;
@@ -1089,7 +1089,7 @@
   border-radius: 999px;
   background: rgba(196, 166, 92, 0.1);
   color: #967a40;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
   font-weight: 700;

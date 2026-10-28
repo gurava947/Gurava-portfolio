@@ -160,7 +160,7 @@
   padding: 11px 18px;
   color: var(--theme-muted-text);
   cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: calc(0.64rem * var(--portfolio-card-font-scale, 1));
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -518,7 +518,7 @@
 }
 
 .fx-studio-area strong {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -810,7 +810,7 @@
   background: var(--theme-card-bg);
   color: var(--theme-text);
   cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -914,7 +914,7 @@
 
 .fx-preview-head h2 {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.15rem, 2vw, 1.5rem);
   letter-spacing: -0.03em;
 }
@@ -1023,7 +1023,7 @@
   background: var(--theme-card-bg);
   color: var(--theme-text);
   cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 0.66rem;
   font-weight: 800;
 }

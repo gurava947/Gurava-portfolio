@@ -113,7 +113,7 @@
 }
 
 .poster-card-monogram {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
   font-size: 3.4rem;
   font-weight: 700;
   color: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-muted-text));
@@ -144,7 +144,7 @@
 
 .poster-card-title {
   color: #fff;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk", "Space Grotesk Fallback", sans-serif;
   font-size: 0.98rem;
   font-weight: 700;
   line-height: 1.15;

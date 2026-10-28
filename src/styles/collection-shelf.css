@@ -451,7 +451,7 @@
 .collection-shelf-name {
   overflow: hidden;
   color: var(--theme-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: clamp(1.34rem, 1.9vw, 1.66rem);
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -473,7 +473,7 @@
 
 .collection-shelf-count b {
   color: var(--collection-accent);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1.42rem;
   font-weight: 700;
   letter-spacing: -0.05em;

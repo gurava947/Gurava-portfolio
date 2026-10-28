@@ -1577,9 +1577,12 @@ function App() {
   }, [site?.imageFallback]);
 
   // Warm the code-split route chunks after the first load so navigating still feels instant
-  // without paying for them in the initial bundle. Skipped when the user is saving data.
+  // without paying for them in the initial bundle. Skipped when the user is saving data or is
+  // on a 2G-class connection, where ~60 kB of speculative chunks is not worth the wait.
   useEffect(() => {
-    if (navigator.connection?.saveData) return undefined;
+    const connection = navigator.connection;
+    if (connection?.saveData) return undefined;
+    if (/(?:^|\s)(?:slow-2g|2g)$/.test(connection?.effectiveType || "")) return undefined;
     let idleId = 0;
     let timeoutId = 0;
     const prefetchRoutes = () => {

@@ -24,7 +24,12 @@ const REMOTE_ASSET_PATTERN = /^https?:\/\/(d2clawv67efefq\.cloudfront\.net|asset
 const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif", ".svg"]);
 const RESIZABLE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif"]);
 const MAX_FULL_WIDTH = 1680;
-const MAX_THUMB_WIDTH = 1080;
+// Posters are the heaviest thing the home page ships: at 1080px the rails downloaded 645 kB of
+// images on a cold visit, which was 75% of the whole page once gzip was in place. Nothing ever
+// draws them that big — a rail card media box is ~420px and the detail poster is capped at
+// `max-height: 300px` with `aspect-ratio: 16/9`, so ~533px wide. 720 keeps headroom for
+// hi-DPI without shipping a full-page screenshot for a thumbnail.
+const MAX_THUMB_WIDTH = 720;
 
 const staticProjects = JSON.parse(readFileSync(join(SOURCE, "projects-static.json"), "utf8"));
 const responsiveProjects = JSON.parse(readFileSync(join(SOURCE, "projects-responsive.json"), "utf8"));

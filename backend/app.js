@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
+import { gzipSync } from "node:zlib";
 import { createApiController } from "./controllers/apiController.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { createApiRoutes } from "./routes/apiRoutes.js";
@@ -30,6 +31,59 @@ const CONTENT_SECURITY_POLICY = [
   "form-action 'self'",
 ].join("; ");
 
+const COMPRESSIBLE_TYPE = /^(?:text\/|application\/(?:json|javascript|manifest\+json|x-javascript|xml)|image\/svg\+xml)/;
+const COMPRESS_MIN_BYTES = 1024;
+
+// Vite writes every chunk as <name>-<8-char base64url hash>.<ext>, with a hyphen before the
+// hash and not a dot. The old hex-only pattern looked for ".<hash>.js", which no filename has,
+// so no script or stylesheet ever got an immutable response: every repeat visit revalidated all
+// of them. Matching the real alphabet makes the hashed assets in dist/assets fully cacheable.
+const IMMUTABLE_ASSET = /-[A-Za-z0-9_-]{8}\.(?:js|css)$/;
+
+// Express has no compression built in and this app stays dependency-light, so gzip is done
+// with node:zlib. Responses are buffered — the largest payload here is a ~290 kB catalog.
+function compressWithGzip(request, response, next) {
+  const acceptEncoding = request.headers["accept-encoding"] || "";
+  const alreadyEncoded = () => response.getHeader("content-encoding");
+  if (request.method === "HEAD" || request.headers.range || !/\bgzip\b/i.test(acceptEncoding)) return next();
+
+  const chunks = [];
+  const originalWrite = response.write.bind(response);
+  const originalEnd = response.end.bind(response);
+
+  const push = (chunk, encoding, callback) => {
+    const done = typeof encoding === "function" ? encoding : callback;
+    if (chunk && !alreadyEncoded()) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding));
+    if (typeof done === "function") done();
+    return true;
+  };
+
+  response.write = push;
+  response.end = (chunk, encoding, callback) => {
+    response.write = originalWrite;
+    response.end = originalEnd;
+    if (chunk) push(chunk, encoding, callback);
+    else if (typeof encoding === "function") encoding();
+    else if (typeof callback === "function") callback();
+
+    const body = Buffer.concat(chunks);
+    if (alreadyEncoded() || body.length < COMPRESS_MIN_BYTES || !COMPRESSIBLE_TYPE.test(String(response.getHeader("content-type") || ""))) {
+      return originalEnd(body.length ? body : undefined);
+    }
+    try {
+      const gzipped = gzipSync(body, { level: 6 });
+      if (gzipped.length >= body.length) return originalEnd(body);
+      response.setHeader("Content-Encoding", "gzip");
+      response.setHeader("Vary", "Accept-Encoding");
+      response.setHeader("Content-Length", String(gzipped.length));
+      return originalEnd(gzipped);
+    } catch {
+      return originalEnd(body);
+    }
+  };
+  return next();
+}
+
 export function createApp({ database, databaseName, staticDirectory = resolve(projectRoot, "dist") }) {
   const app = express();
   const projectService = createProjectService(database.projectRepository);
@@ -53,6 +107,7 @@ export function createApp({ database, databaseName, staticDirectory = resolve(pr
     response.setHeader("Content-Security-Policy", CONTENT_SECURITY_POLICY);
     next();
   });
+  app.use(compressWithGzip);
   app.use(express.json({ limit: "32kb", strict: true }));
   app.use("/api", createApiRoutes(controller));
   app.use("/api", notFoundHandler);
@@ -63,7 +118,7 @@ export function createApp({ database, databaseName, staticDirectory = resolve(pr
       fallthrough: true,
       maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
       setHeaders(response, path) {
-        if (/\.[\da-f]{8,}\.(?:js|css)$/i.test(path)) response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        if (IMMUTABLE_ASSET.test(path)) response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
       },
     }));
     app.get("*path", (request, response, next) => {
