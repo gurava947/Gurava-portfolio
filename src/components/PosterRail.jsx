@@ -12,32 +12,61 @@ function monogram(title) {
     .toUpperCase();
 }
 
-// A poster-first horizontal rail: snap scrolling, edge fades, arrow controls and a
-// hover state that expands the card over its neighbours, the way a streaming shelf works.
+// A poster-first shelf: snap scrolling, edge fades, arrow controls and a hover state that
+// expands the card over its neighbours, the way a streaming rail works.
+//
+// The rail runs in whichever direction the visitor picked in Card Studio -> Site look
+// (`<html data-featured-axis>`), and the same card design serves both. Vertical is the shipped
+// default: cards stack top to bottom and the device count from theme.css (--rail-cards — 3 on a
+// phone, 4 on a tablet, 6 on a desktop) divides the height of the band instead of its width, so
+// the number of builds on screen stays exactly what that device is meant to show.
+const AXIS_ATTRIBUTE = "data-featured-axis";
+
+function readAxis() {
+  if (typeof document === "undefined") return "vertical";
+  return document.documentElement.dataset.featuredAxis === "horizontal" ? "horizontal" : "vertical";
+}
+
 export default function PosterRail({ projects = [], onNavigate, variant = "rail", eyebrow = "Rail" }) {
   const scrollerRef = useRef(null);
+  const [axis, setAxis] = useState(readAxis);
   const [edges, setEdges] = useState({ start: false, end: true });
+  const vertical = axis === "vertical";
 
   const measure = useCallback(() => {
     const node = scrollerRef.current;
     if (!node) return;
-    const max = node.scrollWidth - node.clientWidth;
-    setEdges({ start: node.scrollLeft > 4, end: node.scrollLeft < max - 4 });
-  }, []);
+    const extent = vertical ? node.scrollHeight - node.clientHeight : node.scrollWidth - node.clientWidth;
+    const position = vertical ? node.scrollTop : node.scrollLeft;
+    setEdges({ start: position > 4, end: position < extent - 4 });
+  }, [vertical]);
 
   useEffect(() => {
     measure();
     const node = scrollerRef.current;
-    if (!node || typeof ResizeObserver === "undefined") return undefined;
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    return () => observer.disconnect();
+    if (node && typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(measure);
+      observer.observe(node);
+      return () => observer.disconnect();
+    }
+    return undefined;
   }, [measure, projects.length]);
+
+  // Switching direction in the studio re-measures against the other axis; without this the
+  // arrows keep the enabled/disabled state the previous direction left behind.
+  useEffect(() => {
+    const observer = new MutationObserver(() => setAxis(readAxis()));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: [AXIS_ATTRIBUTE] });
+    return () => observer.disconnect();
+  }, []);
 
   const scrollByPage = (direction) => {
     const node = scrollerRef.current;
     if (!node) return;
-    node.scrollBy({ left: direction * node.clientWidth * 0.82, behavior: "smooth" });
+    const page = (vertical ? node.clientHeight : node.clientWidth) * 0.82;
+    node.scrollBy(vertical
+      ? { top: direction * page, behavior: "smooth" }
+      : { left: direction * page, behavior: "smooth" });
   };
 
   const navigate = (event, destination) => {
@@ -45,7 +74,7 @@ export default function PosterRail({ projects = [], onNavigate, variant = "rail"
   };
 
   return (
-    <div className={`poster-rail is-${variant}`}>
+    <div className={`poster-rail is-${variant}`} data-axis={axis}>
       <div
         className="poster-rail-scroller"
         ref={scrollerRef}
@@ -58,7 +87,7 @@ export default function PosterRail({ projects = [], onNavigate, variant = "rail"
           const poster = project.thumbnail || project.image || "";
           return (
             <a
-              className="poster-card"
+              className={`poster-card${poster ? "" : " is-code-card"}`}
               key={project.id || project.route}
               href={project.route}
               onClick={(event) => navigate(event, project.route)}
@@ -101,20 +130,20 @@ export default function PosterRail({ projects = [], onNavigate, variant = "rail"
         <button
           type="button"
           className="poster-rail-arrow is-prev"
-          aria-label="Scroll builds left"
+          aria-label={vertical ? "Scroll builds up" : "Scroll builds left"}
           disabled={!edges.start}
           onClick={() => scrollByPage(-1)}
         >
-          ‹
+          {vertical ? "↑" : "‹"}
         </button>
         <button
           type="button"
           className="poster-rail-arrow is-next"
-          aria-label="Scroll builds right"
+          aria-label={vertical ? "Scroll builds down" : "Scroll builds right"}
           disabled={!edges.end}
           onClick={() => scrollByPage(1)}
         >
-          ›
+          {vertical ? "↓" : "›"}
         </button>
       </div>
     </div>

@@ -10,6 +10,7 @@ import "./styles/layout-patterns.css";
 import "./styles/card-effects.css";
 import "./styles/site-look.css";
 import "./styles/text-treatments.css";
+import "./styles/footer-credits.css";
 import { DEFAULT_CARD_UI_SETTINGS, DEFAULT_LOADER_SETTINGS, normalizeCardUISettings, normalizeLoaderSettings, useTheme } from "./hooks/useTheme";
 import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
@@ -1057,14 +1058,33 @@ function GuravvaProfilePopover({
 }
 
 function SiteFooter({ site, onNavigate }) {
-  const copy = site.home.footer;
+  const home = site.home || {};
+  const copy = home.footer || {};
+  const credits = home.credits;
   const scrollToTop = () => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
+  // The program, the mentor and the maker credit live here rather than in their own home
+  // section, so the page ends on who the work belongs to — and every page that carries this
+  // footer carries the credit, not just the home shelf.
   return (
-    <footer className="portfolio-footer">
+    <footer className={`portfolio-footer${credits ? " has-credits" : ""}`} id="credits">
+      {credits && (
+        <div className="container footer-credits">
+          <header className="footer-credits-head">
+            <div>
+              <p className="eyebrow">{credits.eyebrow}</p>
+              <h2 className="section-title footer-credits-title">
+                {credits.title} <em className="home-credits-accent">{credits.titleAccent}</em>
+              </h2>
+            </div>
+            <p className="section-note">{credits.note}</p>
+          </header>
+          <CollectionCredits copy={credits} />
+        </div>
+      )}
       <div className="container site-footer-inner">
         <a className="footer-brand" href="/" onClick={(event) => onNavigate(event, "/")}>{site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}</a>
         <p className="site-footer-note">{copy.note}</p>
@@ -1462,22 +1482,7 @@ function PortfolioHome({
         </section>
 
         {/* Guarded because the catalog can render from a cached copy that predates this block. */}
-        {copy.credits && (
-          <section className="home-credits-section" id="credits">
-            <div className="container">
-              <header className="home-section-heading">
-                <div>
-                  <p className="eyebrow">{copy.credits.eyebrow}</p>
-                  <h2 className="section-title">
-                    {copy.credits.title} <em className="home-credits-accent">{copy.credits.titleAccent}</em>
-                  </h2>
-                </div>
-                <p className="section-note">{copy.credits.note}</p>
-              </header>
-              <CollectionCredits copy={copy.credits} />
-            </div>
-          </section>
-        )}
+        {/* The program / mentor / maker credit moved into <SiteFooter>, which every page renders. */}
       </main>
       <SiteFooter site={site} onNavigate={navigate} />
     </div>

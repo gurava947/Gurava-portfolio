@@ -1,0 +1,222 @@
+/* The site footer as a closing credit reel.
+ *
+ * The program card, the mentor card and the maker credit used to sit in their own section at the
+ * end of the home page. They belong to the whole site, so they now live in <SiteFooter>, which
+ * every route renders — and because the footer is the last thing on the page, it is dressed in
+ * the look the visitor picked: the three gradient washes run through the hairline, the labels and
+ * the card plates.
+ *
+ * Everything here is scoped under `.portfolio-footer`, so the credit cards keep their own file
+ * (CollectionCredits.css) for what they are, and this file only decides how they sit in a footer.
+ */
+
+.portfolio-footer {
+  position: relative;
+  padding: 0 0 26px;
+  background:
+    radial-gradient(120% 130% at 4% 0%, color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 9%, transparent), transparent 52%),
+    radial-gradient(90% 120% at 96% 8%, color-mix(in srgb, var(--look-wash-b, var(--theme-primary)) 7%, transparent), transparent 56%),
+    color-mix(in srgb, var(--theme-card-bg) 62%, transparent);
+  color: var(--theme-text);
+}
+
+/* A three-stop hairline in the look's own colours, instead of a flat border. */
+.portfolio-footer::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 78%, transparent),
+    color-mix(in srgb, var(--look-wash-b, var(--theme-primary)) 62%, transparent) 48%,
+    color-mix(in srgb, var(--look-wash-c, var(--theme-primary)) 72%, transparent)
+  );
+  background-size: 220% 100%;
+  content: "";
+  opacity: 0.85;
+  transition: background-size 900ms ease;
+}
+
+.portfolio-footer:hover::before {
+  background-size: 100% 100%;
+}
+
+.theme-dark .portfolio-footer {
+  background:
+    radial-gradient(120% 130% at 4% 0%, color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 15%, transparent), transparent 52%),
+    radial-gradient(90% 120% at 96% 8%, color-mix(in srgb, var(--look-wash-b, var(--theme-primary)) 11%, transparent), transparent 56%),
+    color-mix(in srgb, #070b14 82%, transparent);
+  color: var(--theme-text);
+}
+
+/* ---------- The credit band ---------- */
+
+.footer-credits {
+  padding-top: clamp(34px, 4.4vw, 58px);
+  padding-bottom: clamp(26px, 3vw, 40px);
+}
+
+.footer-credits-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 32px;
+  margin-bottom: clamp(18px, 2.4vw, 28px);
+}
+
+.footer-credits-title {
+  margin: 6px 0 0;
+  font-size: clamp(1.5rem, 2.9vw, 2.35rem);
+}
+
+.footer-credits-head .section-note {
+  max-width: 46ch;
+  margin: 0;
+}
+
+/* Footer scale: the same cards, tightened so they close a page instead of opening a section. */
+.portfolio-footer .home-credits-grid {
+  gap: 14px;
+}
+
+.portfolio-footer .home-credit-card {
+  gap: 8px;
+  padding: clamp(16px, 1.9vw, 24px);
+  border-radius: 22px;
+  background:
+    radial-gradient(126% 100% at 100% 0%, color-mix(in srgb, var(--credit-accent) 14%, transparent), transparent 56%),
+    color-mix(in srgb, var(--theme-card-bg) 82%, transparent);
+  box-shadow: 0 12px 30px rgb(15 24 35 / 6%);
+}
+
+.theme-dark .portfolio-footer .home-credit-card {
+  background:
+    radial-gradient(126% 100% at 100% 0%, color-mix(in srgb, var(--credit-accent) 18%, transparent), transparent 56%),
+    color-mix(in srgb, #0d1420 86%, transparent);
+  box-shadow: 0 14px 34px rgb(0 0 0 / 22%);
+}
+
+.portfolio-footer .home-credit-wordmark {
+  font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+}
+
+.portfolio-footer .home-credit-maker {
+  font-size: clamp(1.45rem, 2.5vw, 1.95rem);
+}
+
+.portfolio-footer .home-credit-card h3 {
+  font-size: clamp(1.05rem, 1.5vw, 1.24rem);
+}
+
+.portfolio-footer .home-credit-note {
+  font-size: 0.74rem;
+}
+
+/* A soft wash that sweeps in behind a card on hover — the footer is the one place the site can
+ * afford a slower, decorative gesture, because nothing below it competes for attention. */
+.portfolio-footer .home-credit-card::before {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--credit-accent) 16%, transparent) 46%, transparent 92%);
+  background-size: 240% 100%;
+  background-position: 140% 0;
+  content: "";
+  opacity: 0;
+  transition: background-position 900ms ease, opacity 320ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .portfolio-footer .home-credit-card:hover::before {
+    background-position: -40% 0;
+    opacity: 1;
+  }
+}
+
+/* ---------- The closing bar ---------- */
+
+.portfolio-footer .site-footer-inner {
+  /* A rule of its own above the bar, so the credit band and the sign-off read as two beats. */
+  position: relative;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--theme-border-color) var(--theme-border-opacity), transparent);
+}
+
+.portfolio-footer.has-credits .site-footer-inner {
+  margin-top: 4px;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--theme-text);
+  font-size: 1.06rem;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+.footer-brand:hover {
+  opacity: 0.72;
+}
+
+.portfolio-footer .site-footer-note {
+  flex: 1 1 34ch;
+  color: var(--theme-muted-text);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.portfolio-footer .back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border: 1px solid color-mix(in srgb, var(--theme-border-color) var(--theme-border-opacity), transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-card-bg) 76%, transparent);
+  color: var(--theme-text);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.2, 0.75, 0.3, 1), border-color 220ms ease, background 220ms ease;
+}
+
+.portfolio-footer .back-to-top:hover {
+  border-color: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 52%, transparent);
+  background: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 12%, var(--theme-card-bg));
+  transform: translateY(-2px);
+}
+
+.portfolio-footer .back-to-top:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 679.98px) {
+  .portfolio-footer .site-footer-inner {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .portfolio-footer .back-to-top {
+    order: -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-footer::before,
+  .portfolio-footer .home-credit-card::before,
+  .portfolio-footer .back-to-top {
+    transition: none;
+  }
+
+  .portfolio-footer .back-to-top:hover {
+    transform: none;
+  }
+}

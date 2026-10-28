@@ -27,8 +27,14 @@ describe("normalizeSiteLook", () => {
   });
 
   it("keeps every valid choice, including the gradient and featured strip", () => {
-    expect(normalizeSiteLook({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail" }))
-      .toEqual({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail" });
+    expect(normalizeSiteLook({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail", axis: "horizontal" }))
+      .toEqual({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail", axis: "horizontal" });
+  });
+
+  it("ships the shuffle running vertically and drops an axis it does not know", () => {
+    expect(DEFAULT_SITE_LOOK.axis).toBe("vertical");
+    expect(normalizeSiteLook({ axis: "diagonal" }).axis).toBe("vertical");
+    expect(normalizeSiteLook({ featured: "poster" }).axis).toBe("vertical");
   });
 
   it("treats settings saved before the look group existed as the default look", () => {
@@ -42,6 +48,7 @@ describe("normalizeSiteLook", () => {
     expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, heading: "glow" })).toBe(false);
     expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, textFx: false })).toBe(false);
     expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, logo3d: false })).toBe(false);
+    expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, axis: "horizontal" })).toBe(false);
   });
 
   it("offers the controls the studio renders", () => {

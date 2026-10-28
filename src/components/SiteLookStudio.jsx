@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import {
   BACKGROUND_PATTERNS,
   DEFAULT_SITE_LOOK,
+  FEATURED_AXES,
   FEATURED_STYLES,
   HEADLINE_STYLES,
   HERO_TEXT_STYLES,
   LOOK_GRADIENTS,
   LOOK_PRESETS,
   getBackgroundPattern,
+  getFeaturedAxis,
   getFeaturedStyle,
   getHeadlineStyle,
   getHeroTextStyle,
@@ -57,6 +59,7 @@ export default function SiteLookStudio({ settings, onApply }) {
   const activeGradient = getLookGradient(draft.gradient);
   const activeHeadline = getHeadlineStyle(draft.heading);
   const activeFeatured = getFeaturedStyle(draft.featured);
+  const activeFeaturedAxis = getFeaturedAxis(draft.axis);
 
   useEffect(() => {
     if (sameSiteLook(appliedRef.current, applied)) return;
@@ -264,13 +267,34 @@ export default function SiteLookStudio({ settings, onApply }) {
             ))}
           </div>
         </div>
+
+        {/* Direction is a separate choice from the strip style: the same cards run sideways or
+            downward, and the device count (3 / 4 / 6) follows whichever axis is picked. */}
+        <div className="card-studio-quick-row">
+          <span className="card-studio-quick-label">Shuffle direction</span>
+          <div className="card-studio-segments" role="group" aria-label="Featured builds direction">
+            {FEATURED_AXES.map((axis) => (
+              <button
+                key={axis.id}
+                type="button"
+                className="card-studio-segment"
+                aria-pressed={draft.axis === axis.id}
+                title={draft.featured === "grid" ? "Direction applies to the rail strips; the grid already stacks." : axis.note}
+                disabled={draft.featured === "grid"}
+                onClick={() => updateDraft({ axis: axis.id }, `${axis.label} shuffle previewed. Choose Apply look to keep it.`)}
+              >
+                {axis.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="look-studio-preview">
         <div className="look-studio-preview-head">
           <span>Live preview</span>
           <strong>
-            {activePreset.label} · {activeHeroText.label} · {activeBackground.label} · {activeGradient.label} · {activeHeadline.label} · {activeFeatured.label}
+            {activePreset.label} · {activeHeroText.label} · {activeBackground.label} · {activeGradient.label} · {activeHeadline.label} · {activeFeatured.label} · {activeFeaturedAxis.label}
           </strong>
           <button type="button" className="look-studio-replay" onClick={() => setPreviewKey((current) => current + 1)}>
             Replay
@@ -285,6 +309,7 @@ export default function SiteLookStudio({ settings, onApply }) {
           data-look-heading={draft.heading}
           data-look-text-fx={String(draft.textFx)}
           data-logo-3d={String(draft.logo3d)}
+          data-featured-axis={draft.axis}
           style={getSiteLookVariables(draft)}
         >
           <span className="look-studio-stage-bg" aria-hidden="true" />
@@ -300,7 +325,7 @@ export default function SiteLookStudio({ settings, onApply }) {
           <span className="look-studio-demo-title" data-look-heading={draft.heading}>Three shelves, one catalog</span>
           <span className="look-studio-demo-note">Hover this line — the highlight sweeps in without moving the text.</span>
           {/* Rail variants need a doubled track so the -50% scroll loop is seamless. */}
-          <div className={`look-studio-strip is-${draft.featured}`} aria-hidden="true">
+          <div className={`look-studio-strip is-${draft.featured}`} data-axis={draft.axis} aria-hidden="true">
             <div className="look-studio-strip-track">
               {(draft.featured === "grid"
                 ? STRIP_TILES.slice(0, 4)

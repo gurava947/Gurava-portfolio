@@ -290,6 +290,7 @@ export function useTheme() {
     root.dataset.lookTextFx = String(look.textFx);
     root.dataset.logo3d = String(look.logo3d);
     root.dataset.featuredStrip = look.featured;
+    root.dataset.featuredAxis = look.axis;
     Object.entries(getSiteLookVariables(look)).forEach(([name, value]) => root.style.setProperty(name, value));
 
     try {

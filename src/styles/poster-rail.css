@@ -358,3 +358,168 @@
     width: 22px;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Vertical shuffle.
+
+   Same cards, same artwork, same hover expansion — only the axis changes. The
+   scroller turns into a column with a definite height, and `--rail-cards` (3 on a
+   phone, 4 on a tablet, 6 on a desktop — theme.css) now divides that height instead
+   of the width, so the device still gets exactly the number of builds it was given,
+   stacked downward. Because a card is full-bleed wide here, the title and the detail
+   block sit side by side along the bottom instead of fighting for a narrow column,
+   and the type can be larger than the horizontal rail can afford.
+   --------------------------------------------------------------------------- */
+
+.poster-rail[data-axis="vertical"] .poster-rail-scroller {
+  --rail-band: clamp(340px, 70vh, 720px);
+
+  flex-direction: column;
+  height: var(--rail-band);
+  overflow: hidden auto;
+  overscroll-behavior-x: auto;
+  overscroll-behavior-y: contain;
+  padding: 4px 26px 4px 4px;
+  scroll-snap-type: y mandatory;
+  scroll-padding-block: 12px;
+}
+
+/* A percentage flex-basis in a column resolves against the container's content height,
+ * which is definite because of --rail-band above. That is what keeps exactly the device
+ * count on screen with no sliver of the next card peeking in. */
+.poster-rail[data-axis="vertical"] .poster-card {
+  flex: 0 0 calc((100% - (var(--rail-cards) - 1) * var(--rail-gap)) / var(--rail-cards));
+  aspect-ratio: auto;
+  transform-origin: center center;
+}
+
+.poster-rail[data-axis="vertical"] .poster-card:hover,
+.poster-rail[data-axis="vertical"] .poster-card:focus-visible,
+.poster-rail[data-axis="vertical"] .poster-card:focus-within {
+  /* Lifting a full-width card by 14px would tear it out of the column; a slight swell
+   * reads as the same gesture without stranding the neighbours. */
+  transform: scale(1.012);
+}
+
+/* A short wide card carries text across almost its whole face, so the resting scrim cannot be
+ * the tall-rail version that only darkens the bottom quarter — the white title would sit on the
+ * light top half of a screenshot. The band starts higher and stays denser. */
+.poster-rail[data-axis="vertical"] .poster-card-scrim {
+  background: linear-gradient(180deg, rgb(6 10 16 / 26%) 0%, rgb(6 10 16 / 52%) 24%, rgb(6 10 16 / 84%) 62%, rgb(6 10 16 / 92%) 100%);
+}
+
+/* The 3:4 rail letterboxes a wide screenshot on purpose, because that rail is tall. Stacked, the
+ * same tile is a banner: contain would leave it a few pixels high, so it covers and crops — and
+ * crops from the top, because the header of a page is what makes its thumbnail recognisable. */
+.poster-rail[data-axis="vertical"] .poster-card-media {
+  background: linear-gradient(165deg, color-mix(in srgb, var(--theme-primary) 16%, var(--theme-card-bg)) 0%, var(--theme-card-bg) 72%);
+}
+
+.poster-rail[data-axis="vertical"] .poster-card-media img {
+  padding: 0;
+  object-fit: cover;
+  object-position: 50% 0;
+}
+
+.poster-rail[data-axis="vertical"]::before,
+.poster-rail[data-axis="vertical"]::after {
+  top: -6px;
+  right: 0;
+  bottom: auto;
+  left: 0;
+  width: auto;
+  height: 34px;
+}
+
+.poster-rail[data-axis="vertical"]::before {
+  background: linear-gradient(180deg, var(--theme-background), transparent);
+}
+
+.poster-rail[data-axis="vertical"]::after {
+  top: auto;
+  bottom: -6px;
+  background: linear-gradient(0deg, var(--theme-background), transparent);
+}
+
+.poster-rail[data-axis="vertical"] .poster-rail-controls {
+  top: auto;
+  right: 12px;
+  bottom: 12px;
+  left: auto;
+  z-index: 4;
+  gap: 6px;
+  translate: 0;
+}
+
+.poster-rail[data-axis="vertical"] .poster-card-body {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 2px 22px;
+  align-items: end;
+  padding: 14px 20px;
+}
+
+.poster-rail[data-axis="vertical"] .poster-card-title {
+  font-size: calc(var(--rail-title-size) * var(--portfolio-card-font-scale, 1) * 1.42);
+}
+
+/* The extra detail has horizontal room for it on a wide card, so it is simply on. */
+.poster-rail[data-axis="vertical"] .poster-card-more {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  max-height: none;
+  opacity: 1;
+  justify-self: end;
+  align-self: end;
+  text-align: right;
+}
+
+.poster-rail[data-axis="vertical"] .poster-card-tech {
+  justify-content: flex-end;
+}
+
+.poster-rail[data-axis="vertical"] .poster-card-media .code-plate {
+  --poster-code-bottom: 10px;
+
+  inset: 8px auto 8px 10px;
+  width: min(24%, 210px);
+}
+
+/* A build with no screenshot puts its snippet where the thumbnail would be, so the text column
+   starts after the plate instead of on top of it. */
+.poster-rail[data-axis="vertical"] .poster-card.is-code-card .poster-card-body {
+  padding-left: calc(min(24%, 210px) + 28px);
+}
+
+@media (max-width: 767.98px) {
+  /* Three stacked cards on a phone are wide but short, so the detail column goes away and the
+   * plate returns to sitting over the tile. The meta row survives because the width allows it. */
+  .poster-rail[data-axis="vertical"] .poster-card-body {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 10px 12px;
+  }
+
+  .poster-rail[data-axis="vertical"] .poster-card-more {
+    display: none;
+  }
+
+  .poster-rail[data-axis="vertical"] .poster-card-meta {
+    display: flex;
+  }
+
+  .poster-rail[data-axis="vertical"] .poster-card-media .code-plate {
+    inset: 8px 8px auto;
+    height: auto;
+    width: auto;
+  }
+
+  .poster-rail[data-axis="vertical"] .poster-card.is-code-card .poster-card-body {
+    padding-left: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-rail[data-axis="vertical"] .poster-card:hover,
+  .poster-rail[data-axis="vertical"] .poster-card:focus-visible {
+    transform: none;
+  }
+}

@@ -642,21 +642,9 @@
   letter-spacing: -0.03em;
 }
 
-/* Credit band */
-
-.home-credits-section {
-  padding: clamp(64px, 7vw, 100px) 0;
-  background:
-    radial-gradient(110% 80% at 8% 0%, color-mix(in srgb, var(--look-wash-a, #7c6cf0) 11%, transparent), transparent 58%),
-    color-mix(in srgb, var(--theme-card-bg) 74%, transparent);
-  color: var(--theme-text);
-}
-
-.theme-dark .home-credits-section {
-  background:
-    radial-gradient(110% 80% at 8% 0%, color-mix(in srgb, var(--look-wash-a, #7c6cf0) 16%, transparent), transparent 58%),
-    color-mix(in srgb, #0a1018 78%, transparent);
-}
+/* Credit band — the cards themselves live in components/ui/CollectionCredits.css and the
+   footer chrome that houses them lives in styles/footer-credits.css. Only the accent word of
+   the closing heading is styled here, because it is shared with the section headings. */
 
 .home-credits-accent {
   color: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 82%, var(--theme-text));
@@ -2170,7 +2158,6 @@
 
   .home-collections-section,
   .home-certificates-section,
-  .home-credits-section,
   .home-featured-section {
     padding: 54px 0;
   }

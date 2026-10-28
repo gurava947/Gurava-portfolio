@@ -121,6 +121,31 @@ describe("SiteLookStudio", () => {
     expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, featured: "rail" });
   });
 
+  it("previews the shuffle direction and only enables it for a strip that can turn", () => {
+    const { onApply, container } = renderStudio({
+      initialSettings: { ...DEFAULT_SITE_LOOK, featured: "rail" },
+    });
+    const strip = () => container.querySelector(".look-studio-strip");
+
+    expect(strip()).toHaveAttribute("data-axis", "vertical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Horizontal" }));
+
+    expect(strip()).toHaveAttribute("data-axis", "horizontal");
+    expect(screen.getByText(/Horizontal shuffle previewed\. Choose Apply look to keep it/i)).toBeInTheDocument();
+    expect(onApply).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: /Apply look/i }));
+    expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, featured: "rail", axis: "horizontal" });
+  });
+
+  it("disables the direction control while the featured strip is a grid", () => {
+    const { container } = renderStudio();
+
+    expect(container.querySelector(".look-studio-strip")).toHaveClass("is-grid");
+    expect(screen.getByRole("button", { name: "Vertical" })).toBeDisabled();
+  });
+
   it("discards an unsaved preview through Cancel", () => {
     const { onApply, stage } = renderStudio();
 
