@@ -173,22 +173,22 @@
   scrollbar-width: thin;
 }
 
-/* Exactly --rail-cards tiles per view (3 on a phone or medium screen, 4 on a large one,
- * 6 on a desktop) with no sliver of the next one, which is what makes the page-flip arrows
+/* Exactly --rail-cards-horizontal tiles per view (three on every device, from a phone to an
+ * extra-large desktop) with no sliver of the next one, which is what makes the page-flip arrows
  * and the progress bar line up with what the visitor actually sees. */
 .lab-project-grid.is-card-rail .lab-project-card {
   width: auto;
   max-width: none;
-  flex: 0 0 calc((100% - (var(--rail-cards) - 1) * var(--rail-gap)) / var(--rail-cards));
+  flex: 0 0 calc((100% - (var(--rail-cards-horizontal) - 1) * var(--rail-gap)) / var(--rail-cards-horizontal));
   min-width: 0;
   margin-inline: 0;
   scroll-snap-align: start;
 }
 
 /* Rail anatomy at streaming density. The card body is written for a tile ~400px wide; divided
-   six ways it is a third of that, so the secondary rows are switched off rather than squashed
-   into 6px type. Everything that stays is sized from the --rail-* tokens in theme.css so this
-   rail and the poster rail on the home page stay in step. */
+   three ways on a phone it is a quarter of that, so the secondary rows are switched off rather
+   than squashed into 6px type. Everything that stays is sized from the --rail-* tokens in
+   theme.css so this rail and the poster rail on the home page stay in step. */
 .lab-project-grid.is-card-rail .lab-card-media {
   height: var(--rail-media-height);
   margin: 6px 6px 0;
@@ -792,6 +792,23 @@
 
 @media (min-width: 768px) and (max-width: 1199.98px) {
   .lab-card-media { height: var(--portfolio-card-image-height-tablet, 175px); }
+}
+
+/* Extra-large: the side-scrolling rail rows three tiles across, so a card is roughly 450px wide —
+ * far too much room for a preview and a title sized for the 216px desktop column it used to sit
+ * in. The paginated catalogue rail keeps its own measures; its selectors are more specific. */
+@media (min-width: 1200px) {
+  .lab-project-grid.is-card-rail {
+    --rail-media-height: clamp(180px, 15vw, 240px);
+    --rail-title-size: clamp(1rem, 1.2vw, 1.35rem);
+    --rail-body-size: clamp(0.8rem, 0.95vw, 1rem);
+    --rail-body-lines: 3;
+  }
+
+  .lab-project-grid.is-card-rail .lab-card-body {
+    gap: 8px;
+    padding: 14px 16px 16px;
+  }
 }
 
 /* Detail page */

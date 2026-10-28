@@ -6,8 +6,9 @@
 }
 
 .poster-rail-scroller {
-  /* --rail-cards comes from theme.css: 3 tiles on a phone or medium screen, 4 on a
-     large one, 6 on a desktop. */
+  /* --rail-cards-horizontal comes from theme.css: three tiles across on every device. The
+     stacked rail below divides its height by --rail-cards (3 on a phone or medium screen, 4 on a
+     large one, 6 on a desktop) instead. */
   --rail-gap: clamp(8px, var(--portfolio-card-gap, 20px), 18px);
   display: flex;
   gap: var(--rail-gap);
@@ -54,7 +55,7 @@
 .poster-card {
   position: relative;
   display: block;
-  flex: 0 0 calc((100% - (var(--rail-cards) - 1) * var(--rail-gap)) / var(--rail-cards));
+  flex: 0 0 calc((100% - (var(--rail-cards-horizontal) - 1) * var(--rail-gap)) / var(--rail-cards-horizontal));
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
@@ -357,6 +358,30 @@
   .poster-rail::before,
   .poster-rail::after {
     width: 22px;
+  }
+}
+
+/* Extra-large: three tiles across makes a card roughly 450px wide — over twice the 216px column
+ * the desktop tokens were sized for — so the title and the summary would float in the tile. The
+ * type and the body padding grow with it. Scoped to the side-scrolling rail and not to :root,
+ * because the stacked axis keeps its six short cards at these widths and their smaller type. */
+@media (min-width: 1200px) {
+  .poster-rail:not([data-axis="vertical"]) {
+    --rail-title-size: clamp(1rem, 1.2vw, 1.35rem);
+    --rail-body-size: clamp(0.8rem, 0.95vw, 1rem);
+  }
+
+  .poster-rail:not([data-axis="vertical"]) .poster-card-body {
+    gap: 8px;
+    padding: 18px 20px;
+  }
+
+  /* The detail block only opened to the height a narrow tile could show. A wide one has room for
+   * the whole summary and the tech chips at once. */
+  .poster-rail:not([data-axis="vertical"]) .poster-card:hover .poster-card-more,
+  .poster-rail:not([data-axis="vertical"]) .poster-card:focus-visible .poster-card-more,
+  .poster-rail:not([data-axis="vertical"]) .poster-card:focus-within .poster-card-more {
+    max-height: 220px;
   }
 }
 

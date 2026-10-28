@@ -67,10 +67,17 @@
    card width. A phone, a tablet and a desktop cannot show the same count: a card that is
    comfortable six-across on a desktop is unreadable three-across on a phone, and a card sized
    for a phone fills a whole desktop screen. So the count is fixed per device class and the type
-   scales down with it. --rail-cards is the visible count; the rail divides its own content box
-   by it, which is what keeps exactly that many cards on screen with no sliver of a seventh. */
+   scales down with it. The rail divides its own content box by the count, which is what keeps
+   exactly that many cards on screen with no sliver of a seventh.
+
+   The two shuffle axes need their own count. --rail-cards is the stacked one: the vertical rail
+   divides the band's height by it, so it still grows with the viewport. --rail-cards-horizontal
+   rows the side-scrolling rail across the screen, and it holds at three on every device — that is
+   the width at which a tile carries a readable title and a preview at the same time, from a phone
+   to an extra-large desktop. */
 :root {
   --rail-cards: 6;
+  --rail-cards-horizontal: 3;
   --rail-media-height: 116px;
   --rail-title-size: 0.84rem;
   --rail-body-size: 0.68rem;
@@ -79,10 +86,11 @@
   --rail-badge-display: inline-flex;
 }
 
-/* Tablet and small laptop: four across. Cards are wider here than at the smallest desktop width, so
-   the rail can afford larger type and a fuller preview image. The count only applies from 992px up —
-   the medium band below overrides it, while the type and media measures keep running across the
-   whole band. */
+/* Tablet and small laptop: four stacked. Cards are wider here than at the smallest desktop width, so
+   the rail can afford larger type and a fuller preview image. The stacked count only applies from
+   992px up — the medium band below overrides it, while the type and media measures keep running
+   across the whole band, which is what makes a large screen lay its three tiles out exactly the way
+   a medium one does. */
 @media (min-width: 768px) and (max-width: 1199.98px) {
   :root {
     --rail-cards: 4;
@@ -93,9 +101,10 @@
   }
 }
 
-/* Medium: three across, the same count a phone gets. Four tiles in this range leave a card too
+/* Medium: three stacked, the same count a phone gets. Four tiles in this range leave a card too
    narrow for its own title, and the extra width is better spent on the preview. Declared after the
-   tablet band above so the equal-specificity :root rule wins; only the count steps here. */
+   tablet band above so the equal-specificity :root rule wins; only the stacked count steps here —
+   the horizontal one is already three. */
 @media (min-width: 768px) and (max-width: 991.98px) {
   :root {
     --rail-cards: 3;
