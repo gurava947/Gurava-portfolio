@@ -84,10 +84,12 @@ function CertificateActions({ data, copy }) {
 
   return (
     <div className="certificate-actions" aria-label={copy.actionsAria}>
-      <a className="certificate-action certificate-action-primary" href={data.certificatePdfUrl} target="_blank" rel="noreferrer" aria-label={copy.download} title={copy.download}>
-        <CertificateIcon name="download" />
-        <span>{copy.download}</span>
-      </a>
+      {data.certificatePdfUrl && (
+        <a className="certificate-action certificate-action-primary" href={data.certificatePdfUrl} target="_blank" rel="noreferrer" aria-label={copy.download} title={copy.download}>
+          <CertificateIcon name="download" />
+          <span>{copy.download}</span>
+        </a>
+      )}
       <button className="certificate-action" type="button" onClick={handleShare} aria-label={copy.shareAria} title={copy.shareAria}>
         <CertificateIcon name="share" />
         <span>{copy.share}</span>
@@ -106,7 +108,7 @@ function CertificateActions({ data, copy }) {
 }
 
 function CertificateHeader({ data, copy, onBack }) {
-  const image = data.assets.find(({ role }) => role === "certificate");
+  const image = (data.assets || []).find(({ role }) => role === "certificate");
   const titleWords = (data.courseTitle || "").trim().split(/\s+/).filter(Boolean);
   const titleAccent = titleWords.length > 1 ? titleWords.pop() : "";
   const titleLead = titleWords.join(" ");
@@ -139,7 +141,15 @@ function CertificateHeader({ data, copy, onBack }) {
         <div className="certificate-image-stage">
           <span className="certificate-image-backdrop" aria-hidden="true" />
           <a className="certificate-image-link" href={data.certificateUrl} target="_blank" rel="noreferrer" aria-label={copy.openCertificate.replace("{title}", data.courseTitle)}>
-            <img className="certificate-image" src={image?.url || ""} alt={image?.alt_text || ""} fetchPriority="high" decoding="async" />
+            {image ? (
+              <img className="certificate-image" src={image.url} alt={image.alt_text || ""} fetchPriority="high" decoding="async" />
+            ) : (
+              <span className="certificate-image certificate-image-record" aria-hidden="true">
+                <span className="certificate-image-record-issuer">{data.issuer || "NxtWave Intensive"}</span>
+                <span className="certificate-image-record-title">{data.courseTitle}</span>
+                <span className="certificate-image-record-id">{copy.certificateId} · {data.certificateId}</span>
+              </span>
+            )}
           </a>
           <span className="certificate-image-seal" aria-hidden="true">
             <CertificateIcon name="award" className="certificate-image-seal-icon" />
