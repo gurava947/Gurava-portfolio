@@ -1,9 +1,32 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LoaderOverlay } from "./LoadSpinner";
+import { PLAYGROUND_THEME_KEY, resolvePlaygroundTheme } from "../config/themeSync";
 
 function publicPath(path) {
   const base = import.meta.env.BASE_URL || "/";
   return `${base.endsWith("/") ? base : `${base}/`}${path}`;
+}
+
+// The playground bundle is same-origin and applies its theme as a `theme-dark` class on its own
+// `.app-shell`, so the parent can read what it is showing and nudge it without rebuilding it.
+function frameDocument(frame) {
+  try {
+    return frame?.contentDocument || null;
+  } catch {
+    return null;
+  }
+}
+
+function readFrameTheme(doc) {
+  const shell = doc?.querySelector(".app-shell");
+  if (!shell) return null;
+  return shell.classList.contains("theme-dark") ? "dark" : "light";
+}
+
+function applyFrameTheme(doc, mode) {
+  const shell = doc?.querySelector(".app-shell");
+  if (!shell) return;
+  shell.classList.toggle("theme-dark", mode === "dark");
 }
 
 function projectTestCases(project) {
@@ -62,13 +85,19 @@ function matchesFrame(event, frame) {
   return event.origin === window.location.origin && event.source === frame?.contentWindow;
 }
 
-export function ProjectWorkspace({ project, runRequest = 0, onStatus, loader }) {
+export function ProjectWorkspace({ project, runRequest = 0, onStatus, loader, siteMode = "light", playgroundTheme = "follow", onPlaygroundTheme }) {
   const frameRef = useRef(null);
   const retryTimers = useRef([]);
+  const themeObserver = useRef(null);
+  const themeTimers = useRef([]);
+  // The theme this page last pushed into the frame. The playground writes its own class when the
+  // visitor uses its switch, and the observer below compares against this to tell the two apart.
+  const pushedTheme = useRef(null);
   const [compact, setCompact] = useState(() => window.matchMedia("(max-width: 680px)").matches);
   const [contentHeight, setContentHeight] = useState(0);
   const [runtimeReady, setRuntimeReady] = useState(false);
   const config = useMemo(() => buildWorkspaceConfig(project), [project]);
+  const desiredTheme = resolvePlaygroundTheme(siteMode, playgroundTheme);
 
   const postConfig = useCallback(() => {
     frameRef.current?.contentWindow?.postMessage(
@@ -77,12 +106,44 @@ export function ProjectWorkspace({ project, runRequest = 0, onStatus, loader }) 
     );
   }, [config]);
 
+  const watchFrameTheme = useCallback(() => {
+    themeObserver.current?.disconnect();
+    themeObserver.current = null;
+    const doc = frameDocument(frameRef.current);
+    const shell = doc?.querySelector(".app-shell");
+    if (!shell || typeof MutationObserver === "undefined") return;
+    pushedTheme.current = readFrameTheme(doc) ?? pushedTheme.current;
+    const observer = new MutationObserver(() => {
+      const mode = readFrameTheme(doc);
+      if (!mode || mode === pushedTheme.current) return;
+      pushedTheme.current = mode;
+      onPlaygroundTheme?.(mode);
+    });
+    observer.observe(shell, { attributes: true, attributeFilter: ["class"] });
+    themeObserver.current = observer;
+  }, [onPlaygroundTheme]);
+
   useEffect(() => {
     const query = window.matchMedia("(max-width: 680px)");
     const update = () => setCompact(query.matches);
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
+
+  // The playground keeps its theme in shared same-origin storage, so writing the key here is what
+  // makes it *open* in the right theme. The class push covers a change while the frame is already
+  // up, which is the case when the visitor flips the site switch rather than reloading.
+  useEffect(() => {
+    pushedTheme.current = desiredTheme;
+    try {
+      window.localStorage.setItem(PLAYGROUND_THEME_KEY, desiredTheme);
+    } catch {
+      // Private-mode storage failures only cost the sync; the playground still runs.
+    }
+    applyFrameTheme(frameDocument(frameRef.current), desiredTheme);
+  }, [desiredTheme]);
+
+  useEffect(() => () => themeObserver.current?.disconnect(), []);
 
   useEffect(() => {
     setRuntimeReady(false);
@@ -113,11 +174,21 @@ export function ProjectWorkspace({ project, runRequest = 0, onStatus, loader }) 
     );
   }, [runRequest]);
 
-  useEffect(() => () => retryTimers.current.forEach((timer) => window.clearTimeout(timer)), []);
+  useEffect(() => () => {
+    retryTimers.current.forEach((timer) => window.clearTimeout(timer));
+    themeTimers.current.forEach((timer) => window.clearTimeout(timer));
+  }, []);
 
   const handleLoad = () => {
     retryTimers.current.forEach((timer) => window.clearTimeout(timer));
     retryTimers.current = [0, 700, 1600].map((delay) => window.setTimeout(postConfig, delay));
+    // The shell only exists once the playground's own bundle has rendered, which can land after
+    // the load event, so the watch is retried a couple of times rather than assumed.
+    [0, 400, 1400].forEach((delay) => themeTimers.current.push(window.setTimeout(() => {
+      const doc = frameDocument(frameRef.current);
+      applyFrameTheme(doc, desiredTheme);
+      watchFrameTheme();
+    }, delay)));
   };
 
   const height = compact && contentHeight ? `${contentHeight}px` : undefined;

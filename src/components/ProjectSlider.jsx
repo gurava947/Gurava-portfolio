@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import ProjectCard from "./ProjectCard";
-import useFeaturedAxis from "../hooks/useFeaturedAxis";
 import { prefersReducedMotion } from "../utils/motion";
 
-const SLIDER_KEYS = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
+const SLIDER_KEYS = ["ArrowLeft", "ArrowRight", "Home", "End"];
 
 function scrollBehavior() {
   return prefersReducedMotion() ? "auto" : "smooth";
+}
+
+function readCount(node, style, property) {
+  const raw = node.style.getPropertyValue(property) || style.getPropertyValue(property);
+  return Math.max(1, Number.parseInt(raw, 10) || 1);
 }
 
 export default function ProjectSlider({
@@ -20,38 +24,63 @@ export default function ProjectSlider({
   label = "",
   hintLabel,
 }) {
-  const [scrollState, setScrollState] = useState({ start: true, end: true, progress: 0, fraction: 1 });
+  const [scrollState, setScrollState] = useState({
+    start: true, end: true, progress: 0, fraction: 1, page: 1, pages: 1, cols: 0, rows: 0,
+  });
   const trackRef = useRef(null);
   const frameRef = useRef(0);
   const generatedId = useId().replace(/:/g, "");
   const hintId = `${generatedId}-slider-hint`;
   const depth = layout === "depth";
-  // The catalogue rail turns with the site-wide shuffle direction: the same cards, the same
-  // device count (--rail-cards), but stacked downward instead of sideways.
-  const axis = useFeaturedAxis();
-  const vertical = axis === "vertical";
-  const regionLabel = label || `Project cards, ${vertical ? "scrollable downward" : "horizontally scrollable"}`;
+  const regionLabel = label || "Project cards, horizontally scrollable";
+
+  /* The grid itself decides how many cards fit: --rail-cols and --rail-rows come from theme.css,
+   * so the control below always pages by exactly what the visitor can see and can never change the
+   * count. One column step is the distance between the first card and the first card of the next
+   * column, which the stylesheet's gap is folded into for free. */
+  const metrics = useCallback(() => {
+    const node = trackRef.current;
+    if (!node) return null;
+    const style = window.getComputedStyle(node);
+    const cols = readCount(node, style, "--rail-cols");
+    const rows = readCount(node, style, "--rail-rows");
+    const first = node.children[0];
+    // Columns fill top to bottom, so the card one full row in is the first card of the next column.
+    const anchor = node.children[rows];
+    const column = anchor && first ? anchor.offsetLeft - first.offsetLeft : 0;
+    const pageWidth = column > 0 ? column * cols : Math.max(260, node.clientWidth * 0.9);
+    return { cols, rows, column: column || pageWidth, pageWidth };
+  }, []);
 
   const measure = useCallback(() => {
     const node = trackRef.current;
     if (!node) return;
-    const visible = vertical ? node.clientHeight : node.clientWidth;
-    const total = vertical ? node.scrollHeight : node.scrollWidth;
-    const position = vertical ? node.scrollTop : node.scrollLeft;
+    const current = metrics();
+    const visible = node.clientWidth;
+    const total = node.scrollWidth;
+    const position = node.scrollLeft;
     const max = total - visible;
     const start = position <= 2;
     const end = position + visible >= total - 2;
     const progress = max > 2 ? Math.min(1, Math.max(0, position / max)) : 0;
     const fraction = total > 0 ? Math.min(1, visible / total) : 1;
-    setScrollState((current) => (
-      current.start === start
-      && current.end === end
-      && Math.abs(current.progress - progress) < 0.002
-      && Math.abs(current.fraction - fraction) < 0.002
-        ? current
-        : { start, end, progress, fraction }
+    const pageWidth = current?.pageWidth ?? 0;
+    const pages = pageWidth > 0 ? Math.max(1, Math.round(max / pageWidth) + 1) : 1;
+    const page = pageWidth > 0 ? Math.min(pages, Math.round(position / pageWidth) + 1) : 1;
+    setScrollState((state) => (
+      state.start === start
+      && state.end === end
+      && state.page === page
+      && state.pages === pages
+      && state.cols === (current?.cols ?? 0)
+      && state.rows === (current?.rows ?? 0)
+      && Math.abs(state.progress - progress) < 0.002
+      && Math.abs(state.fraction - fraction) < 0.002
+        ? state
+        : { start, end, progress, fraction, page, pages, cols: current?.cols ?? 0, rows: current?.rows ?? 0 }
     ));
-  }, [vertical]);
+    return current;
+  }, [metrics]);
 
   const scheduleMeasure = () => {
     if (frameRef.current) return;
@@ -84,86 +113,53 @@ export default function ProjectSlider({
   useEffect(() => {
     const node = trackRef.current;
     if (!node) return;
-    if (vertical) node.scrollTop = 0;
-    else node.scrollLeft = 0;
+    node.scrollLeft = 0;
     measure();
-  }, [resetKey, measure, vertical]);
+  }, [resetKey, measure]);
 
-  const cardStep = () => {
-    const node = trackRef.current;
-    if (!node) return 0;
-    const first = node.children[0];
-    const second = node.children[1];
-    const measured = second && first
-      ? (vertical ? second.offsetTop - first.offsetTop : second.offsetLeft - first.offsetLeft)
-      : 0;
-    if (measured > 0) return measured;
-    const extent = vertical ? node.clientHeight : node.clientWidth;
-    return Math.max(vertical ? 64 : 260, extent * 0.82);
-  };
-
-  const scrollCards = (direction) => {
+  const scrollByPage = (direction) => {
     const node = trackRef.current;
     if (!node) return;
-    const step = cardStep();
-    const extent = vertical ? node.clientHeight : node.clientWidth;
-    const visible = Math.max(1, Math.floor(extent / step));
-    node.scrollBy(vertical
-      ? { top: direction * step * visible, behavior: scrollBehavior() }
-      : { left: direction * step * visible, behavior: scrollBehavior() });
+    const current = metrics();
+    if (!current) return;
+    const max = node.scrollWidth - node.clientWidth;
+    const target = Math.min(max, Math.max(0, Math.round((node.scrollLeft + direction * current.pageWidth) / current.pageWidth) * current.pageWidth));
+    node.scrollTo({ left: target, behavior: scrollBehavior() });
   };
 
   const handleKeyDown = (event) => {
     if (!SLIDER_KEYS.includes(event.key)) return;
     const node = trackRef.current;
     if (!node) return;
-    const forwards = vertical ? event.key === "ArrowDown" : event.key === "ArrowRight";
-    const backwards = vertical ? event.key === "ArrowUp" : event.key === "ArrowLeft";
-    if (!forwards && !backwards && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
+    const current = metrics();
     const behavior = scrollBehavior();
-    const axisProp = vertical ? "top" : "left";
     if (event.key === "Home") {
-      node.scrollTo({ [axisProp]: 0, behavior });
+      node.scrollTo({ left: 0, behavior });
       return;
     }
     if (event.key === "End") {
-      node.scrollTo({ [axisProp]: vertical ? node.scrollHeight : node.scrollWidth, behavior });
+      node.scrollTo({ left: node.scrollWidth, behavior });
       return;
     }
-    node.scrollBy({ [axisProp]: (forwards ? 1 : -1) * cardStep(), behavior });
+    node.scrollBy({ left: (event.key === "ArrowRight" ? 1 : -1) * (current?.column ?? 260), behavior });
   };
 
+  const singlePage = scrollState.start && scrollState.end;
+
   return (
-    <div className={`lab-card-rail-shell is-rail${depth ? " is-depth" : ""}`} data-axis={axis}>
+    <div className={`lab-card-rail-shell is-grid${depth ? " is-depth" : ""}${singlePage ? " is-single-page" : ""}`}>
       <div className="lab-card-rail-controls">
         <span className="lab-card-rail-hint">
-          {hintLabel || (vertical ? (depth ? "3D vertical stack" : "Vertical stack") : depth ? "3D side-scroll shelf" : "Side-scroll shelf")}
+          {hintLabel || (depth
+            ? "3D card grid"
+            : `${scrollState.cols} × ${scrollState.rows} grid`)}
         </span>
-        <div className="lab-card-rail-buttons">
-          <button
-            type="button"
-            className="lab-card-rail-button"
-            onClick={() => scrollCards(-1)}
-            disabled={scrollState.start}
-            aria-label={vertical ? "Scroll project cards up" : "Scroll project cards left"}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
-              ? <path d="m6 14.5 6-6 6 6" />
-              : <path d="m14.5 6-6 6 6 6" />}</svg>
-          </button>
-          <button
-            type="button"
-            className="lab-card-rail-button"
-            onClick={() => scrollCards(1)}
-            disabled={scrollState.end}
-            aria-label={vertical ? "Scroll project cards down" : "Scroll project cards right"}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
-              ? <path d="m6 9.5 6 6 6-6" />
-              : <path d="m9.5 6 6 6-6 6" />}</svg>
-          </button>
-        </div>
+        {!singlePage && (
+          <span className="lab-card-rail-page" aria-hidden="true">
+            {scrollState.page} / {scrollState.pages}
+          </span>
+        )}
       </div>
       <div className="lab-card-rail-viewport">
         <div
@@ -173,7 +169,6 @@ export default function ProjectSlider({
           aria-label={regionLabel}
           aria-describedby={hintId}
           tabIndex={0}
-          data-axis={axis}
           onScroll={scheduleMeasure}
           onKeyDown={handleKeyDown}
         >
@@ -183,6 +178,30 @@ export default function ProjectSlider({
         </div>
         <span className={`lab-card-rail-fade is-start${scrollState.start ? " is-hidden" : ""}`} aria-hidden="true" />
         <span className={`lab-card-rail-fade is-end${scrollState.end ? " is-hidden" : ""}`} aria-hidden="true" />
+        <div className="lab-card-rail-edges">
+          <button
+            type="button"
+            className="lab-card-rail-button lab-card-rail-edge is-prev"
+            onClick={() => scrollByPage(-1)}
+            disabled={scrollState.start}
+            aria-label="Go to the previous page of project cards"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m14.5 6-6 6 6 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="lab-card-rail-button lab-card-rail-edge is-next"
+            onClick={() => scrollByPage(1)}
+            disabled={scrollState.end}
+            aria-label="Go to the next page of project cards"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m9.5 6 6 6-6 6" />
+            </svg>
+          </button>
+        </div>
       </div>
       <div className="lab-card-rail-progress" aria-hidden="true">
         <i
@@ -193,7 +212,8 @@ export default function ProjectSlider({
         />
       </div>
       <p id={hintId} className="visually-hidden">
-        Use the {vertical ? "up and down arrow" : "left and right arrow"} keys to move through the cards, or Home and End to jump to the ends.
+        Use the left and right arrow keys to move a column at a time, or the back and forward
+        buttons at the edges of the grid to move a full page. Home and End jump to the ends.
       </p>
     </div>
   );

@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { DEFAULT_SHELF_MOTION, getShelfMotionStyles, normalizeShelfMotion } from "../config/cardMotion";
 import useFeaturedAxis from "../hooks/useFeaturedAxis";
+import useMediaQuery from "../hooks/useMediaQuery";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/collection-shelf.css";
 
 const SCROLL_KEYS = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
+// Below this the shelf stops being a row of windows and becomes one card at a time, which is the
+// only shape that keeps the label panel readable on a phone.
+const PHONE_QUERY = "(max-width: 767.98px)";
 
 function previewsFor(projects, collectionId) {
   const inCollection = projects.filter((project) => project.collection === collectionId);
@@ -113,9 +117,12 @@ export default function CollectionShelf({
   const frameRef = useRef(0);
   const idPrefix = useId().replace(/:/g, "");
   const hintId = `${idPrefix}-shelf-hint`;
-  // Same site-wide shuffle direction as the poster rail and the catalogue rail: the collection
-  // cards keep their stacked-glass design and just run downward instead of sideways.
-  const axis = useFeaturedAxis();
+  // Same site-wide shuffle direction as the poster rail: the collection cards keep their stacked
+  // glass design and just run downward instead of sideways. A phone overrides that to a
+  // side-scrolling row of full-width cards, because a stacked column there is three thin strips.
+  const featuredAxis = useFeaturedAxis();
+  const phone = useMediaQuery(PHONE_QUERY);
+  const axis = phone ? "horizontal" : featuredAxis;
   const vertical = axis === "vertical";
   const previewsById = useMemo(() => {
     const map = new Map();
@@ -301,30 +308,6 @@ export default function CollectionShelf({
           <span className="collection-shelf-dots" aria-hidden="true"><i /><i /><i /></span>
           <span className="collection-shelf-label">{label}</span>
           <span className="collection-shelf-hint">Swipe, scroll, or use the arrows</span>
-          <div className="collection-shelf-buttons">
-            <button
-              type="button"
-              className="collection-shelf-button"
-              onClick={() => stepShelf(-1)}
-              disabled={scrollState.start}
-              aria-label={vertical ? "Scroll collections up" : "Scroll collections left"}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
-                ? <path d="m6 14.5 6-6 6 6" />
-                : <path d="m14.5 6-6 6 6 6" />}</svg>
-            </button>
-            <button
-              type="button"
-              className="collection-shelf-button"
-              onClick={() => stepShelf(1)}
-              disabled={scrollState.end}
-              aria-label={vertical ? "Scroll collections down" : "Scroll collections right"}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
-                ? <path d="m6 9.5 6 6 6-6" />
-                : <path d="m9.5 6 6 6-6 6" />}</svg>
-            </button>
-          </div>
         </div>
         <div className="collection-shelf-viewport">
           <div
@@ -354,13 +337,39 @@ export default function CollectionShelf({
           <span className={`collection-shelf-fade is-start${scrollState.start ? " is-hidden" : ""}`} aria-hidden="true" />
           <span className={`collection-shelf-fade is-end${scrollState.end ? " is-hidden" : ""}`} aria-hidden="true" />
         </div>
-        <div className="collection-shelf-progress" aria-hidden="true">
-          <i
-            style={{
-              left: `${scrollState.progress * (1 - scrollState.fraction) * 100}%`,
-              width: `${scrollState.fraction * 100}%`,
-            }}
-          />
+        <div className="collection-shelf-foot">
+          <div className="collection-shelf-progress" aria-hidden="true">
+            <i
+              style={{
+                left: `${scrollState.progress * (1 - scrollState.fraction) * 100}%`,
+                width: `${scrollState.fraction * 100}%`,
+              }}
+            />
+          </div>
+          <div className="collection-shelf-buttons">
+            <button
+              type="button"
+              className="collection-shelf-button"
+              onClick={() => stepShelf(-1)}
+              disabled={scrollState.start}
+              aria-label={vertical ? "Scroll collections up" : "Scroll collections left"}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
+                ? <path d="m6 14.5 6-6 6 6" />
+                : <path d="m14.5 6-6 6 6 6" />}</svg>
+            </button>
+            <button
+              type="button"
+              className="collection-shelf-button"
+              onClick={() => stepShelf(1)}
+              disabled={scrollState.end}
+              aria-label={vertical ? "Scroll collections down" : "Scroll collections right"}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{vertical
+                ? <path d="m6 9.5 6 6 6-6" />
+                : <path d="m9.5 6 6 6-6 6" />}</svg>
+            </button>
+          </div>
         </div>
       </div>
       <p id={hintId} className="visually-hidden">

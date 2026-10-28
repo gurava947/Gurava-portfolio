@@ -605,6 +605,27 @@
   background: color-mix(in srgb, var(--theme-text) 9%, transparent);
 }
 
+/* The back/forward pair lives on this row rather than in the head above the cards, so it sits at
+ * the bottom-right of the collection area with the progress rail running out to its left. Nothing
+ * overlaps: the row is under the cards, not on them. */
+.collection-shelf-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 20px 8px;
+}
+
+.collection-shelf-foot .collection-shelf-progress {
+  flex: 1 1 auto;
+  min-width: 32px;
+  margin: 0;
+}
+
+.collection-shelf-foot .collection-shelf-buttons {
+  flex: 0 0 auto;
+  margin-left: 0;
+}
+
 .collection-shelf-progress i {
   position: absolute;
   top: 0;
@@ -903,27 +924,55 @@
     display: none;
   }
 
-  /* Narrow cards wrap the description onto more lines, so the label panel needs more of the card
-   * here — the deck shrinks with it rather than being squeezed behind the glass. */
+  /* One collection at a time, edge to edge. Three narrow windows side by side — or stacked, which
+   * is what the vertical shuffle would give a phone — leaves a label panel too small to read, so
+   * the card takes the whole width and is tall enough to be worth looking at. Both halves of the
+   * card are built from these two tokens, so the deck grows with the panel instead of being left
+   * behind it. */
   .collection-shelf {
-    --shelf-glass-height: 172px;
-    --shelf-art-band: 124px;
-  }
-
-  .collection-shelf-glass {
-    padding: 12px 14px 11px;
-  }
-
-  .collection-shelf-art img {
-    left: 7%;
-    width: 44%;
+    --shelf-glass-height: clamp(152px, 25vh, 204px);
+    --shelf-art-band: clamp(148px, 30vh, 268px);
   }
 
   .collection-shelf-track {
-    --shelf-card-width: min(80vw, 360px);
-    gap: 12px;
-    padding: 18px 12px 30px;
+    --shelf-card-width: 100%;
+    gap: 14px;
+    padding: 16px 12px 24px;
     margin: -8px -4px -8px;
+  }
+
+  .collection-shelf-item {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .collection-shelf-glass {
+    justify-content: center;
+    gap: 6px;
+    padding: 15px 17px 15px;
+  }
+
+  .collection-shelf-name {
+    font-size: clamp(1.32rem, 6.4vw, 1.72rem);
+  }
+
+  .collection-shelf-desc {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  /* The deck has the whole width to itself now, so it is allowed to be big. */
+  .collection-shelf-art img {
+    left: 17%;
+    width: 62%;
+  }
+
+  .collection-shelf-art img:only-child {
+    width: 70%;
+  }
+
+  .collection-shelf-foot {
+    margin: 0 12px 8px;
   }
 
   .collection-shelf-progress {
@@ -937,12 +986,12 @@
 
 @media (max-width: 479.98px) {
   .collection-shelf-track {
-    --shelf-card-width: 84vw;
+    --shelf-card-width: 100%;
   }
 
   .collection-shelf {
-    --shelf-glass-height: 168px;
-    --shelf-art-band: 116px;
+    --shelf-glass-height: clamp(150px, 27vh, 190px);
+    --shelf-art-band: clamp(140px, 31vh, 230px);
   }
 
   .collection-shelf-label::before {
@@ -951,7 +1000,8 @@
   }
 
   .collection-shelf-desc {
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
 }
 

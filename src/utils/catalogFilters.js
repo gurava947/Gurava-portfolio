@@ -1,5 +1,10 @@
 export const PROJECTS_PER_PAGE = 24;
 
+/* The grid layout shows two screens' worth of cards at once on a desktop, so a rail page of 24
+ * would leave its back/forward control with nothing to do. Two pages of the grid keeps the control
+ * meaningful on every device — a phone pages through eight screens of six. */
+export const PROJECTS_PER_RAIL_PAGE = 48;
+
 export function filterProjects(projects, { query = "", collection = "", category = "", technology = "" }) {
   const needle = query.trim().toLowerCase();
   return projects.filter((project) => {

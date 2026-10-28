@@ -4,6 +4,7 @@ import { DEFAULT_CARD_EFFECTS, normalizeCardEffects } from "../config/cardEffect
 import { DEFAULT_SHELF_MOTION, normalizeShelfMotion } from "../config/cardMotion";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
 import { DEFAULT_SITE_LOOK, getSiteLookVariables, normalizeSiteLook } from "../config/siteLook";
+import { DEFAULT_PLAYGROUND_THEME, normalizePlaygroundTheme } from "../config/themeSync";
 
 export const THEME_STORAGE_KEY = "portfolio-theme-settings";
 export const THEME_MODES = ["dark", "light"];
@@ -154,9 +155,6 @@ export const DEFAULT_THEME_SETTINGS = {
   shadowIntensity: 25,
   radius: 24,
   animationIntensity: "smooth",
-  hoverGlow: true,
-  cursorSpotlight: true,
-  cardTilt: true,
   animatedBlobs: true,
   reducedMotion: false,
   cardUI: DEFAULT_CARD_UI_SETTINGS,
@@ -165,6 +163,7 @@ export const DEFAULT_THEME_SETTINGS = {
   effects: DEFAULT_CARD_EFFECTS,
   motion: DEFAULT_SHELF_MOTION,
   look: DEFAULT_SITE_LOOK,
+  playgroundTheme: DEFAULT_PLAYGROUND_THEME,
 };
 
 const themePresets = {
@@ -220,6 +219,7 @@ function getInitialSettings() {
         effects: normalizeCardEffects(parsed?.effects),
         motion: normalizeShelfMotion(parsed?.motion),
         look: normalizeSiteLook(parsed?.look),
+        playgroundTheme: normalizePlaygroundTheme(parsed?.playgroundTheme),
       };
     }
     if (window.localStorage.getItem("portfolio-theme") === "dark") {
@@ -292,11 +292,12 @@ export function useTheme() {
     root.dataset.featuredStrip = look.featured;
     root.dataset.featuredAxis = look.axis;
     Object.entries(getSiteLookVariables(look)).forEach(([name, value]) => root.style.setProperty(name, value));
+    const playgroundTheme = normalizePlaygroundTheme(settings.playgroundTheme);
 
     try {
       window.localStorage.setItem(
         THEME_STORAGE_KEY,
-        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, look }),
+        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, look, playgroundTheme }),
       );
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
@@ -438,6 +439,13 @@ export function useTheme() {
       look: normalizeSiteLook({ ...normalizeSiteLook(current.look), ...changes }),
     }));
   };
+  const updatePlaygroundThemeSettings = (changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      playgroundTheme: normalizePlaygroundTheme(changes?.playgroundTheme ?? changes),
+    }));
+  };
 
   return {
     settings,
@@ -450,5 +458,6 @@ export function useTheme() {
     updateCardEffectsSettings,
     updateShelfMotionSettings,
     updateSiteLookSettings,
+    updatePlaygroundThemeSettings,
   };
 }

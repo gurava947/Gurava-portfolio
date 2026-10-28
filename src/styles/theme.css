@@ -104,6 +104,39 @@
   }
 }
 
+/* Catalogue grid density — how many cards the Projects grid shows at once.
+
+   The rail above is a single line of cards, so one count is enough. The Projects catalogue is a
+   two-dimensional grid, so it needs both: --rail-cols is how many cards sit side by side and
+   --rail-rows is how many rows fit in the band before the left/right control pages to the next
+   screenful. Phone 2x3, tablet 3x4, desktop 4x6, and a wide desktop gets a fifth column while
+   keeping the six rows. The pair is the contract the layout is held to — the grid divides its
+   content box by exactly these numbers, so no breakpoint can drift into an extra column. */
+:root {
+  --rail-cols: 4;
+  --rail-rows: 6;
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --rail-cols: 5;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  :root {
+    --rail-cols: 3;
+    --rail-rows: 4;
+  }
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --rail-cols: 2;
+    --rail-rows: 3;
+  }
+}
+
 html,
 body,
 #root {

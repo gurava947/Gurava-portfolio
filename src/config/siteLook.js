@@ -71,9 +71,10 @@ export const FEATURED_STYLES = [
 // Which way the shelf runs. Vertical is the shipped default: the same cards, at the same size,
 // stacked top to bottom, so the device count (--rail-cards: 3 on a phone, 4 on a tablet, 6 on a
 // desktop) divides the height of the band instead of its width. Horizontal stays available for
-// the classic side-scrolling row.
+// the classic side-scrolling row. The Projects catalogue is not part of this — it is a two-way grid
+// with its own per-device column and row counts (--rail-cols / --rail-rows).
 export const FEATURED_AXES = [
-  { id: "vertical", label: "Vertical", note: "Every shuffle — the featured strip, the collection shelf and the catalogue rail — stacks downward, showing 3 cards on a phone, 4 on a tablet and 6 on a desktop." },
+  { id: "vertical", label: "Vertical", note: "The featured strip and the collection shelf stack downward, showing 3 cards on a phone, 4 on a tablet and 6 on a desktop." },
   { id: "horizontal", label: "Horizontal", note: "The same cards in the classic side-scrolling row, three to six of them wide." },
 ];
 

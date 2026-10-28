@@ -5,7 +5,7 @@ import ProjectSlider from "./ProjectSlider";
 import { DEFAULT_SHELF_MOTION } from "../config/cardMotion";
 import { getOrderedCollections } from "../config/collections";
 import { CARD_LAYOUTS } from "../utils/cardStyle";
-import { filterProjects, pageNumbers, paginateProjects, PROJECTS_PER_PAGE, sortProjects } from "../utils/catalogFilters";
+import { filterProjects, pageNumbers, paginateProjects, PROJECTS_PER_PAGE, PROJECTS_PER_RAIL_PAGE, sortProjects } from "../utils/catalogFilters";
 
 const DEFAULT_FILTERS = { query: "", collection: "", category: "", technology: "", sort: "curated", page: 1 };
 
@@ -226,7 +226,10 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
   }), [catalog.projects, deferredQuery, filters.collection, filters.category, filters.technology]);
 
   const sorted = useMemo(() => sortProjects(filtered, filters.sort), [filtered, filters.sort]);
-  const pagination = useMemo(() => paginateProjects(sorted, filters.page), [sorted, filters.page]);
+  const pagination = useMemo(
+    () => paginateProjects(sorted, filters.page, isRail ? PROJECTS_PER_RAIL_PAGE : PROJECTS_PER_PAGE),
+    [sorted, filters.page, isRail],
+  );
 
   const update = (patch, options = {}) => {
     const next = { ...filters, page: 1, ...patch };

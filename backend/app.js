@@ -40,6 +40,13 @@ const COMPRESS_MIN_BYTES = 1024;
 // of them. Matching the real alphabet makes the hashed assets in dist/assets fully cacheable.
 const IMMUTABLE_ASSET = /-[A-Za-z0-9_-]{8}\.(?:js|css)$/;
 
+// The catalogue JSON is the one payload that changes without its filename changing: a rebuild
+// writes a new data/catalog.json with the same URL. Caching it for the same hour as the rest of
+// the static files means a returning visitor keeps the old records — and the old certificate
+// ids, counts and project list — until the entry expires. Revalidation is cheap (the files are
+// gzipped and small), so these are served with a revalidate-every-time header instead.
+const REVALIDATED_DATA = /(?:^|[\\/])data[\\/].*\.json$/;
+
 // Express has no compression built in and this app stays dependency-light, so gzip is done
 // with node:zlib. Responses are buffered — the largest payload here is a ~290 kB catalog.
 function compressWithGzip(request, response, next) {
@@ -119,6 +126,11 @@ export function createApp({ database, databaseName, staticDirectory = resolve(pr
       maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
       setHeaders(response, path) {
         if (IMMUTABLE_ASSET.test(path)) response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        // The HTML shell is the pointer to every hashed asset, so it must revalidate too — a
+        // one-hour-old index.html is how a deploy leaves visitors running the previous build.
+        else if (REVALIDATED_DATA.test(path) || /index\.html$/.test(path)) {
+          response.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+        }
       },
     }));
     app.get("*path", (request, response, next) => {

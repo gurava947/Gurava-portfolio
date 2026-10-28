@@ -209,15 +209,18 @@
         "name": "NXTWAVE",
         "label": "All Access",
         "program": "CCBP 4.0 · Full Stack Web Development",
+        "community": "All Active Full Stack Developers",
         "note": "The program that supplied every build on this page — its modules set the order, its briefs set the work."
       },
       "thanksLabel": "Special thanks",
       "thanks": {
-        "name": "Mr. Rahul Athuloori",
+        "name": "Mr. Atthuluri Rahul",
         "honorific": "Rahul sir",
-        "role": "NXTWAVE CCBP 4.0",
-        "quote": "ఆయన వల్ల ఇదంతా సాధ్యమైంది.",
-        "quoteTranslation": "Ayana valla idanta sadhyamaindi — every one of these builds became possible because of his guidance."
+        "role": "CEO · NXTWAVE / NIAT",
+        "messageLabel": "A note of thanks",
+        "message": "ఆయన వల్ల ఇదంతా సాధ్యమైంది.",
+        "messageTranslation": "Ayana valla idanta sadhyamaindi — this portfolio became possible because of his support and the opportunity he created.",
+        "messageBy": "Guravaiah K"
       },
       "madeWithLabel": "Made with",
       "madeWith": {
@@ -227,7 +230,11 @@
       }
     },
     "footer": {
-      "note": "Made with గురువయ్య · Guravaiah K · built inside NXTWAVE CCBP 4.0, with special thanks to Mr. Rahul Athuloori (Rahul sir).",
+      "tagline": "A working record of every build from the All Access CCBP 4.0 track — searched, filtered and run in the browser.",
+      "contactLabel": "Get in touch",
+      "contactNote": "Open to full-stack opportunities, code reviews and collaborations.",
+      "followLabel": "Elsewhere",
+      "note": "Made with గురువయ్య by Guravaiah K · built inside NXTWAVE CCBP 4.0, with thanks to Mr. Atthuluri Rahul (Rahul sir), CEO of NXTWAVE / NIAT.",
       "backToTop": "Back to top ↑"
     }
   },

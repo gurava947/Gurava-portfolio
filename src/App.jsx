@@ -29,6 +29,7 @@ import SiteLookStudio from "./components/SiteLookStudio";
 import PosterRail from "./components/PosterRail";
 import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
+import { playgroundThemeDrivesSite } from "./config/themeSync";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
 const PROFILE_STORAGE_KEY = "myapp.guravva.profile.v1";
@@ -141,6 +142,21 @@ function externalProfileUrl(value) {
     return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
   } catch {
     return "";
+  }
+}
+
+// A footer link reads better as "github.com/gurava947" than as its own full href, and the shorter
+// string still says where the visitor is going. The complete URL stays on the link as its title.
+function profileLinkLabel(value) {
+  const url = externalProfileUrl(value);
+  if (!url) return String(value || "").trim();
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const path = parsed.pathname.replace(/^\/+|\/+$/g, "");
+    return path ? `${host}/${path}` : host;
+  } catch {
+    return String(value || "").trim();
   }
 }
 
@@ -963,12 +979,24 @@ function GuravvaProfilePopover({
                   <dd>{href ? <a href={href} aria-label={copy.labels[field]} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined}>{value || copy.placeholders[field]}</a> : value || copy.placeholders[field]}</dd>
                 </div>
               ))}
-              {profile.links.map(({ label, url }, index) => (
-                <div key={`${label}-${index}`}>
-                  <dt>{label}</dt>
-                  <dd><a href={externalProfileUrl(url)} aria-label={label} title={url} target="_blank" rel="noreferrer">{label}</a></dd>
-                </div>
-              ))}
+              {profile.links.map(({ label, url }, index) => {
+                const href = externalProfileUrl(url);
+                return (
+                  <div key={`${label}-${index}`}>
+                    <dt>{label}</dt>
+                    {/* A saved link that is not http(s) has no destination. Rendering href="" points
+                        the anchor back at the current page, so the row reads as a working link and
+                        reloads the app when clicked — show it as text instead. */}
+                    <dd>
+                      {href ? (
+                        <a href={href} aria-label={label} title={url} target="_blank" rel="noreferrer">{label}</a>
+                      ) : (
+                        <span className="profile-link-plain" title={url}>{label}</span>
+                      )}
+                    </dd>
+                  </div>
+                );
+              })}
             </dl>
             {profile.links.length === 0 && <p className="profile-empty-links">{copy.noLinks}</p>}
           </>
@@ -1061,6 +1089,27 @@ function SiteFooter({ site, onNavigate }) {
   const home = site.home || {};
   const copy = home.footer || {};
   const credits = home.credits;
+  // The footer carries the same contact details the profile card shows, read from the same saved
+  // profile so the two never disagree. It is a lookup on render, not a second copy to keep in sync.
+  const profile = readSavedProfile(site.profile?.defaultValues || {});
+  const labels = site.profile?.labels || {};
+  // An unfilled profile field still holds its "[mobile number]" style placeholder — never show that.
+  const isFilled = (value) => Boolean(value) && !/^\[.*\]$/.test(String(value).trim());
+  const phoneHref = profile.mobile ? `tel:${String(profile.mobile).replace(/[^\d+]/g, "")}` : "";
+  const emailHref = String(profile.email || "").includes("@") ? `mailto:${profile.email}` : "";
+  const contactRows = [
+    { field: "email", value: profile.email, href: emailHref },
+    { field: "mobile", value: profile.mobile, href: phoneHref },
+  ].filter((row) => isFilled(row.value) && row.href);
+  const followRows = [
+    { field: "github", value: profile.github, href: externalProfileUrl(profile.github) },
+    { field: "linkedin", value: profile.linkedin, href: externalProfileUrl(profile.linkedin) },
+  ].filter((row) => row.href);
+  // Only links that resolve to a real http(s) URL are listed; an empty href would render a link
+  // back to this page.
+  const extraLinks = (Array.isArray(profile.links) ? profile.links : [])
+    .map((link) => ({ ...link, href: externalProfileUrl(link.url) }))
+    .filter((link) => link.href);
   const scrollToTop = () => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -1085,8 +1134,57 @@ function SiteFooter({ site, onNavigate }) {
           <CollectionCredits copy={credits} />
         </div>
       )}
+      {(copy.tagline || contactRows.length > 0 || followRows.length > 0) && (
+        <div className="container footer-contact">
+          <div className="footer-contact-brand">
+            <a className="footer-brand footer-brand-lg" href="/" onClick={(event) => onNavigate(event, "/")}>
+              {site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}
+            </a>
+            {copy.tagline && <p className="footer-tagline">{copy.tagline}</p>}
+            {copy.contactNote && <p className="footer-contact-note">{copy.contactNote}</p>}
+          </div>
+          {contactRows.length > 0 && (
+            <nav className="footer-contact-column" aria-label={copy.contactLabel || "Contact"}>
+              <p className="footer-contact-label">{copy.contactLabel}</p>
+              <ul className="footer-contact-list">
+                {contactRows.map((row) => (
+                  <li key={row.field}>
+                    <span className="footer-contact-key">{labels[row.field] || row.field}</span>
+                    <a className="footer-contact-value" href={row.href}>{row.value}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          {(followRows.length > 0 || extraLinks.length > 0) && (
+            <nav className="footer-contact-column" aria-label={copy.followLabel || "Profiles"}>
+              <p className="footer-contact-label">{copy.followLabel}</p>
+              <ul className="footer-contact-list">
+                {followRows.map((row) => (
+                  <li key={row.field}>
+                    <span className="footer-contact-key">{labels[row.field] || row.field}</span>
+                    <a className="footer-contact-value" href={row.href} title={row.href} target="_blank" rel="noreferrer">
+                      {profileLinkLabel(row.value)}
+                    </a>
+                  </li>
+                ))}
+                {extraLinks.map((link, index) => (
+                  <li key={`${link.label}-${index}`}>
+                    <span className="footer-contact-key">{link.label}</span>
+                    <a className="footer-contact-value" href={link.href} title={link.url} target="_blank" rel="noreferrer">
+                      {profileLinkLabel(link.url)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
+      )}
       <div className="container site-footer-inner">
-        <a className="footer-brand" href="/" onClick={(event) => onNavigate(event, "/")}>{site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}</a>
+        {!copy.tagline && (
+          <a className="footer-brand" href="/" onClick={(event) => onNavigate(event, "/")}>{site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}</a>
+        )}
         <p className="site-footer-note">{copy.note}</p>
         <button type="button" className="back-to-top" onClick={scrollToTop}>{copy.backToTop}</button>
       </div>
@@ -1556,6 +1654,7 @@ function App() {
     updateCardEffectsSettings,
     updateShelfMotionSettings,
     updateSiteLookSettings,
+    updatePlaygroundThemeSettings,
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
@@ -1822,6 +1921,14 @@ function App() {
             featuredVariant={settings.look.featured === "rail" ? "rail" : "poster"}
             copy={site.detail}
             loader={settings.loader}
+            siteMode={settings.mode}
+            playgroundTheme={settings.playgroundTheme}
+            onPlaygroundThemeChange={(value) => updatePlaygroundThemeSettings({ playgroundTheme: value })}
+            onPlaygroundThemeSwitched={(mode) => {
+              // A pinned playground keeps its own look; an unpinned one speaks for the whole site.
+              if (!playgroundThemeDrivesSite(settings.playgroundTheme)) return;
+              if (mode !== settings.mode) updateSettings({ mode });
+            }}
           />
         </Suspense>
         {!detailLoading && <SiteFooter site={site} onNavigate={navigate} />}

@@ -4,6 +4,7 @@ import CodePlate from "./ui/CodePlate";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import HeroWords from "./HeroWords";
 import PosterRail from "./PosterRail";
+import { PLAYGROUND_THEME_OPTIONS } from "../config/themeSync";
 import "../styles/project-detail-look.css";
 
 function resultOutput(result) {
@@ -184,7 +185,7 @@ function ReactPreview({ project, devices, copy, loader }) {
   );
 }
 
-function PythonWorkspace({ project, copy, loader }) {
+function PythonWorkspace({ project, copy, loader, siteMode, playgroundTheme, onPlaygroundThemeChange, onPlaygroundThemeSwitched }) {
   const data = project.data || {};
   const tests = data.tests || {};
   const testCases = Array.isArray(tests.cases) ? tests.cases : [];
@@ -206,9 +207,40 @@ function PythonWorkspace({ project, copy, loader }) {
             <p className="lab-section-note lab-workspace-heading-side">
               The supplied solution is already loaded and runs automatically in your browser through Pyodide.
             </p>
+            {/* The playground carries its own switch, so the site offers the matching choice here:
+                follow the portfolio, or pin this one area to a theme of its own. */}
+            <div className="lab-theme-sync" role="group" aria-label="Playground theme">
+              <span className="lab-theme-sync-label">Playground theme</span>
+              <span className="lab-theme-sync-options">
+                {PLAYGROUND_THEME_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className="lab-theme-sync-option"
+                    aria-pressed={playgroundTheme === option.value}
+                    title={option.hint}
+                    onClick={() => onPlaygroundThemeChange?.(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </span>
+              <span className="lab-theme-sync-state" aria-live="polite">
+                {playgroundTheme === "follow"
+                  ? `Following the site — currently ${siteMode === "dark" ? "dark" : "light"}`
+                  : `Pinned to ${playgroundTheme}`}
+              </span>
+            </div>
           </header>
           <div className="lab-workspace-panel">
-            <ProjectWorkspace project={project} onStatus={setStatus} loader={loader} />
+            <ProjectWorkspace
+              project={project}
+              onStatus={setStatus}
+              loader={loader}
+              siteMode={siteMode}
+              playgroundTheme={playgroundTheme}
+              onPlaygroundTheme={onPlaygroundThemeSwitched}
+            />
           </div>
         </div>
       </section>
@@ -369,7 +401,7 @@ function ReactAbout({ project, copy }) {
   );
 }
 
-export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader, relatedProjects = [], featuredVariant = "poster" }) {
+export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader, relatedProjects = [], featuredVariant = "poster", siteMode = "light", playgroundTheme = "follow", onPlaygroundThemeChange, onPlaygroundThemeSwitched }) {
   const fullProject = detail || project;
   const data = fullProject.data || {};
   const eyebrow = [...new Set([fullProject.collectionLabel, fullProject.category].filter(Boolean))].join(" · ");
@@ -437,7 +469,17 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
         />
       )}
       {!isLoading && error && <DetailState title={copy.previewError} message={error} onRetry={onRetry} />}
-      {!isLoading && !error && detail && fullProject.previewType === "python" && <PythonWorkspace project={fullProject} copy={copy} loader={loader} />}
+      {!isLoading && !error && detail && fullProject.previewType === "python" && (
+        <PythonWorkspace
+          project={fullProject}
+          copy={copy}
+          loader={loader}
+          siteMode={siteMode}
+          playgroundTheme={playgroundTheme}
+          onPlaygroundThemeChange={onPlaygroundThemeChange}
+          onPlaygroundThemeSwitched={onPlaygroundThemeSwitched}
+        />
+      )}
       {!isLoading && !error && detail && fullProject.previewType !== "python" && (
         <>
           <ReactPreview project={fullProject} devices={previewDevices} copy={copy} loader={loader} />

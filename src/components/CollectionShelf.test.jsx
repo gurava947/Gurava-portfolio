@@ -204,6 +204,40 @@ describe("CollectionShelf", () => {
     expect(track.closest(".collection-shelf")).toHaveAttribute("data-axis", axis);
   });
 
+  it("puts the back and forward controls at the bottom of the shelf, beside the progress rail", () => {
+    const { container } = renderShelf();
+    const foot = container.querySelector(".collection-shelf-foot");
+
+    expect(foot).not.toBeNull();
+    expect(foot.querySelectorAll(".collection-shelf-button")).toHaveLength(2);
+    expect(foot.querySelector(".collection-shelf-progress")).not.toBeNull();
+    // Nothing is left in the head above the cards, so the control can never sit on top of one.
+    expect(container.querySelector(".collection-shelf-head .collection-shelf-button")).toBeNull();
+  });
+
+  it("runs one card at a time sideways on a phone, whatever the shuffle direction says", () => {
+    const original = window.matchMedia;
+    window.matchMedia = (query) => ({
+      media: query,
+      matches: query.includes("max-width: 767"),
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+    });
+
+    try {
+      const { container } = renderShelf();
+      const shelf = container.querySelector(".collection-shelf");
+
+      expect(shelf).toHaveAttribute("data-axis", "horizontal");
+      expect(screen.getByRole("button", { name: "Scroll collections right" })).toBeInTheDocument();
+      expect(screen.queryByText(/up and down arrow keys/i)).not.toBeInTheDocument();
+    } finally {
+      window.matchMedia = original;
+    }
+  });
+
   it("renders a non-interactive sample in preview mode", () => {
     const { container } = renderShelf({ preview: true, motion: { preset: "fade", intensity: "strong", duration: 400, delay: 40 } });
 

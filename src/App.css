@@ -477,6 +477,12 @@ select:focus-visible {
   text-underline-offset: 3px;
 }
 
+/* A saved link whose value is not a real URL is shown as text, so it never reads as clickable. */
+.profile-link-plain {
+  color: var(--theme-muted-text);
+  font-weight: 500;
+}
+
 .profile-empty-links {
   margin: 10px 0 0;
   color: var(--theme-muted-text);
