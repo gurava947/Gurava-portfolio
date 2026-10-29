@@ -33,10 +33,12 @@ function renderSlider({ cols = 2, rows = 3, columnStep = 300, clientWidth = 600,
 }
 
 // Measurement is deferred to an animation frame, so a test that asserts anything derived from the
-// grid has to scroll once and wait for the state to land.
-async function measured(track) {
+// grid has to scroll once and wait for the state to land. The wait names the counts it expects:
+// the hint reads "1 × 1 grid" from the unmeasured default before that frame runs, so waiting for
+// any "×" would resolve on the first paint and the assertion below would race the measurement.
+async function measured(track, label) {
   fireEvent.scroll(track);
-  await waitFor(() => expect(screen.getByText(/×/)).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText(label)).toBeInTheDocument());
 }
 
 describe("ProjectSlider", () => {
@@ -49,8 +51,8 @@ describe("ProjectSlider", () => {
   });
 
   it("names the grid by the counts the stylesheet gave it", async () => {
-    const { track } = renderSlider();
-    await measured(track);
+    const { track, cols, rows } = renderSlider();
+    await measured(track, `${cols} × ${rows} grid`);
     expect(screen.getByText(/2 × 3 grid/i)).toBeInTheDocument();
   });
 
