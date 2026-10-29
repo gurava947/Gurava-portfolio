@@ -2,9 +2,9 @@ const CATALOG_CACHE_KEY = "practicefolio.catalog.v9";
 const CACHE_TTL = 10 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 15000;
 // sessionStorage is roughly 5MB per origin and the catalog is the only large thing in it, so the
-// cache needs a ceiling. At 399 projects the serialized catalog is 342KB and it grows linearly with
-// the catalogue; above this budget a 4,000-project build would cost a gzip-compressed refetch per
-// visit instead of crowding out the profile entry that shares the storage.
+// cache needs a ceiling. The serialized catalog runs at about 0.84KB per project (390KB at 463),
+// and it grows linearly; above this budget a 4,000-project build would cost a gzip-compressed
+// refetch per visit instead of crowding out the profile entry that shares the storage.
 const MAX_CACHE_BYTES = 2 * 1024 * 1024;
 const detailCache = new Map();
 

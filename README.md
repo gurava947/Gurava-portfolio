@@ -4,11 +4,11 @@ A single, unified portfolio combining three supplied project sets into one catal
 
 | Collection | Projects | Source |
 | --- | --- | --- |
-| Python | 262 | 262 supplied Python practice questions plus the Practice.folio Python playground (real Pyodide execution) |
+| Python | 389 | 388 supplied Python practice questions plus the Practice.folio Python playground (real Pyodide execution) |
 | Responsive | 35 | Responsive design and ecommerce practice builds |
 | Static | 39 | Static web development practice builds |
 
-The catalog also carries the supplied Python certificate (3 normalized certificate records). All project titles, descriptions, technologies, images, and certificate facts come from the supplied portfolios.
+The catalog also carries the supplied certificates (8 normalized certificate records). All project titles, descriptions, technologies, images, and certificate facts come from the supplied portfolios.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ npm run catalog:build   # regenerate public/data from catalog/source
 npm run build           # catalog build + production frontend build
 npm run build:vercel    # Vercel-mode production build
 npm test                # Vitest unit tests + backend API tests
-npm run test:python     # Python exercise unittest suite (110 checks)
+npm run test:python     # Python exercise unittest suite (1042 checks)
 npm run lighthouse      # production build check against the Lighthouse budget
 npm start               # build and serve the production app with Express
 ```
@@ -48,13 +48,13 @@ npm start               # build and serve the production app with Express
 
 `lighthouserc.cjs` audits five routes (home, catalog, certificates, a project page, a certificate page) with Lighthouse's mobile preset and fails when a Core Web Vital or byte budget is exceeded. Thresholds are calibrated from measured medians, not guesses; see the comments in that file. `npm run lighthouse` builds first, then runs the audit, so it needs a locally installed Chrome. Lighthouse CI runs through `npx` from the pinned `@lhci/cli` version rather than a project dependency, because its transitive tooling carries advisories that would otherwise show up in `npm audit` for a tool the app never ships.
 
-The catalog route (`/projects`) currently cannot produce a Largest Contentful Paint in Lighthouse: its real content paints after the route chunk and catalog JSON arrive, while the removed Suspense fallback was the last recorded candidate. FCP, CLS, and byte budgets still guard that route; LCP and the performance score are not asserted there.
+The catalog route (`/projects`) used to report NO_LCP, which left it with no timing signal at all. Moving the background drift onto the compositor and serving the chrome fonts same-origin brought a Largest Contentful Paint back inside the observation window, so LCP, TBT and the performance score are asserted there again. What LCP records is the navbar brand, so that assertion guards the shell; the byte budgets on the same route are what cover the catalogue paint itself.
 
 ## Data sources
 
 - `catalog/source/site.json` — navigation, hero copy, section copy, certificate labels.
 - `catalog/source/projects-responsive.json`, `catalog/source/projects-static.json` — project records and metadata.
-- `catalog/source/projects-python.json` — portfolio metadata for the 32 Python practice questions.
+- `catalog/source/projects-python.json` — portfolio metadata for the 388 supplied Python practice questions.
 - `python-projects/<slug>/solution.py` — preserved supplied Python code, stored verbatim; never edited by the build.
 - `python-projects/<slug>/README.md` — per-question details, expected outputs, and limitations.
 - `python-projects/tests/` — separate unittest files for the supplied Python solutions.
