@@ -585,10 +585,9 @@
   line-height: 1.05;
 }
 
-.look-studio-stage .hero-word {
-  display: inline-block;
-  white-space: pre;
-}
+/* The stage's words take `.hero-word` from site-look.css as-is. This rule used to restate
+ * `display` and `white-space` at higher specificity, which quietly kept the preview on `pre` after
+ * the real headline had moved to `pre-wrap`. */
 
 .look-studio-stage .hero-word-accent {
   color: var(--theme-primary);

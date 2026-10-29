@@ -98,7 +98,15 @@
 
 .hero-word {
   display: inline-block;
-  white-space: pre;
+  /* `pre` kept the trailing space each span carries, but it also forbids wrapping inside the
+   * span, so a word wider than its column — "Denominations" needs 327px while a 320px viewport
+   * leaves the headline 296px — hung out of the h1 and the detail hero's overflow: hidden cut it
+   * off. `pre-wrap` preserves the space and still allows a break.
+   * `anywhere` rather than `break-word`: each word is an inline-block, so it shrink-to-fits to its
+   * min-content width, and only `anywhere` counts a forced break when computing min-content. With
+   * `break-word` the span still sized itself to the unbreakable word and simply overflowed. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   will-change: transform, opacity;
 }
 
