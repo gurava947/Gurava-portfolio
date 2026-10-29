@@ -4,7 +4,7 @@ A single, unified portfolio combining three supplied project sets into one catal
 
 | Collection | Projects | Source |
 | --- | --- | --- |
-| Python | 33 | 32 supplied Python practice questions plus the Practice.folio Python playground (real Pyodide execution) |
+| Python | 262 | 262 supplied Python practice questions plus the Practice.folio Python playground (real Pyodide execution) |
 | Responsive | 35 | Responsive design and ecommerce practice builds |
 | Static | 39 | Static web development practice builds |
 
