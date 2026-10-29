@@ -1,4 +1,4 @@
-name: Lighthouse budget
+name: Verify and Lighthouse budget
 
 on:
   push:
@@ -9,7 +9,33 @@ permissions:
   contents: read
 
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build the catalogue
+        run: npm run catalog:build
+
+      - name: Audit the catalogue against its source seeds
+        run: node scripts/audit-catalog.mjs
+
+      - name: Unit and API tests
+        run: npm test
+
+      - name: Python exercise tests
+        run: npm run test:python
+
   lighthouse:
+    needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -23,7 +49,9 @@ jobs:
       - run: npm ci
 
       - name: Build production bundle
-        run: npm run build
+        # build:vercel is what vercel.json runs. The plain build keeps the local-API settings sync
+        # in the bundle, which Lighthouse would then measure as requests that production never makes.
+        run: npm run build:vercel
 
       - name: Run Lighthouse budget
         run: npx --yes @lhci/cli@0.15.1 autorun

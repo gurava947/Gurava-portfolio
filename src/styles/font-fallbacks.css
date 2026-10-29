@@ -1,4 +1,4 @@
-/* Metric-matched local fallbacks for the two Google fonts the site chrome uses.
+/* Metric-matched local fallbacks for the two webfonts the site chrome uses.
  *
  * Without these, text first paints in Arial and then reflows when the webfont arrives —
  * one measurable layout shift at ~3.2s on a throttled connection (0.041 CLS on the home

@@ -1,6 +1,11 @@
 const CATALOG_CACHE_KEY = "practicefolio.catalog.v9";
 const CACHE_TTL = 10 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 15000;
+// sessionStorage is roughly 5MB per origin and the catalog is the only large thing in it, so the
+// cache needs a ceiling. At 399 projects the serialized catalog is 342KB and it grows linearly with
+// the catalogue; above this budget a 4,000-project build would cost a gzip-compressed refetch per
+// visit instead of crowding out the profile entry that shares the storage.
+const MAX_CACHE_BYTES = 2 * 1024 * 1024;
 const detailCache = new Map();
 
 function withTimeout(run) {
@@ -41,9 +46,23 @@ function readCache() {
 }
 
 function writeCache(data) {
+  let payload = "";
   try {
-    window.sessionStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    payload = JSON.stringify({ savedAt: Date.now(), data });
   } catch (error) {
+    console.warn("Unable to prepare the cached catalog.", error);
+    return;
+  }
+  try {
+    if (payload.length > MAX_CACHE_BYTES) {
+      window.sessionStorage.removeItem(CATALOG_CACHE_KEY);
+      return;
+    }
+    window.sessionStorage.setItem(CATALOG_CACHE_KEY, payload);
+  } catch (error) {
+    // A rejected write leaves the previous entry in place, so every later navigation would pay the
+    // stringify again to fail the same way; dropping it returns the storage to the rest of the app.
+    window.sessionStorage.removeItem(CATALOG_CACHE_KEY);
     console.warn("Unable to cache the catalog for this session.", error);
   }
 }
