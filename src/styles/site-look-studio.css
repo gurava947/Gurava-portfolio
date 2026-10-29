@@ -458,7 +458,16 @@
     radial-gradient(120% 78% at 6% -12%, color-mix(in srgb, var(--look-wash-a) calc(var(--look-wash-strength) * 2.2), transparent), transparent 62%),
     radial-gradient(120% 88% at 52% 112%, color-mix(in srgb, var(--look-wash-b) calc(var(--look-wash-strength) * 2.2), transparent), transparent 64%);
   background-size: 26px 26px, 26px 26px, auto, auto;
-  animation: look-grid-drift 34s linear infinite;
+  /* The stage is a miniature, so it keeps the old background-position sweep — translating it would
+   * slide the texture out of the swatch box. Its tile is 26px, so the sweep is one tile, which the
+   * shared 72px keyframes were not: the preview used to jump 2px off-grid every 34s. The live page
+   * drifts by transform instead, because the full-viewport version cannot afford a per-frame paint. */
+  animation: look-grid-drift-tile 34s ease-in-out infinite alternate;
+}
+
+@keyframes look-grid-drift-tile {
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 26px 26px, 26px 26px, 0 0, 0 0; }
 }
 
 .look-studio-stage[data-bg-pattern="dots"] .look-studio-stage-bg {

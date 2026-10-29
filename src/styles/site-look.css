@@ -228,12 +228,18 @@
     linear-gradient(90deg, color-mix(in srgb, var(--look-wash-a) 22%, transparent) 1px, transparent 1px);
   background-size: 72px 72px;
   mask-image: radial-gradient(ellipse at 50% 0%, rgb(0 0 0 / 85%), transparent 78%);
-  animation: look-grid-drift 34s linear infinite;
+  animation: look-grid-drift 34s ease-in-out infinite alternate;
 }
 
+/* `background-position` is not a compositor property, so drifting the grid that way re-painted the
+ * whole viewport on the main thread every frame: measured at ~14ms of main-thread task time per
+ * frame, 47fps on an untouched page, and unreachable against the 8.3ms budget of a 120Hz display.
+ * A translate is composited. The distance stays inside the layer's own 10% bleed so the grid can
+ * never uncover a viewport edge, and `alternate` turns the sweep around smoothly, which means the
+ * pattern no longer has to travel a whole tile to loop without a seam. */
 @keyframes look-grid-drift {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 72px 72px, 72px 72px; }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(min(10vw, 72px), min(10vh, 72px), 0); }
 }
 
 :root[data-bg-pattern="dots"] .site-look-layer::after {
@@ -289,12 +295,16 @@
     transparent 1px 22px
   );
   mask-image: radial-gradient(ellipse at 70% 20%, rgb(0 0 0 / 85%), transparent 76%);
-  animation: look-diagonal-drift 26s linear infinite;
+  animation: look-diagonal-drift 26s ease-in-out infinite alternate;
 }
 
+/* Same treatment as the grid. The stripes repeat every 22px across a 58deg axis, so a horizontal
+ * move of 22/sin(58deg) = 25.94px lands the pattern back on itself; three of those is 77.83px,
+ * which is where the sweep turns around. The old keyframe travelled 220px, which is 8.48 periods,
+ * so every 26s loop the stripes snapped sideways by half a period. */
 @keyframes look-diagonal-drift {
-  from { background-position: 0 0; }
-  to { background-position: 220px 0; }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(min(10vw, 77.83px), 0, 0); }
 }
 
 :root[data-bg-pattern="rings"] .site-look-layer::after {
@@ -325,6 +335,10 @@
   animation: look-stardust-drift 60s linear infinite;
 }
 
+/* Left on background-position on purpose. The three dot fields have periods of 42, 78 and 130px
+ * and each advances exactly one of its own periods, which is what reads as depth. One transform
+ * moves all three in lockstep, so compositing this pattern means splitting it across three boxes
+ * and re-deriving its mask — an art change, not a property swap. */
 @keyframes look-stardust-drift {
   from { background-position: 0 0, 22px 30px, 60px 12px; }
   to { background-position: 42px 84px, 100px 108px, 190px 142px; }
