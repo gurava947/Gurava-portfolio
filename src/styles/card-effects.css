@@ -478,8 +478,8 @@
 
 /* Effects studio ------------------------------------------------------ */
 
-.card-studio > .fx-studio {
-  grid-area: effects;
+.card-studio-controls > .fx-studio {
+  min-width: 0;
 }
 
 .fx-studio-note {

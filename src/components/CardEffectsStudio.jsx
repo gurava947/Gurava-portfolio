@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import CertificateCard from "./CertificateCard";
 import ProjectCard from "./ProjectCard";
@@ -149,7 +149,7 @@ function EffectsPreviewDialog({ open, effects, cardUI, project, certificate, dir
   );
 }
 
-export default function CardEffectsStudio({ settings, onApply, cardUI = {}, previewProject, previewProjects = [], previewCertificates = [] }) {
+function CardEffectsStudio({ settings, onApply, cardUI = {}, previewProject, previewProjects = [], previewCertificates = [] }) {
   const applied = normalizeCardEffects(settings);
   const [draft, setDraft] = useState(applied);
   const [area, setArea] = useState("projects");
@@ -353,3 +353,7 @@ export default function CardEffectsStudio({ settings, onApply, cardUI = {}, prev
     </section>
   );
 }
+
+/* Memoised because one studio holding local draft state must not re-render the other
+   five: the panels together are the bulk of the settings column. */
+export default memo(CardEffectsStudio);

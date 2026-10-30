@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import CollectionShelf from "./CollectionShelf";
 import {
   DEFAULT_SHELF_3D,
@@ -30,7 +30,7 @@ const SWITCHES = [
   ["stack", "Side stack"],
 ];
 
-export default function Shelf3DStudio({ settings, onApply, collections = [], projects = [], motion }) {
+function Shelf3DStudio({ settings, onApply, collections = [], projects = [], motion }) {
   const applied = normalizeShelf3d(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -49,9 +49,11 @@ export default function Shelf3DStudio({ settings, onApply, collections = [], pro
     appliedRef.current = applied;
   }, [appliedKey]);
 
+  /* The sample is re-keyed only by the Replay button, never here: remounting the shelf on every
+     dial tick means re-deriving every collection's previews from the whole catalogue, sixty times a
+     second, which is the one thing that does not scale as the catalogue grows. */
   const updateDraft = (patch, message) => {
     setDraft((current) => normalizeShelf3d({ ...current, ...patch }));
-    setPreviewKey((current) => current + 1);
     if (message) setAnnouncement(`${message} previewed on the sample shelf. Choose Apply 3D settings to keep it.`);
   };
 
@@ -263,3 +265,7 @@ export default function Shelf3DStudio({ settings, onApply, collections = [], pro
     </section>
   );
 }
+
+/* Memoised because one studio holding local draft state must not re-render the other
+   five: the panels together are the bulk of the settings column. */
+export default memo(Shelf3DStudio);

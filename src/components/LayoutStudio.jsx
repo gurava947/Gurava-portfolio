@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import CertificateCard from "./CertificateCard";
 import ProjectCard from "./ProjectCard";
 import {
@@ -143,7 +143,7 @@ function LayoutPreview({ area, pattern, projects, certificates, cardUI }) {
   );
 }
 
-export default function LayoutStudio({
+function LayoutStudio({
   settings,
   onApply,
   previewProject,
@@ -332,3 +332,7 @@ export default function LayoutStudio({
     </section>
   );
 }
+
+/* Memoised because one studio holding local draft state must not re-render the other
+   five: the panels together are the bulk of the settings column. */
+export default memo(LayoutStudio);

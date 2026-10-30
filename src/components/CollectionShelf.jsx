@@ -6,8 +6,7 @@ import "../styles/collection-shelf.css";
 
 const SCROLL_KEYS = ["ArrowLeft", "ArrowRight", "Home", "End"];
 
-function previewsFor(projects, collectionId) {
-  const inCollection = projects.filter((project) => project.collection === collectionId);
+function previewsFor(inCollection) {
   const images = inCollection
     .filter((project) => project.thumbnail || project.image)
     .slice(0, 3);
@@ -119,8 +118,16 @@ export default function CollectionShelf({
   // the only one that keeps the label panel the size of its text; the stylesheet widens the card on
   // larger screens and, once there is real room for it, lets up to four windows share the row.
   const previewsById = useMemo(() => {
+    // One pass to group the catalogue, then a card per collection: filtering the whole list once per
+    // collection is O(collections x projects) and it re-runs every time this component remounts.
+    const grouped = new Map();
+    projects.forEach((project) => {
+      const bucket = grouped.get(project.collection);
+      if (bucket) bucket.push(project);
+      else grouped.set(project.collection, [project]);
+    });
     const map = new Map();
-    collections.forEach((collection) => map.set(collection.id, previewsFor(projects, collection.id)));
+    collections.forEach((collection) => map.set(collection.id, previewsFor(grouped.get(collection.id) || [])));
     return map;
   }, [collections, projects]);
 

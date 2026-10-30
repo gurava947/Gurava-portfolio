@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
+import { memo, Suspense, lazy, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import "./styles/theme.css";
 import "./App.css";
@@ -27,6 +27,8 @@ import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import SiteLookStudio from "./components/SiteLookStudio";
 import Shelf3DStudio from "./components/Shelf3DStudio";
+import Three3DStudio from "./components/Three3DStudio";
+import Three3DStage from "./components/Three3DStage";
 import PosterRail from "./components/PosterRail";
 import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
@@ -267,7 +269,47 @@ const CARD_UI_SURFACE_CONTROLS = [
   ]],
 ];
 
-function CardUIColorControl({ setting, label, value, onChange, themeMode }) {
+/* One memoised row per control, keyed off the module-level descriptor it renders. Dragging any dial
+ * used to re-render all thirty of them — seven StudioSelect instances included, each with its own
+ * effects and portal logic — which is what put forty milliseconds between a pointer move and the
+ * preview answering. A row now re-renders only when its own value moves. */
+const CardUIRangeRow = memo(function CardUIRangeRow({ control, value, onChange }) {
+  const [key, label, min, max, step, unit] = control;
+  return (
+    <div className="card-ui-range">
+      <div>
+        <label htmlFor={`card-ui-${key}`}>{label}</label>
+        <output htmlFor={`card-ui-${key}`}>{value}{unit}</output>
+      </div>
+      <input
+        id={`card-ui-${key}`}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(key, Number(event.target.value))}
+      />
+    </div>
+  );
+});
+
+const CardUISelectRow = memo(function CardUISelectRow({ control, value, onChange }) {
+  const [key, label, pairs] = control;
+  return (
+    <StudioSelect
+      id={`card-ui-${key}`}
+      label={label}
+      icon={<OptionGlyph name={CARD_UI_CONTROL_ICONS[key]} />}
+      value={value}
+      options={pairs.map(([optionValue, text]) => ({ value: optionValue, label: text }))}
+      onChange={(nextValue) => onChange(key, nextValue)}
+    />
+  );
+});
+
+const CardUIColorRow = memo(function CardUIColorRow({ control, value, onChange, themeMode }) {
+  const [setting, label] = control;
   const dark = themeMode === "dark";
   const themeColor = setting === "backgroundColor" ? (dark ? "#202822" : "#ffffff")
     : setting === "textColor" ? (dark ? "#eef2e8" : "#18231d")
@@ -295,10 +337,28 @@ function CardUIColorControl({ setting, label, value, onChange, themeMode }) {
       </div>
     </div>
   );
-}
+});
 
-function CardUISettings({ settings, onChange, themeMode }) {
-  const setValue = (key, value) => {
+const CardUIToggleRow = memo(function CardUIToggleRow({ control, checked, onChange }) {
+  const [key, label] = control;
+  return (
+    <label className="card-ui-toggle" htmlFor={`card-ui-${key}`}>
+      <input id={`card-ui-${key}`} type="checkbox" checked={checked} onChange={(event) => onChange(key, event.target.checked)} />
+      <span>{label}</span>
+    </label>
+  );
+});
+
+const CARD_UI_TOGGLES = [
+  ["scrollReveal", "Scroll reveal"],
+  ["pressFeedback", "Click and press feedback"],
+  ["deviceSwitchTransition", "Preview device transition"],
+];
+
+const DEFAULT_CARD_IMAGE_HEIGHTS = { mobileImageHeight: 150, tabletImageHeight: 175, desktopImageHeight: 190 };
+
+const CardUISettings = memo(function CardUISettings({ settings, onChange, themeMode }) {
+  const setValue = useCallback((key, value) => {
     if (key === "radius") {
       onChange({
         radius: value,
@@ -310,40 +370,24 @@ function CardUISettings({ settings, onChange, themeMode }) {
       return;
     }
     onChange({ [key]: value });
-  };
+  }, [onChange]);
 
-  const rangeControl = ([key, label, min, max, step, unit]) => (
-    <div className="card-ui-range" key={key}>
-      <div>
-        <label htmlFor={`card-ui-${key}`}>{label}</label>
-        <output htmlFor={`card-ui-${key}`}>{settings[key]}{unit}</output>
-      </div>
-      <input
-        id={`card-ui-${key}`}
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={settings[key]}
-        onChange={(event) => setValue(key, Number(event.target.value))}
-      />
-    </div>
+  const resetHeights = useCallback(() => onChange(DEFAULT_CARD_IMAGE_HEIGHTS), [onChange]);
+
+  const rangeControl = (control) => (
+    <CardUIRangeRow key={control[0]} control={control} value={settings[control[0]]} onChange={setValue} />
   );
 
-  const selectControl = ([key, label, options]) => (
-    <StudioSelect
-      key={key}
-      id={`card-ui-${key}`}
-      label={label}
-      icon={<OptionGlyph name={CARD_UI_CONTROL_ICONS[key]} />}
-      value={settings[key]}
-      options={options.map(([optionValue, text]) => ({ value: optionValue, label: text }))}
-      onChange={(nextValue) => setValue(key, nextValue)}
-    />
+  const selectControl = (control) => (
+    <CardUISelectRow key={control[0]} control={control} value={settings[control[0]]} onChange={setValue} />
   );
 
-  const colorControl = ([key, label]) => (
-    <CardUIColorControl key={key} setting={key} label={label} value={settings[key]} onChange={setValue} themeMode={themeMode} />
+  const colorControl = (control) => (
+    <CardUIColorRow key={control[0]} control={control} value={settings[control[0]]} onChange={setValue} themeMode={themeMode} />
+  );
+
+  const toggleControl = (control) => (
+    <CardUIToggleRow key={control[0]} control={control} checked={Boolean(settings[control[0]])} onChange={setValue} />
   );
 
   return (
@@ -389,7 +433,7 @@ function CardUISettings({ settings, onChange, themeMode }) {
           <button
             type="button"
             className="card-ui-reset"
-            onClick={() => onChange({ mobileImageHeight: 150, tabletImageHeight: 175, desktopImageHeight: 190 })}
+            onClick={resetHeights}
           >
             Reset height
           </button>
@@ -413,21 +457,51 @@ function CardUISettings({ settings, onChange, themeMode }) {
           {CARD_UI_SELECT_CONTROLS.slice(1).map(selectControl)}
           {CARD_UI_NUMBER_CONTROLS.Motion.map(rangeControl)}
           <div className="card-ui-toggles">
-            {[
-              ["scrollReveal", "Scroll reveal"],
-              ["pressFeedback", "Click and press feedback"],
-              ["deviceSwitchTransition", "Preview device transition"],
-            ].map(([key, label]) => (
-              <label className="card-ui-toggle" htmlFor={`card-ui-${key}`} key={key}>
-                <input id={`card-ui-${key}`} type="checkbox" checked={settings[key]} onChange={(event) => setValue(key, event.target.checked)} />
-                <span>{label}</span>
-              </label>
-            ))}
+            {CARD_UI_TOGGLES.map(toggleControl)}
           </div>
         </div>
       </details>
     </fieldset>
   );
+});
+
+/* The sections the studio scroll is divided into, in the order they are mounted. `headingId` is the
+ * `aria-labelledby` target already on each panel, so the jump list does not have to own those ids;
+ * `selector` covers the one block (fine-tune) that has no heading of its own. */
+const STUDIO_SECTIONS = [
+  { id: "presets", label: "Looks", headingId: "card-studio-presets" },
+  { id: "quick", label: "Quick style", headingId: "card-studio-quick" },
+  { id: "loader", label: "Loading", headingId: "card-studio-loader" },
+  { id: "look", label: "Site look", headingId: "card-studio-look" },
+  { id: "layout", label: "Layout", headingId: "card-studio-layout" },
+  { id: "effects", label: "Effects", headingId: "card-studio-effects" },
+  { id: "motion", label: "Motion", headingId: "card-studio-motion" },
+  { id: "shelf3d", label: "Shelf 3D", headingId: "card-studio-shelf-3d" },
+  { id: "stage3d", label: "Stage 3D", headingId: "card-studio-three-3d" },
+  { id: "fine", label: "Fine-tune", selector: ".card-ui-settings" },
+];
+
+// Height of the sticky chip row the section has to clear when it is jumped to.
+const STUDIO_NAV_OFFSET = 46;
+
+function studioSectionElement(section, pane) {
+  if (!pane) return null;
+  if (section.selector) return pane.querySelector(section.selector);
+  const heading = document.getElementById(section.headingId);
+  return (heading?.closest("section") || heading) ?? null;
+}
+
+/* Whichever element actually scrolls the studio: the tools column in the two-pane shell, the dialog
+ * body once the panes stack on a narrow screen. Jumping and observing both have to follow it,
+ * because asking a column that no longer scrolls to scroll silently does nothing. */
+function studioScrollHost(from) {
+  let node = from || null;
+  while (node && node !== document.body) {
+    const overflowY = getComputedStyle(node).overflowY;
+    if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight + 1) return node;
+    node = node.parentElement;
+  }
+  return null;
 }
 
 function CardStudio({
@@ -447,6 +521,10 @@ function CardStudio({
   onMotionApply,
   shelf3dSettings,
   onShelf3dApply,
+  three3dSettings,
+  onThree3dApply,
+  three3dPalette,
+  reducedMotion = false,
   lookSettings,
   onLookApply,
   shelfCollections = [],
@@ -459,11 +537,19 @@ function CardStudio({
   const [previewOpen, setPreviewOpen] = useState(false);
   const appliedCardRef = useRef(settings);
   const appliedLoaderRef = useRef(appliedLoader);
+  const controlsRef = useRef(null);
+  const scrollHostRef = useRef(null);
+  const [activeSection, setActiveSection] = useState(STUDIO_SECTIONS[0].id);
   const cardDirty = !sameCardSettings(draftCardUI, settings);
   const loaderDirty = !sameCardSettings(draftLoader, appliedLoader);
   const dirty = cardDirty || loaderDirty;
   const activePresetId = getActiveCardPresetId(draftCardUI);
   const activePreset = CARD_STYLE_PRESETS.find((preset) => preset.id === activePresetId) || null;
+  /* Two panels draw whole project cards for their previews, and they are the expensive half of a
+     fine-tune drag: thirty-odd milliseconds of commit per dial tick, most of it in thumbnails that
+     are not the thing being dragged. They follow the dial one frame behind instead, so the row under
+     the pointer and the live sample stay instant. */
+  const previewCardUI = useDeferredValue(draftCardUI);
   const appliedCopy = copy.applied || "{name} style applied";
   const loader = draftLoader;
   const dialogProjects = previewProjects.length
@@ -482,9 +568,76 @@ function CardStudio({
     appliedLoaderRef.current = appliedLoader;
   }, [settings, appliedLoader, draftCardUI, draftLoader]);
 
-  const updateDraftCardUI = (patch) => {
-    setDraftCardUI((current) => normalizeCardUISettings({ ...current, ...patch }));
+  /* Which section the scroll column is currently showing. Observed rather than measured on scroll:
+     the column is tall enough that a scroll handler would run layout on every frame of a flick.
+     Of the panels crossing the band, the one whose top edge sits nearest the line under the chip
+     row wins; sorting by the band instead highlighted the tall panel before the one asked for.
+     Re-attached when the pane resizes, because crossing the stacking measure moves the scrolling
+     from the tools column to the whole studio and the observer has to follow it. */
+  useEffect(() => {
+    const pane = controlsRef.current;
+    if (!pane || typeof IntersectionObserver === "undefined") return undefined;
+    let observer = null;
+    const crossing = new Set();
+    const attach = () => {
+      const host = studioScrollHost(pane);
+      scrollHostRef.current = host;
+      const sections = STUDIO_SECTIONS
+        .map((section) => studioSectionElement(section, pane))
+        .filter(Boolean);
+      crossing.clear();
+      observer?.disconnect();
+      observer = new IntersectionObserver((entries) => {
+        let line = 0;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) crossing.add(entry.target);
+          else crossing.delete(entry.target);
+          if (entry.rootBounds) line = entry.rootBounds.top + STUDIO_NAV_OFFSET;
+        });
+        let nearest = null;
+        let nearestGap = Number.POSITIVE_INFINITY;
+        crossing.forEach((element) => {
+          const gap = Math.abs(element.getBoundingClientRect().top - line);
+          if (gap < nearestGap) {
+            nearestGap = gap;
+            nearest = element;
+          }
+        });
+        if (!nearest) return;
+        const match = STUDIO_SECTIONS.find((section) => studioSectionElement(section, pane) === nearest);
+        if (match) setActiveSection(match.id);
+      }, { root: host, rootMargin: "-24% 0px -60% 0px", threshold: 0 });
+      sections.forEach((el) => observer.observe(el));
+    };
+    attach();
+    let resize;
+    if (typeof ResizeObserver !== "undefined") {
+      resize = new ResizeObserver(attach);
+      resize.observe(pane);
+    }
+    return () => {
+      resize?.disconnect();
+      observer?.disconnect();
+    };
+  }, []);
+
+  const focusSection = (section) => {
+    const pane = controlsRef.current;
+    const target = studioSectionElement(section, pane);
+    if (!pane || !target) return;
+    setActiveSection(section.id);
+    const host = scrollHostRef.current || pane;
+    host.scrollTo({
+      top: host.scrollTop + target.getBoundingClientRect().top - host.getBoundingClientRect().top - STUDIO_NAV_OFFSET,
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
   };
+
+  /* Stable because every fine-tune row is memoised against it: a new closure per render would make
+     all thirty rows look changed on each dial tick, which is the cost this whole pass removes. */
+  const updateDraftCardUI = useCallback((patch) => {
+    setDraftCardUI((current) => normalizeCardUISettings({ ...current, ...patch }));
+  }, []);
   const updateDraftLoader = (patch) => {
     setDraftLoader((current) => normalizeLoaderSettings({ ...current, ...patch }));
   };
@@ -538,206 +691,237 @@ function CardStudio({
         <span className="card-studio-scope"><ProfileIcon name="sliders" /> {copy.scope || "Global card style"}</span>
       </div>
 
-      <section className="card-studio-block card-studio-presets-block" aria-labelledby="card-studio-presets">
-        <div className="card-studio-block-head">
-          <h3 id="card-studio-presets">{copy.presetsLabel || "Curated looks"}</h3>
-          <span>{copy.presetsHint || "Complete styles you can adjust"}</span>
-        </div>
-        <div className="card-studio-presets" role="group" aria-label={copy.presetsLabel || "Curated looks"}>
-          {CARD_STYLE_PRESETS.map((preset) => {
-            const active = activePresetId === preset.id;
-            return (
+      {/* Two panes, one scroll: the controls column scrolls on its own and the sample rail keeps its
+          place beside it. Letting the dialog scroll instead pinned the sample only for as long as it
+          spanned its own grid rows, so the last two panels lost it mid-scroll. */}
+      <div className="card-studio-panes">
+        <div className="card-studio-controls" ref={controlsRef}>
+          <nav className="card-studio-nav" aria-label="Studio sections">
+            {STUDIO_SECTIONS.map((section) => (
               <button
-                key={preset.id}
+                key={section.id}
                 type="button"
-                className={`card-studio-preset${active ? " is-active" : ""}`}
-                aria-pressed={active}
-                onClick={() => applyPreset(preset)}
+                className="card-studio-nav-chip"
+                aria-current={activeSection === section.id ? "true" : undefined}
+                onClick={() => focusSection(section)}
               >
-                <span className={`card-studio-swatch is-${preset.id}`} aria-hidden="true"><span /><span /></span>
-                <span className="card-studio-preset-copy">
-                  <strong>{preset.label}</strong>
-                  <small>{preset.note}</small>
-                </span>
-                {active && <span className="card-studio-preset-check" aria-hidden="true"><ProfileIcon name="check" /></span>}
+                {section.label}
               </button>
-            );
-          })}
-        </div>
-      </section>
+            ))}
+          </nav>
 
-      <section className="card-studio-block card-studio-preview-block" aria-labelledby="card-studio-preview">
-        <div className="card-studio-block-head">
-          <h3 id="card-studio-preview">{copy.previewLabel || "Live preview"}</h3>
-          <span className={`card-studio-preview-hint${dirty ? " is-dirty" : ""}`}>
-            <i aria-hidden="true" /> {dirty ? (copy.previewDirty || "Unsaved preview") : (copy.previewClean || "Applied design")}
-          </span>
-        </div>
-        <div className="card-studio-preview">
-          <div
-            className={`card-studio-preview-stage${draftCardUI.cardLayout === "depth" ? " is-depth" : ""}`}
-            style={getCardStyleVariables(draftCardUI)}
-            data-card-layout={draftCardUI.cardLayout}
-            aria-hidden="true"
-          >
-            {previewProject
-              ? <ProjectCard project={previewProject} cardUI={draftCardUI} preview />
-              : <p className="card-studio-preview-empty">Cards appear here once the catalog is ready.</p>}
-          </div>
-          <p className="card-studio-preview-note">{copy.previewHint || "Hover the sample to test motion. Open Preview to see the layout across real projects. Only Apply changes the live portfolio."}</p>
-        </div>
-      </section>
+          <section className="card-studio-block card-studio-presets-block" aria-labelledby="card-studio-presets">
+            <div className="card-studio-block-head">
+              <h3 id="card-studio-presets">{copy.presetsLabel || "Curated looks"}</h3>
+              <span>{copy.presetsHint || "Complete styles you can adjust"}</span>
+            </div>
+            <div className="card-studio-presets" role="group" aria-label={copy.presetsLabel || "Curated looks"}>
+              {CARD_STYLE_PRESETS.map((preset) => {
+                const active = activePresetId === preset.id;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className={`card-studio-preset${active ? " is-active" : ""}`}
+                    aria-pressed={active}
+                    onClick={() => applyPreset(preset)}
+                  >
+                    <span className={`card-studio-swatch is-${preset.id}`} aria-hidden="true"><span /><span /></span>
+                    <span className="card-studio-preset-copy">
+                      <strong>{preset.label}</strong>
+                      <small>{preset.note}</small>
+                    </span>
+                    {active && <span className="card-studio-preset-check" aria-hidden="true"><ProfileIcon name="check" /></span>}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
 
-      <section className="card-studio-block card-studio-quick-block" aria-labelledby="card-studio-quick">
-        <div className="card-studio-block-head">
-          <h3 id="card-studio-quick">{copy.quickLabel || "Quick style"}</h3>
-          <span>{copy.quickHint || "Common adjustments, one tap away"}</span>
-        </div>
-        <div className="card-studio-quick">
-          {CARD_QUICK_CONTROLS.map((control) => {
-            const activeValue = control.getActive(draftCardUI);
-            return (
-              <div className="card-studio-quick-row" key={control.id}>
-                <span className="card-studio-quick-label">{control.label}</span>
-                <div className="card-studio-segments" role="group" aria-label={control.label}>
-                  {control.options.map((option) => (
+          <section className="card-studio-block card-studio-quick-block" aria-labelledby="card-studio-quick">
+            <div className="card-studio-block-head">
+              <h3 id="card-studio-quick">{copy.quickLabel || "Quick style"}</h3>
+              <span>{copy.quickHint || "Common adjustments, one tap away"}</span>
+            </div>
+            <div className="card-studio-quick">
+              {CARD_QUICK_CONTROLS.map((control) => {
+                const activeValue = control.getActive(draftCardUI);
+                return (
+                  <div className="card-studio-quick-row" key={control.id}>
+                    <span className="card-studio-quick-label">{control.label}</span>
+                    <div className="card-studio-segments" role="group" aria-label={control.label}>
+                      {control.options.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          className="card-studio-segment"
+                          aria-pressed={activeValue === option.value}
+                          onClick={() => applyQuick(control, option)}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="card-studio-block card-studio-loader-block" aria-labelledby="card-studio-loader">
+            <div className="card-studio-block-head">
+              <h3 id="card-studio-loader">{copy.loaderLabel || "Loading indicators"}</h3>
+              <span>{copy.loaderHint || "Previewed before Apply"}</span>
+            </div>
+            <div className="loader-studio">
+              <div className="loader-studio-controls">
+                <div className="card-studio-quick-row">
+                  <span className="card-studio-quick-label">Display</span>
+                  <div className="card-studio-segments" role="group" aria-label="Loading indicator display">
                     <button
-                      key={option.value}
                       type="button"
                       className="card-studio-segment"
-                      aria-pressed={activeValue === option.value}
-                      onClick={() => applyQuick(control, option)}
+                      aria-pressed={loader.enabled}
+                      onClick={() => updateDraftLoader({ enabled: true })}
                     >
-                      {option.label}
+                      On
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      className="card-studio-segment"
+                      aria-pressed={!loader.enabled}
+                      onClick={() => updateDraftLoader({ enabled: false })}
+                    >
+                      Off
+                    </button>
+                  </div>
                 </div>
+                <div className="card-studio-quick-row">
+                  <span className="card-studio-quick-label">Style</span>
+                  <div className="card-studio-segments" role="group" aria-label="Loading indicator style">
+                    {[["ring", "Ring"], ["dots", "Dots"], ["bar", "Bar"]].map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className="card-studio-segment"
+                        aria-pressed={loader.style === value}
+                        onClick={() => updateDraftLoader({ style: value })}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="card-studio-quick-row">
+                  <span className="card-studio-quick-label">Speed</span>
+                  <div className="card-studio-segments" role="group" aria-label="Loading indicator speed">
+                    {[["calm", "Calm"], ["normal", "Normal"], ["fast", "Fast"]].map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className="card-studio-segment"
+                        aria-pressed={loader.speed === value}
+                        onClick={() => updateDraftLoader({ speed: value })}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <label className="card-ui-toggle" htmlFor="card-ui-loader-labels">
+                  <input
+                    id="card-ui-loader-labels"
+                    type="checkbox"
+                    checked={loader.labels}
+                    onChange={(event) => updateDraftLoader({ labels: event.target.checked })}
+                  />
+                  <span>{copy.loaderText || "Show loading text"}</span>
+                </label>
               </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="card-studio-block card-studio-loader-block" aria-labelledby="card-studio-loader">
-        <div className="card-studio-block-head">
-          <h3 id="card-studio-loader">{copy.loaderLabel || "Loading indicators"}</h3>
-          <span>{copy.loaderHint || "Previewed before Apply"}</span>
-        </div>
-        <div className="loader-studio">
-          <div className="loader-studio-controls">
-            <div className="card-studio-quick-row">
-              <span className="card-studio-quick-label">Display</span>
-              <div className="card-studio-segments" role="group" aria-label="Loading indicator display">
-                <button
-                  type="button"
-                  className="card-studio-segment"
-                  aria-pressed={loader.enabled}
-                  onClick={() => updateDraftLoader({ enabled: true })}
-                >
-                  On
-                </button>
-                <button
-                  type="button"
-                  className="card-studio-segment"
-                  aria-pressed={!loader.enabled}
-                  onClick={() => updateDraftLoader({ enabled: false })}
-                >
-                  Off
-                </button>
-              </div>
-            </div>
-            <div className="card-studio-quick-row">
-              <span className="card-studio-quick-label">Style</span>
-              <div className="card-studio-segments" role="group" aria-label="Loading indicator style">
-                {[["ring", "Ring"], ["dots", "Dots"], ["bar", "Bar"]].map(([value, label]) => (
-                  <button
-                    key={value}
-                    type="button"
-                    className="card-studio-segment"
-                    aria-pressed={loader.style === value}
-                    onClick={() => updateDraftLoader({ style: value })}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="card-studio-quick-row">
-              <span className="card-studio-quick-label">Speed</span>
-              <div className="card-studio-segments" role="group" aria-label="Loading indicator speed">
-                {[["calm", "Calm"], ["normal", "Normal"], ["fast", "Fast"]].map(([value, label]) => (
-                  <button
-                    key={value}
-                    type="button"
-                    className="card-studio-segment"
-                    aria-pressed={loader.speed === value}
-                    onClick={() => updateDraftLoader({ speed: value })}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="loader-studio-sample" aria-hidden="true">
+                <span className="loader-studio-sample-label">{copy.loaderSample || "Live sample"}</span>
+                <LoadSpinner settings={loader} label={copy.loaderSampleLabel || "Loading your content"} size="lg" />
+                {!loader.enabled && !loader.labels && (
+                  <span className="loader-studio-off">{copy.loaderOff || "Indicators are off"}</span>
+                )}
               </div>
             </div>
-            <label className="card-ui-toggle" htmlFor="card-ui-loader-labels">
-              <input
-                id="card-ui-loader-labels"
-                type="checkbox"
-                checked={loader.labels}
-                onChange={(event) => updateDraftLoader({ labels: event.target.checked })}
-              />
-              <span>{copy.loaderText || "Show loading text"}</span>
-            </label>
-          </div>
-          <div className="loader-studio-sample" aria-hidden="true">
-            <span className="loader-studio-sample-label">{copy.loaderSample || "Live sample"}</span>
-            <LoadSpinner settings={loader} label={copy.loaderSampleLabel || "Loading your content"} size="lg" />
-            {!loader.enabled && !loader.labels && (
-              <span className="loader-studio-off">{copy.loaderOff || "Indicators are off"}</span>
-            )}
-          </div>
+          </section>
+
+          <SiteLookStudio
+            settings={lookSettings}
+            onApply={onLookApply}
+          />
+
+          <LayoutStudio
+            settings={layoutSettings}
+            onApply={onLayoutApply}
+            previewProject={previewProject}
+            previewProjects={previewProjects}
+            previewCertificates={previewCertificates}
+            cardUI={previewCardUI}
+          />
+
+          <CardEffectsStudio
+            settings={effectsSettings}
+            onApply={onEffectsApply}
+            cardUI={previewCardUI}
+            previewProject={previewProject}
+            previewProjects={previewProjects}
+            previewCertificates={previewCertificates}
+          />
+
+          <CardMotionStudio
+            settings={motionSettings}
+            onApply={onMotionApply}
+            collections={shelfCollections}
+            projects={shelfProjects}
+            shelf3d={shelf3dSettings}
+          />
+
+          <Shelf3DStudio
+            settings={shelf3dSettings}
+            onApply={onShelf3dApply}
+            collections={shelfCollections}
+            projects={shelfProjects}
+            motion={motionSettings}
+          />
+
+          <Three3DStudio
+            settings={three3dSettings}
+            onApply={onThree3dApply}
+            projects={shelfProjects}
+            palette={three3dPalette}
+            reducedMotion={reducedMotion}
+          />
+
+          <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
         </div>
-      </section>
 
-      <SiteLookStudio
-        settings={lookSettings}
-        onApply={onLookApply}
-      />
-
-      <LayoutStudio
-        settings={layoutSettings}
-        onApply={onLayoutApply}
-        previewProject={previewProject}
-        previewProjects={previewProjects}
-        previewCertificates={previewCertificates}
-        cardUI={draftCardUI}
-      />
-
-      <CardEffectsStudio
-        settings={effectsSettings}
-        onApply={onEffectsApply}
-        cardUI={draftCardUI}
-        previewProject={previewProject}
-        previewProjects={previewProjects}
-        previewCertificates={previewCertificates}
-      />
-
-      <CardMotionStudio
-        settings={motionSettings}
-        onApply={onMotionApply}
-        collections={shelfCollections}
-        projects={shelfProjects}
-        shelf3d={shelf3dSettings}
-      />
-
-      <Shelf3DStudio
-        settings={shelf3dSettings}
-        onApply={onShelf3dApply}
-        collections={shelfCollections}
-        projects={shelfProjects}
-        motion={motionSettings}
-      />
-
-      <CardUISettings settings={draftCardUI} onChange={updateDraftCardUI} themeMode={themeMode} />
+        <aside className="card-studio-rail" aria-label="Live preview">
+          <section className="card-studio-block card-studio-preview-block" aria-labelledby="card-studio-preview">
+            <div className="card-studio-block-head">
+              <h3 id="card-studio-preview">{copy.previewLabel || "Live preview"}</h3>
+              <span className={`card-studio-preview-hint${dirty ? " is-dirty" : ""}`}>
+                <i aria-hidden="true" /> {dirty ? (copy.previewDirty || "Unsaved preview") : (copy.previewClean || "Applied design")}
+              </span>
+            </div>
+            <div className="card-studio-preview">
+              <div
+                className={`card-studio-preview-stage${draftCardUI.cardLayout === "depth" ? " is-depth" : ""}`}
+                style={getCardStyleVariables(draftCardUI)}
+                data-card-layout={draftCardUI.cardLayout}
+                aria-hidden="true"
+              >
+                {previewProject
+                  ? <ProjectCard project={previewProject} cardUI={draftCardUI} preview />
+                  : <p className="card-studio-preview-empty">Cards appear here once the catalog is ready.</p>}
+              </div>
+              <p className="card-studio-preview-note">{copy.previewHint || "Hover the sample to test motion. Open Preview to see the layout across real projects. Only Apply changes the live portfolio."}</p>
+            </div>
+          </section>
+        </aside>
+      </div>
 
       <div className="card-studio-actions">
         <div className="card-studio-actions-status">
@@ -800,6 +984,10 @@ function GuravvaProfilePopover({
   onMotionChange,
   shelf3dSettings,
   onShelf3dChange,
+  three3dSettings,
+  onThree3dChange,
+  three3dPalette,
+  reducedMotion = false,
   lookSettings,
   onLookChange,
   shelfCollections,
@@ -1089,6 +1277,10 @@ function GuravvaProfilePopover({
           onMotionApply={onMotionChange}
           shelf3dSettings={shelf3dSettings}
           onShelf3dApply={onShelf3dChange}
+          three3dSettings={three3dSettings}
+          onThree3dApply={onThree3dChange}
+          three3dPalette={three3dPalette}
+          reducedMotion={reducedMotion}
           lookSettings={lookSettings}
           onLookApply={onLookChange}
           shelfCollections={shelfCollections}
@@ -1231,6 +1423,10 @@ function SiteNav({
   onMotionChange,
   shelf3dSettings,
   onShelf3dChange,
+  three3dSettings,
+  onThree3dChange,
+  three3dPalette,
+  reducedMotion = false,
   lookSettings,
   onLookChange,
   shelfCollections,
@@ -1317,6 +1513,10 @@ function SiteNav({
               onMotionChange={onMotionChange}
               shelf3dSettings={shelf3dSettings}
               onShelf3dChange={onShelf3dChange}
+              three3dSettings={three3dSettings}
+              onThree3dChange={onThree3dChange}
+              three3dPalette={three3dPalette}
+              reducedMotion={reducedMotion}
               lookSettings={lookSettings}
               onLookChange={onLookChange}
               shelfCollections={shelfCollections}
@@ -1395,6 +1595,7 @@ function PortfolioHome({
   onEffectsChange,
   onMotionChange,
   onShelf3dChange,
+  onThree3dChange,
   onLookChange,
 }) {
   const copy = site.home;
@@ -1425,11 +1626,22 @@ function PortfolioHome({
       ? ` is-card-${featuredLayout}`
       : "";
   const certificates = catalog.certificates || [];
-  const previewProject = catalog.projects.find((project) => project.thumbnail || project.image) || catalog.projects[0] || null;
+  /* Both of these feed memoised panels, so they are kept by value: a fresh object or a re-found
+     project on every render would make the panels look like their inputs changed when nothing did. */
+  const previewProject = useMemo(
+    () => catalog.projects.find((project) => project.thumbnail || project.image) || catalog.projects[0] || null,
+    [catalog.projects],
+  );
   const previewProjects = useMemo(() => [...catalog.projects]
     .sort((left, right) => left.sortOrder - right.sortOrder)
     .filter((project) => project.thumbnail || project.image)
     .slice(0, 6), [catalog.projects]);
+  const three3dPalette = useMemo(() => ({
+    primary: settings.primary,
+    secondary: settings.secondary,
+    accent: settings.accent,
+    mode: themeMode,
+  }), [settings.primary, settings.secondary, settings.accent, themeMode]);
   const navigate = (event, destination) => onNavigate(event, destination);
 
   return (
@@ -1455,6 +1667,10 @@ function PortfolioHome({
         onMotionChange={onMotionChange}
         shelf3dSettings={settings.shelf3d}
         onShelf3dChange={onShelf3dChange}
+        three3dSettings={settings.three3d}
+        onThree3dChange={onThree3dChange}
+        three3dPalette={three3dPalette}
+        reducedMotion={settings.reducedMotion}
         lookSettings={settings.look}
         onLookChange={onLookChange}
         shelfCollections={catalog.collections}
@@ -1677,6 +1893,7 @@ function App() {
     updateCardEffectsSettings,
     updateShelfMotionSettings,
     updateShelf3dSettings,
+    updateThree3dSettings,
     updateSiteLookSettings,
     updatePlaygroundThemeSettings,
   } = useTheme();
@@ -1701,6 +1918,28 @@ function App() {
   const isCertificateRoute = Boolean(certificateMatch);
   const site = catalog?.site;
   const defaultProfile = site?.profile?.defaultValues || {};
+  /* The whole catalogue is sorted once per data load, not once per render: these lists feed the
+     memoised studio panels, and a fresh array identity makes every panel re-render as though the
+     settings changed. It is also the difference between a settings commit costing milliseconds or
+     seconds once the catalogue grows past a few thousand projects. */
+  const sortedProjects = useMemo(
+    () => [...projects].sort((left, right) => left.sortOrder - right.sortOrder),
+    [projects],
+  );
+  const cardPreviewProject = useMemo(
+    () => projects.find((project) => project.thumbnail || project.image) || projects[0] || null,
+    [projects],
+  );
+  const cardPreviewProjects = useMemo(
+    () => sortedProjects.filter((project) => project.thumbnail || project.image).slice(0, 6),
+    [sortedProjects],
+  );
+  const three3dPalette = useMemo(() => ({
+    primary: settings.primary,
+    secondary: settings.secondary,
+    accent: settings.accent,
+    mode: settings.mode,
+  }), [settings.primary, settings.secondary, settings.accent, settings.mode]);
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -1811,7 +2050,6 @@ function App() {
     return <AppGate error={catalog ? "" : error} onRetry={retry} loader={settings.loader} />;
   }
 
-  const sortedProjects = [...projects].sort((left, right) => left.sortOrder - right.sortOrder);
   const projectIndex = projectSummary ? sortedProjects.findIndex((project) => project.id === projectSummary.id) : -1;
   const previousProject = projectIndex > 0 ? sortedProjects[projectIndex - 1] : null;
   const nextProject = projectIndex >= 0 && projectIndex < sortedProjects.length - 1 ? sortedProjects[projectIndex + 1] : null;
@@ -1827,10 +2065,6 @@ function App() {
     ].slice(0, 10)
     : [];
   const nextTheme = settings.mode === "dark" ? "light" : "dark";
-  const cardPreviewProject = projects.find((project) => project.thumbnail || project.image) || projects[0] || null;
-  const cardPreviewProjects = sortedProjects
-    .filter((project) => project.thumbnail || project.image)
-    .slice(0, 6);
   const navProps = {
     site,
     profile: defaultProfile,
@@ -1851,6 +2085,10 @@ function App() {
     onMotionChange: updateShelfMotionSettings,
     shelf3dSettings: settings.shelf3d,
     onShelf3dChange: updateShelf3dSettings,
+    three3dSettings: settings.three3d,
+    onThree3dChange: updateThree3dSettings,
+    three3dPalette,
+    reducedMotion: settings.reducedMotion,
     lookSettings: settings.look,
     onLookChange: updateSiteLookSettings,
     shelfCollections: catalog.collections,
@@ -1882,6 +2120,7 @@ function App() {
         onEffectsChange={updateCardEffectsSettings}
         onMotionChange={updateShelfMotionSettings}
         onShelf3dChange={updateShelf3dSettings}
+        onThree3dChange={updateThree3dSettings}
         onLookChange={updateSiteLookSettings}
       />
     );
@@ -1995,6 +2234,12 @@ function App() {
   return (
     <>
       <span className="site-look-layer" aria-hidden="true" />
+      <Three3DStage
+        settings={settings.three3d}
+        projects={catalog.projects}
+        palette={{ primary: settings.primary, secondary: settings.secondary, accent: settings.accent, mode: settings.mode }}
+        reducedMotion={settings.reducedMotion}
+      />
       {viewError}
       {isLoading && !projects.length ? <AppGate loader={settings.loader} /> : page}
     </>

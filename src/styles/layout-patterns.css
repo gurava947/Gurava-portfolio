@@ -420,8 +420,8 @@
 
 /* Layout studio inside the G settings panel */
 
-.card-studio > .layout-studio {
-  grid-area: layout;
+.card-studio-controls > .layout-studio {
+  min-width: 0;
 }
 
 .layout-studio {

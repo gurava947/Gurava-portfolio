@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import {
   BACKGROUND_PATTERNS,
   DEFAULT_SITE_LOOK,
@@ -44,7 +44,7 @@ function LookOptionCard({ active, label, note, onClick, children, ariaLabel }) {
   );
 }
 
-export default function SiteLookStudio({ settings, onApply }) {
+function SiteLookStudio({ settings, onApply }) {
   const applied = normalizeSiteLook(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -360,3 +360,7 @@ export default function SiteLookStudio({ settings, onApply }) {
     </section>
   );
 }
+
+/* Memoised because one studio holding local draft state must not re-render the other
+   five: the panels together are the bulk of the settings column. */
+export default memo(SiteLookStudio);

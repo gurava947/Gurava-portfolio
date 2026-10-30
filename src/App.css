@@ -243,9 +243,13 @@ select:focus-visible {
   animation: profile-popover-enter 220ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
 }
 
-/* The card studio holds five full tool sections, so it needs the whole viewport
- * instead of the avatar-dropdown box the profile tab uses. It stays anchored under
- * the sticky navbar (an ancestor backdrop-filter traps `position: fixed` here). */
+/* The card studio holds every tool panel, so it takes the whole viewport instead of the
+ * avatar-dropdown box the profile tab uses. It stays anchored under the sticky navbar (an ancestor
+ * backdrop-filter traps `position: fixed` here).
+ *
+ * The dialog itself never scrolls. Its column is fixed to the viewport and the two panes inside
+ * scroll, which is what keeps the sample and the Apply bar on screen while a panel is being dragged
+ * — and it means a scroll in the controls can no longer repaint the header behind them. */
 .profile-popover.is-studio {
   right: 0;
   left: 0;
@@ -253,16 +257,32 @@ select:focus-visible {
   width: min(1180px, calc(100vw - 28px));
   height: calc(100dvh - 132px);
   max-height: calc(100dvh - 132px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* Tabs and Apply/Cancel stay reachable while the sections scroll. */
+/* Tabs and Apply/Cancel stay reachable while the sections scroll. The header is a plain opaque
+ * blend here: a backdrop-filter over a column this tall repaints the blur on every scroll frame. */
 .profile-popover.is-studio .profile-popover-top {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 7;
-  background: color-mix(in srgb, var(--theme-card-bg) 94%, transparent);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  flex: 0 0 auto;
+  background: color-mix(in srgb, var(--theme-card-bg) 97%, var(--theme-text));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.profile-popover.is-studio .profile-panel-studio {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 10px;
+  /* The pane split is measured on this box, because it is the width the studio actually gets. */
+  container-type: inline-size;
+  container-name: studio;
 }
 
 @keyframes profile-popover-enter {
@@ -658,35 +678,22 @@ select:focus-visible {
   flex: 0 0 16px;
 }
 
-/* Card studio */
+/* Card studio
+ *
+ * A three-row shell: intro, the two panes, and the Apply bar. Only the middle row is allowed to
+ * shrink, so the panes scroll inside it instead of the dialog growing to the height of every panel
+ * at once. */
 
 .card-studio {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
-  grid-template-areas:
-    "intro intro"
-    "presets preview"
-    "quick preview"
-    "loader loader"
-    "look look"
-    "layout layout"
-    "effects effects"
-    "motion motion"
-    "fine fine"
-    "actions actions";
-  column-gap: 16px;
-  row-gap: 15px;
-  align-items: start;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 13px;
+  /* It is a flex item of the panel: without an explicit basis and a zero floor it grows to the
+     height of all ten panels and nothing inside ever becomes the scroll container. */
+  flex: 1 1 auto;
+  min-height: 0;
 }
-
-.card-studio-intro { grid-area: intro; }
-.card-studio-presets-block { grid-area: presets; }
-.card-studio-preview-block { grid-area: preview; }
-.card-studio-quick-block { grid-area: quick; }
-.card-studio-loader-block { grid-area: loader; }
-.card-studio > .look-studio { grid-area: look; }
-.card-studio > .motion-studio { grid-area: motion; }
-.card-studio > .card-ui-settings { grid-area: fine; }
 
 .card-studio-intro {
   display: flex;
@@ -731,6 +738,97 @@ select:focus-visible {
   width: 12px;
   height: 12px;
   flex-basis: 12px;
+}
+
+/* The two panes. Left: every tool panel, scrolling on its own. Right: the sample, which never
+ * scrolls away because it is not inside the column that does. */
+
+.card-studio-panes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(310px, 33%, 430px);
+  gap: 0 18px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.card-studio-controls {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 12px 4px 2px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--theme-text) 22%, transparent) transparent;
+}
+
+/* One flexible track, so no panel can widen the pane. The 3D panels were never given a column of
+ * their own in the old area map, which is what pushed them into an implicit third track and
+ * squeezed the sample to 300px against the dialog edge. */
+.card-studio-controls > .card-studio-block,
+.card-studio-controls > .card-ui-settings {
+  flex: 0 0 auto;
+  min-width: 0;
+  scroll-margin-top: 52px;
+}
+
+.card-studio-nav {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0 9px;
+  background: linear-gradient(180deg, var(--theme-card-bg) 74%, transparent);
+}
+
+.card-studio-nav-chip {
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-text) 3%, transparent);
+  color: var(--theme-muted-text);
+  font: inherit;
+  font-size: 0.6rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.card-studio-nav-chip:hover {
+  border-color: color-mix(in srgb, var(--theme-primary) 34%, transparent);
+  color: var(--theme-text);
+}
+
+.card-studio-nav-chip[aria-current="true"] {
+  border-color: color-mix(in srgb, var(--theme-primary) 46%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 12%, transparent);
+  color: color-mix(in srgb, var(--theme-primary) 72%, var(--theme-text));
+}
+
+.card-studio-rail {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid color-mix(in srgb, var(--theme-text) 9%, transparent);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--theme-text) 22%, transparent) transparent;
+}
+
+.card-studio-rail > * {
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .card-studio-reset {
@@ -1051,8 +1149,10 @@ select:focus-visible {
   background-size: 20px 20px, 20px 20px;
 }
 
+/* The rail is the narrowest the sample ever gets, so it fills its pane instead of holding the old
+ * 300px-column proportion. */
 .card-studio-preview-stage .lab-project-card {
-  width: min(100%, calc(var(--portfolio-card-max-width, 520px) * 0.56));
+  width: min(100%, calc(var(--portfolio-card-max-width, 520px) * 0.9));
 }
 
 .card-studio-preview-stage.is-depth {
@@ -1117,24 +1217,19 @@ select:focus-visible {
   text-align: center;
 }
 
+/* The Apply bar is its own row in the dialog, below the panes, so it needs no sticky trickery and no
+ * backdrop over a column that is no longer scrolling behind it. */
 .card-studio-actions {
-  position: sticky;
-  z-index: 6;
-  bottom: 0;
-  grid-area: actions;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin: 4px -6px -6px;
-  padding: 11px 12px calc(11px + env(safe-area-inset-bottom, 0px));
+  padding: 11px 12px;
   border: 1px solid color-mix(in srgb, var(--theme-primary) 20%, var(--theme-card-border));
   border-radius: 15px;
-  background: color-mix(in srgb, var(--theme-card-bg) 93%, transparent);
+  background: color-mix(in srgb, var(--theme-card-bg) 97%, var(--theme-text));
   box-shadow: 0 -12px 30px -18px rgb(9 18 14 / 42%);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
 }
 
 .card-studio-actions-status {
@@ -1248,23 +1343,66 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-@media (max-width: 679.98px) {
+/* The panes are sized by the dialog, not by the viewport: the studio dialog is capped well below
+ * the screen on wide monitors and fills it on phones, so a container query is the only measure that
+ * tracks when a second column stops fitting. */
+@container studio (max-width: 1039.98px) {
+  /* Below the two-column measure the whole studio scrolls: sample first, then the tools, with the
+     Apply bar pinned to the bottom. The shell is the scroller rather than the panel because a
+     container cannot answer a query about itself — a rule for the panel inside this block would
+     never match. Keeping an inner scroll for the tools next to a fixed-height preview left a phone
+     with a 111px — then an 8px — tool column, because that column was only ever allocated what the
+     preview had not taken. */
   .card-studio {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "intro"
-      "presets"
-      "preview"
-      "quick"
-      "loader"
-      "look"
-      "layout"
-      "effects"
-      "motion"
-      "fine"
-      "actions";
+    grid-template-rows: none;
+    align-content: start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--theme-text) 22%, transparent) transparent;
   }
 
+  .card-studio-panes {
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: visible;
+  }
+
+  /* The sample leads the scroll instead of holding a lane beside it, so it is the first thing you
+     see and is never clipped by a viewport-sized box of its own. */
+  .card-studio-rail {
+    order: -1;
+    flex: 0 0 auto;
+    max-height: none;
+    padding: 0 0 12px;
+    overflow: visible;
+    border-left: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--theme-text) 9%, transparent);
+  }
+
+  .card-studio-controls {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  /* The sample keeps its own measure when the column goes full width: a 470px card stranded in a
+     metre of grid paper reads as a broken layout rather than as a preview. */
+  .card-studio-rail > * {
+    width: min(100%, 560px);
+    margin-inline: auto;
+  }
+
+  .card-studio-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+  }
+}
+
+@media (max-width: 679.98px) {
   .card-studio-actions {
     align-items: flex-start;
     flex-direction: column;
@@ -1285,33 +1423,6 @@ select:focus-visible {
   }
 
   .card-studio-action.is-apply { margin-left: auto; }
-}
-
-/* Wide studio dialog: presets and quick style sit side by side and the live
- * sample stays pinned on the right while the sections scroll. The sample column
- * runs the full height on purpose — if the tool sections spanned all three
- * columns, the sticky sample would slide out of its own grid area and paint on
- * top of the next section instead of scrolling away with it. */
-@media (min-width: 1240px) {
-  .card-studio {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(300px, 0.62fr);
-    grid-template-areas:
-      "intro   intro   preview"
-      "presets quick   preview"
-      "loader  loader  preview"
-      "look    look    preview"
-      "layout  layout  preview"
-      "effects effects preview"
-      "motion  motion  preview"
-      "fine    fine    preview"
-      "actions actions actions";
-  }
-
-  .card-studio-preview-block {
-    position: sticky;
-    top: 0;
-    align-self: start;
-  }
 }
 
 .card-studio-loader-block .card-studio-block-head {
@@ -1496,10 +1607,13 @@ select:focus-visible {
   .profile-popover,
   .card-studio-preset,
   .card-studio-segment,
+  .card-studio-nav-chip,
   .profile-popover-close {
     animation: none;
     transition: none;
   }
+
+  .card-studio-controls { scroll-behavior: auto; }
 }
 
 .brand-dot {

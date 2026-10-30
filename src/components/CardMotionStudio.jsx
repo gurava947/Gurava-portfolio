@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import CollectionShelf from "./CollectionShelf";
 import {
   DEFAULT_SHELF_MOTION,
@@ -27,7 +27,7 @@ function MotionSwatch({ preset }) {
   );
 }
 
-export default function CardMotionStudio({ settings, onApply, collections = [], projects = [], shelf3d = DEFAULT_SHELF_3D }) {
+function CardMotionStudio({ settings, onApply, collections = [], projects = [], shelf3d = DEFAULT_SHELF_3D }) {
   const applied = normalizeShelfMotion(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -44,9 +44,10 @@ export default function CardMotionStudio({ settings, onApply, collections = [], 
     appliedRef.current = applied;
   }, [appliedKey]);
 
+  /* Replay is the button's job. Re-keying the sample here would remount the whole shelf on every
+     frame of a drag, and the shelf derives its previews from the full catalogue. */
   const updateDraft = (patch) => {
     setDraft((current) => normalizeShelfMotion({ ...current, ...patch }));
-    setPreviewKey((current) => current + 1);
   };
 
   const choosePreset = (preset) => {
@@ -199,3 +200,7 @@ export default function CardMotionStudio({ settings, onApply, collections = [], 
     </section>
   );
 }
+
+/* Memoised because one studio holding local draft state must not re-render the other
+   five: the panels together are the bulk of the settings column. */
+export default memo(CardMotionStudio);

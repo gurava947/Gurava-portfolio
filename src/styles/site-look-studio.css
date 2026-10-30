@@ -1,9 +1,9 @@
 /* Card Studio controls for the Look group. The preview stage carries its own
  * data-attributes so a draft can animate without touching the live page. */
 
-/* The studio column tracks are fixed fractions, so this block has to be allowed to
- * shrink below its content width — otherwise the option grids push past the dialog. */
-.card-studio > .look-studio {
+/* The controls pane is one flexible column, so this block still has to be allowed to shrink below
+ * its content width — otherwise the option grids push past the dialog. */
+.card-studio-controls > .look-studio {
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
 }

@@ -1,0 +1,426 @@
+/* The 3D stage and its Studio section.
+
+   Nothing here paints while the style is `off`: useTheme puts no data-three3d attribute on <html>, no
+   canvas is rendered, and getThree3dVariables emits no custom properties. Every rule below is either
+   scoped to an element that only exists for an active style or gated behind a [data-three3d] selector,
+   so the shipped flat design is untouched by importing this file. */
+
+/* ---------- Site layer ---------- */
+
+.three-3d-stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The dial dims the scene, not the veil over it. Fading the whole stage would make the page more
+ * readable as brightness went *down*, which is the opposite of what the control is for. */
+.three-3d-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: var(--three3d-brightness, 0.6);
+}
+
+/* The stage paints under the page, but the look layer is only a wash. Without this the brightest
+ * scene would sit directly behind body copy. It is a scrim on the stage, not a filter on the page,
+ * so text keeps its own rendering and the canvas still composites on the GPU. */
+.three-3d-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-background) 88%, transparent) 0%, transparent 34%, transparent 66%, color-mix(in srgb, var(--theme-background) 88%, transparent) 100%),
+    radial-gradient(120% 90% at 50% 42%, color-mix(in srgb, var(--theme-background) 72%, transparent), transparent 70%);
+}
+
+/* ---------- Studio section ---------- */
+
+.three-3d-note {
+  margin: -2px 0 0;
+  color: var(--theme-muted-text);
+  font-size: 0.67rem;
+  line-height: 1.5;
+}
+
+.three-3d-note strong {
+  color: var(--theme-card-text);
+  font-weight: 750;
+}
+
+.three-3d-styles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.three-3d-style {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 10%, transparent);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--theme-card-bg) 84%, var(--theme-text) 4%);
+  color: var(--theme-card-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.three-3d-style:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--theme-primary) 30%, var(--theme-card-border));
+  background: color-mix(in srgb, var(--theme-primary) 6%, var(--theme-card-bg));
+}
+
+.three-3d-style[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--theme-primary) 72%, var(--theme-card-border));
+  background: color-mix(in srgb, var(--theme-primary) 7%, var(--theme-card-bg));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary) 17%, transparent);
+}
+
+.three-3d-style:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 62%, transparent);
+  outline-offset: 2px;
+}
+
+.three-3d-style-copy {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.three-3d-style-copy strong {
+  color: var(--theme-card-text);
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.three-3d-style-copy small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--theme-muted-text);
+  font-size: 0.54rem;
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.three-3d-check {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--theme-primary);
+  color: var(--theme-card-bg);
+  font-size: 0.55rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgb(10 20 15 / 28%);
+}
+
+/* A miniature of what each style draws, so the choice is legible without opening the preview. */
+
+.three-3d-style-swatch {
+  position: relative;
+  display: block;
+  width: 34px;
+  height: 30px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 8px;
+  background: linear-gradient(150deg, #101a27, #0b141d);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.three-3d-style-swatch::before,
+.three-3d-style-swatch::after {
+  position: absolute;
+  content: "";
+}
+
+.three-3d-style-swatch.is-off {
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--theme-text) 8%, transparent) 0 3px, transparent 3px 6px),
+    linear-gradient(150deg, #16202e, #101a27);
+}
+
+.three-3d-style-swatch.is-swarm::before,
+.three-3d-style-swatch.is-swarm::after {
+  inset: 20% 26% auto auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--theme-primary);
+  box-shadow:
+    -14px 8px 0 -1px var(--theme-secondary),
+    -6px 16px 0 -2px var(--theme-accent),
+    4px 12px 0 0 color-mix(in srgb, var(--theme-secondary) 80%, white),
+    -18px -2px 0 -2px color-mix(in srgb, var(--theme-primary) 70%, white);
+}
+
+.three-3d-style-swatch.is-swarm::after {
+  display: none;
+}
+
+.three-3d-style-swatch.is-shelf::before {
+  inset: 5px 4px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 70%, transparent) 0 28%, transparent 28% 33%,
+      color-mix(in srgb, var(--theme-secondary) 70%, transparent) 33% 61%, transparent 61% 66%,
+      color-mix(in srgb, var(--theme-accent) 70%, transparent) 66% 94%);
+  transform: perspective(60px) rotateX(16deg);
+  transform-origin: 50% 100%;
+}
+
+.three-3d-style-swatch.is-shelf::after {
+  inset: auto 4px 4px;
+  height: 2px;
+  background: color-mix(in srgb, var(--theme-text) 18%, transparent);
+}
+
+.three-3d-style-swatch.is-constellation::before {
+  inset: 6px;
+  background:
+    radial-gradient(circle at 18% 26%, var(--theme-primary) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 62% 18%, var(--theme-secondary) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 82% 62%, var(--theme-accent) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 34% 74%, var(--theme-secondary) 0 1.5px, transparent 2px);
+}
+
+.three-3d-style-swatch.is-constellation::after {
+  inset: 10px 8px 12px 10px;
+  border-top: 1px solid color-mix(in srgb, var(--theme-primary) 45%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-secondary) 40%, transparent);
+  transform: rotate(-14deg);
+}
+
+.three-3d-style-swatch.is-vortex::before {
+  inset: 3px;
+  border-radius: 50%;
+  background: conic-gradient(from 30deg, transparent, color-mix(in srgb, var(--theme-primary) 80%, transparent), transparent 65%);
+  filter: blur(0.4px);
+}
+
+.three-3d-style-swatch.is-vortex::after {
+  inset: 12px 13px;
+  border-radius: 50%;
+  background: var(--theme-secondary);
+}
+
+.three-3d-style-swatch.is-rings::before {
+  inset: 4px;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 60%, transparent);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--theme-secondary) 40%, transparent);
+  transform: rotateX(58deg);
+}
+
+.three-3d-style-swatch.is-rings::after {
+  inset: 13px 6px;
+  border-top: 1px solid color-mix(in srgb, var(--theme-accent) 55%, transparent);
+}
+
+.three-3d-style-swatch.is-helix::before {
+  inset: 2px 8px;
+  background: repeating-linear-gradient(115deg, var(--theme-primary) 0 2px, transparent 2px 7px);
+  border-radius: 3px;
+  opacity: 0.85;
+}
+
+.three-3d-style-swatch.is-helix::after {
+  inset: 2px 8px;
+  background: repeating-linear-gradient(65deg, var(--theme-secondary) 0 2px, transparent 2px 7px);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.three-3d-style-swatch.is-curtain::before {
+  inset: 3px 2px;
+  background: repeating-linear-gradient(90deg,
+    color-mix(in srgb, var(--theme-primary) 70%, transparent) 0 2px,
+    color-mix(in srgb, var(--theme-secondary) 45%, transparent) 2px 4px,
+    transparent 4px 7px);
+  border-radius: 4px 4px 12px 12px;
+}
+
+.three-3d-style-swatch.is-curtain::after {
+  inset: auto 2px 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--theme-accent) 50%, transparent);
+  filter: blur(1px);
+}
+
+.three-3d-style-swatch.is-ripple::before {
+  inset: 4px;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--theme-secondary) 65%, transparent) 0 2px, transparent 2px 6px);
+  border-radius: 4px;
+  transform: perspective(48px) rotateX(52deg);
+  transform-origin: 50% 92%;
+}
+
+.three-3d-style-swatch.is-ripple::after {
+  display: none;
+}
+
+.three-3d-style-swatch.is-lattice::before {
+  inset: 6px;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 65%, transparent);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-secondary) 28%, transparent) inset;
+}
+
+.three-3d-style-swatch.is-lattice::after {
+  inset: 10px;
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 55%, transparent);
+  transform: rotate(45deg);
+}
+
+.three-3d-style-swatch.is-prism::before {
+  inset: 8px 6px auto;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 11px solid color-mix(in srgb, var(--theme-secondary) 70%, transparent);
+}
+
+.three-3d-style-swatch.is-prism::after {
+  inset: auto auto 6px 16px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 9px solid color-mix(in srgb, var(--theme-primary) 60%, transparent);
+}
+
+.three-3d-ranges {
+  margin-top: 2px;
+}
+
+.three-3d-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+}
+
+/* ---------- Preview block ---------- */
+
+.three-3d-preview {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 9%, transparent);
+  border-radius: 14px;
+  background:
+    radial-gradient(100% 90% at 100% 0%, color-mix(in srgb, var(--theme-primary) 5%, transparent), transparent 58%),
+    color-mix(in srgb, var(--theme-card-bg) 92%, var(--theme-text) 2%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+.three-3d-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.three-3d-preview-head > span {
+  color: var(--theme-muted-text);
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.three-3d-preview-head > strong {
+  color: color-mix(in srgb, var(--theme-primary) 40%, var(--theme-card-text));
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* In the Studio the stage is a box, not a site layer: it must scroll with the panel and take
+ * pointer input, which is the opposite of the fixed page layer above. */
+
+.three-3d-stage.is-preview {
+  position: relative;
+  z-index: auto;
+  height: 190px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 10%, transparent);
+  border-radius: 12px;
+  background:
+    radial-gradient(120% 130% at 20% -10%, color-mix(in srgb, var(--theme-primary) 16%, transparent), transparent 60%),
+    linear-gradient(158deg, #0e1826, #0a1219);
+  pointer-events: auto;
+}
+
+.three-3d-preview.is-off .three-3d-preview-head > strong {
+  color: var(--theme-muted-text);
+}
+
+.three-3d-unsupported {
+  display: grid;
+  min-height: 190px;
+  place-items: center;
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed color-mix(in srgb, var(--theme-text) 16%, transparent);
+  border-radius: 12px;
+  color: var(--theme-muted-text);
+  font-size: 0.6rem;
+  font-weight: 650;
+  text-align: center;
+}
+
+.three-3d-preview-note {
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.58rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 479.98px) {
+  .three-3d-styles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .three-3d-preview-head > strong {
+    width: 100%;
+    order: 3;
+  }
+
+  .three-3d-stage.is-preview {
+    height: 158px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .three-3d-style {
+    transition: none;
+  }
+
+  .three-3d-style:hover {
+    transform: none;
+  }
+}
+
+:root[data-reduced-motion="true"] .three-3d-style:hover,
+:root[data-animation="none"] .three-3d-style:hover {
+  transform: none;
+}

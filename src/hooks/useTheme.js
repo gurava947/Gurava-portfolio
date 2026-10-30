@@ -1,8 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { applyCardStyleVariables, CARD_LAYOUTS } from "../utils/cardStyle";
 import { DEFAULT_CARD_EFFECTS, normalizeCardEffects } from "../config/cardEffects";
 import { DEFAULT_SHELF_MOTION, normalizeShelfMotion } from "../config/cardMotion";
 import { DEFAULT_SHELF_3D, normalizeShelf3d } from "../config/shelf3d";
+import {
+  DEFAULT_THREE_3D,
+  THREE_3D_ATTRIBUTE_NAMES,
+  THREE_3D_VARIABLE_NAMES,
+  getThree3dAttributes,
+  getThree3dVariables,
+  normalizeThree3d,
+} from "../config/three3d";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
 import { DEFAULT_SITE_LOOK, getSiteLookVariables, normalizeSiteLook } from "../config/siteLook";
 import { DEFAULT_PLAYGROUND_THEME, normalizePlaygroundTheme } from "../config/themeSync";
@@ -164,6 +172,7 @@ export const DEFAULT_THEME_SETTINGS = {
   effects: DEFAULT_CARD_EFFECTS,
   motion: DEFAULT_SHELF_MOTION,
   shelf3d: DEFAULT_SHELF_3D,
+  three3d: DEFAULT_THREE_3D,
   look: DEFAULT_SITE_LOOK,
   playgroundTheme: DEFAULT_PLAYGROUND_THEME,
 };
@@ -221,6 +230,7 @@ function getInitialSettings() {
         effects: normalizeCardEffects(parsed?.effects),
         motion: normalizeShelfMotion(parsed?.motion),
         shelf3d: normalizeShelf3d(parsed?.shelf3d),
+        three3d: normalizeThree3d(parsed?.three3d),
         look: normalizeSiteLook(parsed?.look),
         playgroundTheme: normalizePlaygroundTheme(parsed?.playgroundTheme),
       };
@@ -285,6 +295,15 @@ export function useTheme() {
     const motion = normalizeShelfMotion(settings.motion);
     root.dataset.shelfMotion = motion.preset;
     const shelf3d = normalizeShelf3d(settings.shelf3d);
+    const three3d = normalizeThree3d(settings.three3d);
+    // Off leaves no attribute and no property on <html> at all, which is how the default stays the
+    // shipped design rather than a look the stylesheet has to undo.
+    THREE_3D_ATTRIBUTE_NAMES.forEach((name) => {
+      if (three3d.style === "off") root.removeAttribute(name);
+    });
+    Object.entries(getThree3dAttributes(three3d)).forEach(([name, value]) => root.setAttribute(name, value));
+    THREE_3D_VARIABLE_NAMES.forEach((name) => root.style.removeProperty(name));
+    Object.entries(getThree3dVariables(three3d)).forEach(([name, value]) => root.style.setProperty(name, value));
     const look = normalizeSiteLook(settings.look);
     root.dataset.look = look.preset;
     root.dataset.heroText = look.heroText;
@@ -301,7 +320,7 @@ export function useTheme() {
     try {
       window.localStorage.setItem(
         THEME_STORAGE_KEY,
-        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, shelf3d, look, playgroundTheme }),
+        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, shelf3d, three3d, look, playgroundTheme }),
       );
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
@@ -380,7 +399,7 @@ export function useTheme() {
     return () => window.clearTimeout(syncTimer);
   }, [settings]);
 
-  const updateSettings = (changes) => {
+  const updateSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => {
       if (!Object.prototype.hasOwnProperty.call(changes, "mode")) return { ...current, ...changes };
@@ -392,71 +411,78 @@ export function useTheme() {
         cardUI: ensureCardTextContrast(normalizeCardUISettings(current.cardUI), mode),
       };
     });
-  };
-  const updateCardUISettings = (changes) => {
+  }, []);
+  const updateCardUISettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       cardUI: ensureCardTextContrast(normalizeCardUISettings({ ...current.cardUI, ...changes }), current.mode),
     }));
-  };
-  const resetCardUISettings = () => {
+  }, []);
+  const resetCardUISettings = useCallback(() => {
     userChangedSettings.current = true;
     setSettings((current) => ({ ...current, cardUI: DEFAULT_CARD_UI_SETTINGS }));
-  };
-  const updateLoaderSettings = (changes) => {
+  }, []);
+  const updateLoaderSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       loader: normalizeLoaderSettings({ ...normalizeLoaderSettings(current.loader), ...changes }),
     }));
-  };
-  const resetLoaderSettings = () => {
+  }, []);
+  const resetLoaderSettings = useCallback(() => {
     userChangedSettings.current = true;
     setSettings((current) => ({ ...current, loader: DEFAULT_LOADER_SETTINGS }));
-  };
-  const updateLayoutSettings = (changes) => {
+  }, []);
+  const updateLayoutSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       layout: normalizeLayoutSettings({ ...normalizeLayoutSettings(current.layout), ...changes }),
     }));
-  };
-  const updateCardEffectsSettings = (changes) => {
+  }, []);
+  const updateCardEffectsSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       effects: normalizeCardEffects({ ...normalizeCardEffects(current.effects), ...changes }),
     }));
-  };
-  const updateShelfMotionSettings = (changes) => {
+  }, []);
+  const updateShelfMotionSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       motion: normalizeShelfMotion({ ...normalizeShelfMotion(current.motion), ...changes }),
     }));
-  };
-  const updateSiteLookSettings = (changes) => {
+  }, []);
+  const updateSiteLookSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       look: normalizeSiteLook({ ...normalizeSiteLook(current.look), ...changes }),
     }));
-  };
-  const updateShelf3dSettings = (changes) => {
+  }, []);
+  const updateShelf3dSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       shelf3d: normalizeShelf3d({ ...normalizeShelf3d(current.shelf3d), ...changes }),
     }));
-  };
-  const updatePlaygroundThemeSettings = (changes) => {
+  }, []);
+  const updatePlaygroundThemeSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
       ...current,
       playgroundTheme: normalizePlaygroundTheme(changes?.playgroundTheme ?? changes),
     }));
-  };
+  }, []);
+  const updateThree3dSettings = useCallback((changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      three3d: normalizeThree3d({ ...normalizeThree3d(current.three3d), ...changes }),
+    }));
+  }, []);
 
   return {
     settings,
@@ -469,6 +495,7 @@ export function useTheme() {
     updateCardEffectsSettings,
     updateShelfMotionSettings,
     updateShelf3dSettings,
+    updateThree3dSettings,
     updateSiteLookSettings,
     updatePlaygroundThemeSettings,
   };
