@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Three3DStage from "./Three3DStage";
 import { DEFAULT_THREE_3D } from "../config/three3d";
 
@@ -8,6 +8,7 @@ import { DEFAULT_THREE_3D } from "../config/three3d";
 const createStage = vi.fn();
 const updateStage = vi.fn();
 const disposeStage = vi.fn();
+const surfaceSeen = [];
 
 vi.mock("../three/stage3d", () => ({
   isThree3DSupported: () => true,
@@ -18,6 +19,7 @@ vi.mock("../three/stage3d", () => ({
     return {
       update: updateStage,
       dispose: disposeStage,
+      setSurface: (surface) => surfaceSeen.push(surface),
       getStats: () => ({ drawCalls: 1, instances: 720, triangles: 8640, pixelRatio: 2 }),
     };
   },
@@ -30,10 +32,46 @@ function stageSettings(overrides = {}) {
   return { ...DEFAULT_THREE_3D, ...overrides };
 }
 
+/* jsdom ships no IntersectionObserver, and the host is only supposed to ask for one when a stage is
+   watching the page. The recorder keeps every instance so a test can hand it entries the way the
+   browser would. */
+function recordObservers() {
+  const instances = [];
+  class FakeObserver {
+    constructor(callback, options) {
+      this.callback = callback;
+      this.options = options;
+      this.nodes = [];
+      instances.push(this);
+    }
+
+    observe(node) { this.nodes.push(node); }
+
+    unobserve() {}
+
+    disconnect() { this.disconnected = true; }
+  }
+  vi.stubGlobal("IntersectionObserver", FakeObserver);
+  return instances;
+}
+
+function surfaceRegion(id) {
+  const node = document.createElement("section");
+  node.setAttribute("data-three3d-surface", id);
+  document.body.append(node);
+  return node;
+}
+
 beforeEach(() => {
   createStage.mockClear();
   updateStage.mockClear();
   disposeStage.mockClear();
+  surfaceSeen.length = 0;
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  document.body.replaceChildren();
 });
 
 describe("Three3DStage", () => {
@@ -119,5 +157,62 @@ describe("Three3DStage", () => {
 
     await waitFor(() => expect(onStats).toHaveBeenCalled());
     expect(onStats).toHaveBeenCalledWith({ drawCalls: 1, instances: 720, triangles: 8640, pixelRatio: 2 });
+  });
+
+  it("hands the engine the surface the reader is looking at", async () => {
+    const observers = recordObservers();
+    const hero = surfaceRegion("hero");
+    const catalogue = surfaceRegion("projects");
+
+    const { unmount } = render(
+      <Three3DStage settings={stageSettings({ style: "swarm" })} projects={projects} palette={palette} observeSurfaces />,
+    );
+    await waitFor(() => expect(createStage).toHaveBeenCalled());
+    await waitFor(() => expect(observers.length).toBeGreaterThan(0));
+    // The scan re-attaches when the DOM changes, so the live observer is the most recent one.
+    const observer = observers.at(-1);
+
+    expect(observer.nodes).toContain(hero);
+    expect(observer.nodes).toContain(catalogue);
+    // The band is measured from the middle of the viewport, which is what makes the modulation settle
+    // rather than flicker while a boundary is being crossed.
+    expect(observer.options.rootMargin).toBe("-45% 0px -45% 0px");
+
+    observer.callback([
+      { target: hero, isIntersecting: true, intersectionRatio: 0.15 },
+      { target: catalogue, isIntersecting: true, intersectionRatio: 0.9 },
+    ]);
+    expect(surfaceSeen).toEqual(["projects"]);
+
+    observer.callback([
+      { target: hero, isIntersecting: true, intersectionRatio: 0.8 },
+      { target: catalogue, isIntersecting: false, intersectionRatio: 0 },
+    ]);
+    expect(surfaceSeen).toEqual(["projects", "hero"]);
+
+    unmount();
+    expect(observers.at(-1).disconnected).toBe(true);
+  });
+
+  it("does not watch the page from a panel that already knows its surface", async () => {
+    const observers = recordObservers();
+    surfaceRegion("hero");
+
+    render(
+      <Three3DStage settings={stageSettings({ style: "swarm" })} projects={projects} palette={palette} surface="certificates" />,
+    );
+    await waitFor(() => expect(surfaceSeen).toEqual(["certificates"]));
+    expect(observers).toHaveLength(0);
+  });
+
+  it("asks for no observer at all on a device that has none", async () => {
+    vi.stubGlobal("IntersectionObserver", undefined);
+
+    render(
+      <Three3DStage settings={stageSettings({ style: "swarm" })} projects={projects} palette={palette} observeSurfaces />,
+    );
+
+    await waitFor(() => expect(createStage).toHaveBeenCalled());
+    expect(surfaceSeen).toEqual([]);
   });
 });

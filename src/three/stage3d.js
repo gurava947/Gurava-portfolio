@@ -15,12 +15,33 @@
 
 import * as THREE from "three";
 import { gsap } from "gsap";
-import { getThree3dScene, normalizeThree3d, resolveInstanceCount, resolvePixelRatio } from "../config/three3d";
+import {
+  THREE_3D_GOVERNOR,
+  THREE_3D_SURFACES,
+  getThree3dScene,
+  getThree3dSurfaceFactor,
+  normalizeThree3d,
+  resolveInstanceCount,
+  resolvePixelRatio,
+} from "../config/three3d";
 
 const FRAME_DELTA_CAP = 1 / 20;
 const POINTER_LERP = 8;
 const POINTER_RADIUS = 3.6;
 const POINTER_PUSH = 1.3;
+/* One time constant for every modulation, in inverse seconds. `3` reaches a new surface in about a
+   third of a second, which is long enough that scrolling past a boundary reads as the stage settling
+   rather than as a jump, and short enough that it is finished before the reader has looked away.
+   Expressed as `1 - exp(-k * delta)` so the curve is the same at 30Hz, 60Hz or 120Hz. */
+const MODULATION_LERP = 3;
+const MODULATION_EPSILON = 0.002;
+/* Frame intervals outside this band are not evidence of anything: below 4ms the browser is not
+   actually presenting (headless, or a coalesced rAF tick), above 250ms the gap is a tab coming back
+   or a layout thrash, and degrading density because a tab was hidden would punish the next visitor who
+   opens it. */
+const FASTEST_FRAME_MS = 4;
+const SLOW_FRAME_MS = 250;
+const GOVERNOR_WARMUP_FRAMES = 30;
 const SHELF_CELLS = 48;
 const SHELF_ATLAS_COLUMNS = 12;
 const SHELF_CELL_WIDTH = 256;
@@ -153,6 +174,15 @@ const ARRANGEMENTS = {
 };
 
 function seedArrangement(arrangement, data, count, spread) {
+  /* When the stage draws only a prefix of the field — a thinned surface, or a governor taking work
+     off a slow device — that prefix has to be a representative sample. For the random-seeded
+     arrangements it already is, but the helix, ripple and lattice seed their instances in order
+     along a strand or a row, and an ordered prefix would show a truncated strand or a field with the
+     far half missing. Writing them through a stride of `count - 1` is a permutation for any count
+     (gcd(n, n-1) is always 1) and it scatters consecutive indices across the whole arrangement, so
+     the first n instances of any buffer describe the same scene as all of them, only sparser. */
+  const stride = count - 1 > 0 ? count - 1 : 1;
+  const spreadIndex = (i) => (count > 2 ? (i * stride) % count : i);
   const extent = 9 * spread;
   if (arrangement === "vortex") {
     for (let i = 0; i < count; i += 1) {
@@ -172,8 +202,9 @@ function seedArrangement(arrangement, data, count, spread) {
   }
   if (arrangement === "helix") {
     for (let i = 0; i < count; i += 1) {
-      data.params[i * 2] = i / count;
-      data.params[i * 2 + 1] = Math.random();
+      const slot = spreadIndex(i);
+      data.params[slot * 2] = i / count;
+      data.params[slot * 2 + 1] = Math.random();
     }
     return;
   }
@@ -187,9 +218,10 @@ function seedArrangement(arrangement, data, count, spread) {
     for (let layer = 0; layer < layers && index < count; layer += 1) {
       for (let x = 0; x < side && index < count; x += 1) {
         for (let z = 0; z < side && index < count; z += 1) {
-          data.positions[index * 3] = (x - (side - 1) / 2) * cell;
-          data.positions[index * 3 + 1] = arrangement === "grid3d" ? (layer - (side - 1) / 2) * cell : 0;
-          data.positions[index * 3 + 2] = (z - (side - 1) / 2) * cell;
+          const slot = spreadIndex(index);
+          data.positions[slot * 3] = (x - (side - 1) / 2) * cell;
+          data.positions[slot * 3 + 1] = arrangement === "grid3d" ? (layer - (side - 1) / 2) * cell : 0;
+          data.positions[slot * 3 + 2] = (z - (side - 1) / 2) * cell;
           index += 1;
         }
       }
@@ -278,6 +310,24 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
   let onScreen = true;
   let pixelRatio = 1;
 
+  /* Two multipliers that compose at draw time: the surface the reader is looking at, and whatever
+     the frame-rate governor will currently allow. Keeping them separate means a visitor who asked
+     for a thin field on the projects grid and a visitor on a throttled laptop both get the field they
+     should have, instead of the last writer winning. */
+  const modulation = { surface: "page", density: 1, depth: 1, densityTarget: 1, depthTarget: 1 };
+  const governor = {
+    scale: 1,
+    pixelRatioScale: 1,
+    frames: 0,
+    windowFrames: 0,
+    windowSumMs: 0,
+    fastestMs: Infinity,
+    meanMs: 0,
+    targetMs: 0,
+    lastFrameMs: 0,
+    lastChangeAt: Number.NEGATIVE_INFINITY,
+  };
+
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "high-performance" });
@@ -297,7 +347,11 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
     const rect = canvas.getBoundingClientRect();
     const width = Math.max(1, Math.round(rect.width || window.innerWidth));
     const height = Math.max(1, Math.round(rect.height || window.innerHeight));
-    pixelRatio = resolvePixelRatio(window.devicePixelRatio, current.pixelRatioCap);
+    /* The governor's scale is applied after the ceiling, and floored at 0.75x: below that the canvas
+       is being upscaled far enough that text drawn over it starts to soften, which is a readability
+       cost the density lever was supposed to avoid. */
+    const ceiling = resolvePixelRatio(window.devicePixelRatio, current.pixelRatioCap);
+    pixelRatio = Math.max(0.75, ceiling * governor.pixelRatioScale);
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(width, height, false);
     renderer.setClearAlpha(0);
@@ -417,7 +471,10 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
 
       fitShelf(columns, rows);
       place(elapsed);
-      build = { root, tracked, kind: "shelf", texture: atlas.texture, count, update: place };
+      // A deck is a layout, not a field: drawing fewer of its instances leaves holes where projects
+      // should be, so the shelf opts out of density modulation and the governor spends its saving on
+      // the device ratio instead of on the card count.
+      build = { root, tracked, kind: "shelf", mesh, texture: atlas.texture, count, densityLocked: true, update: place };
       scene.add(root);
       return;
     }
@@ -487,12 +544,17 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
     const unit = style.size * (current.size / 6);
     const spinPerInstance = style.arrangement === "scatter" || style.arrangement === "grid3d";
     const update = (t) => {
-      (ARRANGEMENTS[style.arrangement] || ARRANGEMENTS.field)(data, count, t, spread);
+      // `mesh.count` is the whole density lever: it is the number of instances WebGL is told to
+      // draw, it costs nothing to change, and every arrangement below reads its own amplitude from
+      // the live modulation instead of the build-time constant, so neither lever rebuilds a buffer.
+      const active = mesh.count;
+      const liveSpread = spread * modulation.depth;
+      (ARRANGEMENTS[style.arrangement] || ARRANGEMENTS.field)(data, active, t, liveSpread);
       const halfHeight = Math.tan((camera.fov * Math.PI) / 360) * Math.max(camera.position.z, 1);
       const px = pointer.x * halfHeight * camera.aspect;
       const py = pointer.y * halfHeight;
       const interactive = current.pointer && pointer.active && style.kind === "particles";
-      for (let i = 0; i < count; i += 1) {
+      for (let i = 0; i < active; i += 1) {
         let x = data.base[i * 3];
         let y = data.base[i * 3 + 1];
         if (interactive) {
@@ -525,7 +587,10 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
       if (links) {
         const attribute = links.geometry.getAttribute("position");
         const array = attribute.array;
-        const pairCount = array.length / 6;
+        // A link to an instance that is not being drawn is a line into empty space, so the pair
+        // count follows the field rather than the buffer it was allocated with.
+        const pairCount = Math.min(array.length / 6, Math.max(0, active - 1));
+        links.geometry.setDrawRange(0, pairCount * 2);
         for (let i = 0; i < pairCount; i += 1) {
           const a = linkPairs[i * 2] * 3;
           const b = linkPairs[i * 2 + 1] * 3;
@@ -540,9 +605,112 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
       }
     };
 
-    build = { root, tracked, kind: style.kind, count, update };
+    build = { root, tracked, kind: style.kind, mesh, count, update };
     scene.add(root);
+    applyModulation();
     update(elapsed);
+  };
+
+  const applyModulation = () => {
+    if (!build?.mesh || build.densityLocked) return;
+    // Both levers multiply into the one number: what the visitor asked this surface for, and what
+    // the frame budget currently permits.
+    const drawn = Math.max(1, Math.min(build.count, Math.round(build.count * modulation.density * governor.scale)));
+    if (build.mesh.count !== drawn) build.mesh.count = drawn;
+  };
+
+  const setSurface = (surfaceId) => {
+    const factor = getThree3dSurfaceFactor(current, surfaceId);
+    modulation.surface = factor.surface;
+    modulation.densityTarget = factor.density;
+    modulation.depthTarget = factor.depth;
+    // Snap while the loop is stopped. A paused stage draws nothing, so a modulation that only
+    // converged inside `tick` would still be visibly settling on the frame after the visitor returns.
+    if (!frame || motionOff) {
+      modulation.density = factor.density;
+      modulation.depth = factor.depth;
+      applyModulation();
+      if (!frame) render();
+    }
+  };
+
+  const easeModulation = (ease) => {
+    let changed = false;
+    ["density", "depth"].forEach((key) => {
+      const target = modulation[`${key}Target`];
+      if (modulation[key] === target) return;
+      const next = modulation[key] + (target - modulation[key]) * ease;
+      modulation[key] = Math.abs(target - next) < MODULATION_EPSILON ? target : next;
+      if (key === "density") changed = true;
+    });
+    return changed;
+  };
+
+  /* The frame budget, in ms per frame, as the display actually presents it.
+
+   `fastestMs` is the shortest credible frame interval seen so far. On a vsync-locked page that
+   interval is the refresh period — the browser cannot present sooner than it — so it doubles as the
+   measurement of the refresh rate, which is the only part of "adapt to the refresh rate" a script can
+   observe: the panel's rate is not something a page sets, but whether the page keeps up with it is.
+   The target is a multiple of it, floored at 16.7ms so an unusually quick frame cannot make the
+   governor demand sub-60Hz work, and capped at 33ms so a 30Hz-capped device is never asked to hold
+   something it cannot reach. */
+  const sampleFrameBudget = (frameMs, nowMs) => {
+    governor.frames += 1;
+    if (!current.adaptive || !build || build.densityLocked) {
+      releaseGovernor();
+      return;
+    }
+    if (governor.frames <= GOVERNOR_WARMUP_FRAMES) return;
+    if (frameMs < FASTEST_FRAME_MS || frameMs > SLOW_FRAME_MS) return;
+    governor.lastFrameMs = frameMs;
+    if (frameMs < governor.fastestMs) governor.fastestMs = frameMs;
+    governor.targetMs = Math.min(
+      THREE_3D_GOVERNOR.maxTargetFrameMs,
+      Math.max(THREE_3D_GOVERNOR.minTargetFrameMs, governor.fastestMs * THREE_3D_GOVERNOR.targetMultiplier),
+    );
+    governor.windowFrames += 1;
+    governor.windowSumMs += frameMs;
+    if (governor.windowFrames < THREE_3D_GOVERNOR.samplesPerWindow) return;
+    governor.meanMs = governor.windowSumMs / governor.windowFrames;
+    governor.windowFrames = 0;
+    governor.windowSumMs = 0;
+    if (nowMs - governor.lastChangeAt < THREE_3D_GOVERNOR.settleMs) return;
+    const { step, floor, ceiling } = THREE_3D_GOVERNOR;
+    // Asymmetric thresholds, on purpose: it takes 10% over budget to give work up and 28% of
+    // headroom to take it back. Restoring at the same margin that triggered the cut would oscillate
+    // at exactly the boundary, and oscillation at the boundary is the one behaviour a visitor can see.
+    if (governor.meanMs > governor.targetMs * 1.1) {
+      if (governor.scale > floor) {
+        governor.scale = Math.max(floor, governor.scale * (1 - step));
+      } else if (governor.pixelRatioScale > 0.75) {
+        governor.pixelRatioScale = Math.max(0.75, governor.pixelRatioScale - step);
+        sizeStage();
+      } else {
+        return;
+      }
+    } else if (governor.meanMs < governor.targetMs * 0.72) {
+      if (governor.pixelRatioScale < 1) {
+        governor.pixelRatioScale = Math.min(1, governor.pixelRatioScale + step);
+        sizeStage();
+      } else if (governor.scale < ceiling) {
+        governor.scale = Math.min(ceiling, governor.scale * (1 + step));
+      } else {
+        return;
+      }
+    } else {
+      return;
+    }
+    governor.lastChangeAt = nowMs;
+    applyModulation();
+  };
+
+  const releaseGovernor = () => {
+    if (governor.scale === 1 && governor.pixelRatioScale === 1) return;
+    governor.scale = 1;
+    governor.pixelRatioScale = 1;
+    sizeStage();
+    applyModulation();
   };
 
   const start = () => {
@@ -551,15 +719,20 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
     frame = requestAnimationFrame(tick);
   };
 
-  function tick() {
+  function tick(time) {
     frame = requestAnimationFrame(tick);
     // One delta per frame, capped: a tab left in the background for ten minutes reports that whole
-    // gap on return, and without the cap the scene would jump straight past its own motion.
-    const delta = Math.min(clock.getDelta(), FRAME_DELTA_CAP);
+    // gap on return, and without the cap the scene would jump straight past its own motion. The raw
+    // value is still what the governor measures — the cap is a limit on the animation, not evidence
+    // about the device.
+    const rawDelta = clock.getDelta();
+    const delta = Math.min(rawDelta, FRAME_DELTA_CAP);
     elapsed += delta * (motionOff ? 0 : current.speed / 100);
     const ease = 1 - Math.exp(-POINTER_LERP * delta);
     pointer.x += (pointer.tx - pointer.x) * ease;
     pointer.y += (pointer.ty - pointer.y) * ease;
+    if (easeModulation(1 - Math.exp(-MODULATION_LERP * delta))) applyModulation();
+    sampleFrameBudget(rawDelta * 1000, time);
     render();
   }
 
@@ -655,6 +828,7 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
       if (projectsChanged) sourceProjects = options.projects;
       const previous = getThree3dScene(current);
       const incomingScene = getThree3dScene(normalized);
+      const surfacesChanged = THREE_3D_SURFACES.some(({ id }) => current.surfaces[id] !== normalized.surfaces[id]);
       const needsRebuild = normalized.style !== current.style
         || resolveInstanceCount(normalized) !== resolveInstanceCount(current)
         || normalized.depth !== current.depth
@@ -663,15 +837,31 @@ export function createThree3DStage({ canvas, projects = [], palette = {}, settin
         || previous?.links !== incomingScene?.links
         || previous?.arrangement !== incomingScene?.arrangement;
       current = normalized;
+      // Neither of these costs a rebuild: a new presence dials for the surface already on screen
+      // re-targets the same smoothing, and switching the governor off hands the work back.
+      if (surfacesChanged) setSurface(modulation.surface);
+      if (!normalized.adaptive) releaseGovernor();
       if (needsRebuild) rebuild();
       else if (!frame) render();
     },
+    setSurface,
     getStats() {
       return {
         drawCalls: renderer.info.render.calls,
         instances: build?.count || 0,
+        drawn: build?.mesh?.count ?? 0,
         triangles: renderer.info.render.triangles,
         pixelRatio,
+        surface: modulation.surface,
+        // The two multipliers are reported separately because they answer different questions: the
+        // governor's share is the machine's decision, the rest is what the visitor asked for.
+        governorScale: Number(governor.scale.toFixed(3)),
+        pixelRatioScale: Number(governor.pixelRatioScale.toFixed(3)),
+        frameMs: Number(governor.lastFrameMs.toFixed(2)),
+        meanFrameMs: Number(governor.meanMs.toFixed(2)),
+        targetFrameMs: Number(governor.targetMs.toFixed(2)),
+        refreshMs: Number.isFinite(governor.fastestMs) ? Number(governor.fastestMs.toFixed(2)) : 0,
+        adaptive: Boolean(current.adaptive && build && !build.densityLocked),
       };
     },
     dispose() {

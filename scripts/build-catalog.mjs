@@ -38,6 +38,7 @@ const site = JSON.parse(readFileSync(join(SOURCE, "site.json"), "utf8"));
 const certificates = JSON.parse(readFileSync(join(SOURCE, "certificates.json"), "utf8"));
 const pythonProject = JSON.parse(readFileSync(join(ROOT, "backend", "db", "projects", "python-playground.json"), "utf8"));
 const pythonProjects = JSON.parse(readFileSync(join(SOURCE, "projects-python.json"), "utf8"));
+const backlogSeeds = JSON.parse(readFileSync(join(SOURCE, "backlog.json"), "utf8"));
 const PYTHON_PROJECTS = join(ROOT, "python-projects");
 
 if (!Array.isArray(pythonProjects)) throw new Error("catalog/source/projects-python.json must contain an array.");
@@ -341,6 +342,7 @@ function normalizeProject(seed, collection, options) {
     previewType: isPython ? "python" : "react",
     language: isPython ? data.language || "Python 3.10" : "React",
     live: true,
+    status: "built",
     route: `/projects/${seed.id}`,
     data,
     previewModule,
@@ -527,11 +529,21 @@ async function main() {
     .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
 
   const summaries = allProjects.map(({ data, ...project }) => project);
+  /* Planned work is published as its own list rather than as projects with a flag. A backlog entry
+     has no component, no thumbnail and no route, so letting one sit in `projects` would hand the grid
+     a card that 404s when tapped. Kept apart, the page can say plainly that these are not built. */
+  const backlog = backlogSeeds.map((entry) => ({
+    ...entry,
+    id: entry.id,
+    status: "planned",
+    live: false,
+  }));
   const catalog = {
     version: 2,
     counts: {
       projects: allProjects.length,
       certificates: normalizedCertificates.length,
+      backlog: backlog.length,
       collections: collectionCounts,
     },
     collections,
@@ -540,6 +552,7 @@ async function main() {
     devices: { responsive: responsiveDevices, static: staticDevices },
     projects: summaries,
     certificates: normalizedCertificates,
+    backlog,
     site,
   };
 

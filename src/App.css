@@ -497,6 +497,116 @@ select:focus-visible {
   text-underline-offset: 3px;
 }
 
+.profile-bio {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-text) 8%, transparent);
+}
+
+.profile-bio-eyebrow {
+  margin: 0;
+  color: color-mix(in srgb, var(--theme-primary) 62%, var(--theme-muted-text));
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.profile-bio-lead {
+  margin: 0;
+  color: var(--theme-card-text);
+  font-size: 0.79rem;
+  font-weight: 550;
+  line-height: 1.6;
+}
+
+.profile-bio-block {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.profile-bio-label {
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.profile-bio-note {
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.62rem;
+  line-height: 1.5;
+}
+
+/* Every rule of the rotating set sits in the same grid cell, so the slot is already as tall as its
+   longest line before the first swap: the rotation changes opacity and nothing else. No reflow means
+   no layout shift, and a reader who never waits still has all five lines in the list. */
+.profile-bio-lines {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.profile-bio-lines li {
+  grid-area: 1 / 1;
+  min-width: 0;
+  color: var(--theme-card-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.55;
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.profile-bio-lines li.is-active { opacity: 1; }
+
+.profile-bio-lines.is-static { gap: 6px; }
+
+.profile-bio-lines.is-static li {
+  grid-area: auto;
+  opacity: 1;
+  transition: none;
+}
+
+.profile-bio-skills {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.profile-bio-skills > div {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 7%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--theme-text) 3%, transparent);
+}
+
+.profile-bio-skills dt {
+  color: var(--theme-card-text);
+  font-size: 0.63rem;
+  font-weight: 800;
+}
+
+.profile-bio-skills dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
 /* A saved link whose value is not a real URL is shown as text, so it never reads as clickable. */
 .profile-link-plain {
   color: var(--theme-muted-text);
@@ -1583,7 +1693,6 @@ select:focus-visible {
     left: 8px;
     width: calc(100vw - 16px);
   }
-
   .profile-popover-heading { padding-inline: 14px; }
   .profile-tabs { margin-inline: 14px; }
   .profile-panel { padding: 14px; }
@@ -1603,6 +1712,15 @@ select:focus-visible {
   }
 }
 
+/* A 96px label column leaves the description about 200px wide inside a phone-width popover, which is
+   narrow enough to wrap every line onto three. The skills rows stack their label instead. */
+@media (max-width: 479.98px) {
+  .profile-bio-skills > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .profile-popover,
   .card-studio-preset,
@@ -1612,6 +1730,8 @@ select:focus-visible {
     animation: none;
     transition: none;
   }
+
+  .profile-bio-lines li { transition: none; }
 
   .card-studio-controls { scroll-behavior: auto; }
 }

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "backlog-mongo-catalogue",
+    "title": "MongoDB-backed catalogue",
+    "area": "Data layer",
+    "summary": "The stack is advertised as MERN, but the catalogue is stored in SQLite over Express and flattened to JSON at build time. No Mongo server, driver or schema exists anywhere in the repository.",
+    "notBuiltBecause": "Moving the catalogue to MongoDB would change how the site deploys: the static Vercel target reads build-time JSON and opens no database at all, so the swap needs a hosted database and a persistent API before it can be honest on the page.",
+    "evidence": "backend/db/connection.js uses node:sqlite. VERCEL_DEPLOY.md states the static deployment needs no database. A repository-wide search for mongoose, mongodb and DATABASE_URL returns nothing.",
+    "status": "planned"
+  },
+  {
+    "id": "backlog-settings-sync",
+    "title": "Studio settings that follow the visitor between devices",
+    "area": "Persistence",
+    "summary": "Every card, layout, motion and 3D-stage choice is saved in that browser's localStorage, so a design tuned on a laptop is not the design a phone shows.",
+    "notBuiltBecause": "Vercel Functions do not provide a shared durable store, so cross-device writes need a managed database and an always-on API. The Express and SQLite sync path exists for local development and is deliberately not enabled on the static deploy.",
+    "evidence": "VERCEL_DEPLOY.md, Data and preferences: preferences are saved separately in each visitor's browser localStorage, and server-synchronised writes require a managed remote database first.",
+    "status": "planned"
+  },
+  {
+    "id": "backlog-stage-default",
+    "title": "The 3D stage switched on by default",
+    "area": "Performance",
+    "summary": "The particle stage ships with its style set to off. Visitors have to choose a style in the studio before the landing, projects and certificate surfaces draw anything.",
+    "notBuiltBecause": "The stage is a lazy 570 kB chunk and a full-viewport WebGL canvas. Making it the default on every device, including the ones the frame-rate governor has not yet been measured against, would trade the performance budget for an effect not everyone asked for.",
+    "evidence": "DEFAULT_THREE_3D_STYLE_ID is \"off\" in src/config/three3d.js, and the lighthouse budget asserts the script transfer ceiling that the stage chunk is kept under.",
+    "status": "planned"
+  }
+]

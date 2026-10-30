@@ -8,6 +8,7 @@ const staticSeed = JSON.parse(readFileSync(join(ROOT, "catalog/source/projects-s
 const responsiveSeed = JSON.parse(readFileSync(join(ROOT, "catalog/source/projects-responsive.json"), "utf8"));
 const pythonSeed = JSON.parse(readFileSync(join(ROOT, "backend/db/projects/python-playground.json"), "utf8"));
 const pythonExerciseSeed = JSON.parse(readFileSync(join(ROOT, "catalog/source/projects-python.json"), "utf8"));
+const backlogSeed = JSON.parse(readFileSync(join(ROOT, "catalog/source/backlog.json"), "utf8"));
 // The builder takes playground seeds from both files, so the audit has to as well; leaving out the
 // exercise seeds made every Python project look un-sourced.
 const seeds = new Map([pythonSeed, ...pythonExerciseSeed, ...responsiveSeed, ...staticSeed].map((seed) => [seed.id, seed]));
@@ -94,6 +95,25 @@ for (const id of detailFiles) if (!ids.has(id)) add("error", id, "detail", "Orph
 for (const id of seeds.keys()) if (!ids.has(id)) add("error", id, "catalog", "Source seed not included in catalog");
 
 if (catalog.counts.projects !== catalog.projects.length) add("error", "catalog", "counts.projects", "Project count mismatch");
+for (const project of catalog.projects) {
+  if (project.status !== "built") add("error", project.id, "status", `Shipped project carries status "${project.status}" instead of built`);
+}
+
+// The backlog is a disclosure, not a second catalogue: it has to match its source, stay out of the
+// project list, and keep the fields that make "this is not built" checkable rather than decorative.
+if (catalog.counts.backlog !== catalog.backlog.length) add("error", "catalog", "counts.backlog", "Backlog count mismatch");
+if (catalog.backlog.length !== backlogSeed.length) add("error", "catalog", "backlog", "Backlog differs from its source seed");
+const backlogIds = new Set();
+for (const entry of catalog.backlog) {
+  if (backlogIds.has(entry.id)) add("error", entry.id, "backlog.id", "Duplicate backlog id");
+  backlogIds.add(entry.id);
+  if (ids.has(entry.id)) add("error", entry.id, "backlog.id", "Backlog id collides with a shipped project");
+  if (entry.status !== "planned") add("error", entry.id, "backlog.status", `Backlog entry carries status "${entry.status}" instead of planned`);
+  if (entry.live !== false) add("error", entry.id, "backlog.live", "Backlog entry is marked live");
+  for (const field of ["title", "area", "summary", "notBuiltBecause", "evidence"]) {
+    if (!entry[field]) add("error", entry.id, `backlog.${field}`, `Missing ${field}`);
+  }
+}
 for (const collection of catalog.collections) {
   const actual = catalog.projects.filter((project) => project.collection === collection.id).length;
   if (collection.count !== actual) add("error", collection.id, "count", `Collection count ${collection.count} vs actual ${actual}`);

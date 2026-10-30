@@ -29,10 +29,14 @@ import SiteLookStudio from "./components/SiteLookStudio";
 import Shelf3DStudio from "./components/Shelf3DStudio";
 import Three3DStudio from "./components/Three3DStudio";
 import Three3DStage from "./components/Three3DStage";
+import ProfileBio from "./components/ProfileBio";
+import ProjectBacklog from "./components/ProjectBacklog";
 import PosterRail from "./components/PosterRail";
 import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
 import { playgroundThemeDrivesSite } from "./config/themeSync";
+import { resolveThree3dPalette } from "./config/three3d";
+import { profileBioFigures } from "./utils/profileBio";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
 const PROFILE_STORAGE_KEY = "myapp.guravva.profile.v1";
@@ -990,7 +994,7 @@ function GuravvaProfilePopover({
   reducedMotion = false,
   lookSettings,
   onLookChange,
-  shelfCollections,
+  shelfCollections = [],
   shelfProjects,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
@@ -1004,6 +1008,8 @@ function GuravvaProfilePopover({
   const studioCopy = copy.cardStudio || {};
   const tabCopy = copy.tabs || {};
   const profileInitial = (profile.name || copy.eyebrow || "G").trim().charAt(0).toUpperCase();
+  const bio = copy.bio || null;
+  const bioFigures = useMemo(() => profileBioFigures(profile, shelfCollections), [profile, shelfCollections]);
 
   useEffect(() => {
     if (editing) firstInputRef.current?.focus();
@@ -1174,6 +1180,7 @@ function GuravvaProfilePopover({
       <div className="profile-panel" id="guravva-profile-panel" role="tabpanel" aria-labelledby="guravva-profile-tab" hidden={tab !== "profile"}>
         {!editing ? (
           <>
+            <ProfileBio bio={bio} figures={bioFigures} reducedMotion={reducedMotion} paused={tab !== "profile"} />
             <dl className="profile-details">
               {profileRows.map(({ field, value, href }) => (
                 <div key={field}>
@@ -1677,7 +1684,7 @@ function PortfolioHome({
         shelfProjects={catalog.projects}
       />
       <main>
-        <section className="home-hero">
+        <section className="home-hero" data-three3d-surface="hero">
           <div className="container">
             <div className="home-hero-grid">
               <div className="home-hero-copy">
@@ -1739,7 +1746,7 @@ function PortfolioHome({
           </div>
         </section>
 
-        <section className="home-collections-section" id="collections">
+        <section className="home-collections-section" id="collections" data-three3d-surface="projects">
           <div className="container">
             <header className="home-section-heading">
               <div>
@@ -1767,7 +1774,7 @@ function PortfolioHome({
           </div>
         </section>
 
-        <section className="home-featured-section" id="featured">
+        <section className="home-featured-section" id="featured" data-three3d-surface="projects">
           <div className="container">
             <header className="home-section-heading">
               <div>
@@ -1796,7 +1803,7 @@ function PortfolioHome({
           </div>
         </section>
 
-        <section className="home-certificates-section" id="certificates">
+        <section className="home-certificates-section" id="certificates" data-three3d-surface="certificates">
           <div className="container">
             <header className="home-section-heading">
               <div>
@@ -1817,6 +1824,8 @@ function PortfolioHome({
             </div>
           </div>
         </section>
+
+        <ProjectBacklog backlog={catalog.backlog} copy={copy.backlog} />
 
         {/* Guarded because the catalog can render from a cached copy that predates this block. */}
         {/* The program / mentor / maker credit moved into <SiteFooter>, which every page renders. */}
@@ -2126,7 +2135,7 @@ function App() {
     );
   } else if (isCatalog) {
     page = (
-      <div className={pageClass} id="top">
+      <div className={pageClass} id="top" data-three3d-surface="projects">
         <SiteNav {...navProps} activeNav="projects" />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
           <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} shelf3d={settings.shelf3d} />
@@ -2136,7 +2145,7 @@ function App() {
     );
   } else if (isCertificates) {
     page = (
-      <div className={pageClass} id="top">
+      <div className={pageClass} id="top" data-three3d-surface="certificates">
         <SiteNav {...navProps} activeNav="certificates" />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
           <CertificatesIndex certificates={catalog.certificates} copy={site.certificatesPage} onNavigate={navigate} cardEffects={settings.effects} />
@@ -2146,7 +2155,7 @@ function App() {
     );
   } else if (isCertificateRoute) {
     page = certificate ? (
-      <div className={pageClass} id="top">
+      <div className={pageClass} id="top" data-three3d-surface="certificates">
         <SiteNav {...navProps} activeNav="certificates" isDetail />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
           <CertificateShowcase data={certificate} copy={site.certificate} onBack={(event) => goBackTo(event, "/certificates")} />
@@ -2154,7 +2163,7 @@ function App() {
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     ) : (
-      <div className={pageClass} id="top">
+      <div className={pageClass} id="top" data-three3d-surface="certificates">
         <SiteNav {...navProps} activeNav="certificates" isDetail />
         <MissingPage
           site={site}
@@ -2169,7 +2178,7 @@ function App() {
     );
   } else if (isProjectRoute) {
     page = projectSummary ? (
-      <div className={pageClass} id="top">
+      <div className={pageClass} id="top" data-three3d-surface="projects">
         <SiteNav {...navProps} activeNav="projects" isDetail />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
           <ProjectDetail
@@ -2200,7 +2209,7 @@ function App() {
         {!detailLoading && <SiteFooter site={site} onNavigate={navigate} />}
       </div>
     ) : (
-      <div className={pageClass} id="top">
+      <div className={pageClass} id="top" data-three3d-surface="projects">
         <SiteNav {...navProps} activeNav="projects" isDetail />
         <MissingPage site={site} title={site.detail.notFoundTitle} description={site.detail.notFoundDescription} onNavigate={navigate} />
         <SiteFooter site={site} onNavigate={navigate} />
@@ -2237,8 +2246,14 @@ function App() {
       <Three3DStage
         settings={settings.three3d}
         projects={catalog.projects}
-        palette={{ primary: settings.primary, secondary: settings.secondary, accent: settings.accent, mode: settings.mode }}
+        palette={resolveThree3dPalette(settings.three3d, {
+          primary: settings.primary,
+          secondary: settings.secondary,
+          accent: settings.accent,
+          mode: settings.mode,
+        })}
         reducedMotion={settings.reducedMotion}
+        observeSurfaces
       />
       {viewError}
       {isLoading && !projects.length ? <AppGate loader={settings.loader} /> : page}

@@ -29,6 +29,9 @@ function validateCatalog(payload) {
   if (!payload.site || !payload.counts) {
     throw new Error("The catalog is missing its site configuration or counts.");
   }
+  // A session that cached the catalog before the backlog existed still has to render, so the
+  // disclosure list is allowed to be absent. The shipped work it is contrasted against is not.
+  if (!Array.isArray(payload.backlog)) payload.backlog = [];
   return payload;
 }
 

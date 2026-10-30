@@ -318,6 +318,180 @@
   gap: 7px 14px;
 }
 
+/* ---------- Per-surface presence ---------- */
+
+/* Both new groups open with a sentence rather than a heading: the point of the control is not
+ * obvious from a slider labelled "Projects", and the panels already carry enough chrome. */
+
+.three-3d-subhead {
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.57rem;
+  line-height: 1.5;
+}
+
+.three-3d-surfaces,
+.three-3d-colors {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 8%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--theme-card-bg) 72%, var(--theme-text) 3%);
+}
+
+.three-3d-surface {
+  min-width: 0;
+}
+
+.three-3d-surface-note {
+  color: var(--theme-muted-text);
+  font-size: 0.53rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ---------- Stage colours ---------- */
+
+.three-3d-color-row {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.three-3d-color-head {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.three-3d-color-head label {
+  color: var(--theme-card-text);
+  font-size: 0.6rem;
+  font-weight: 750;
+}
+
+.three-3d-color-head output {
+  color: var(--theme-muted-text);
+  font-size: 0.56rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+}
+
+/* A stop that follows the theme is showing a colour the visitor did not choose, so it reads as a
+ * reference rather than a setting: the value stays legible but the row is visibly quieter. */
+
+.three-3d-color-row[data-follow-theme="true"] .three-3d-color-head label {
+  color: var(--theme-muted-text);
+  font-weight: 650;
+}
+
+/* The swatch and three channels share one line on a wide pane and wrap instead of overflowing it —
+ * the same min-width: 0 discipline the rest of the studio needed. */
+
+.three-3d-color-controls {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.three-3d-color-swatch {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 16%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.three-3d-color-swatch::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.three-3d-color-swatch::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.three-3d-color-swatch::-moz-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.three-3d-color-channel {
+  flex: 1 1 42px;
+  min-width: 0;
+  max-width: 54px;
+  padding: 5px 6px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--theme-card-bg) 92%, var(--theme-text) 2%);
+  color: var(--theme-card-text);
+  font: inherit;
+  font-size: 0.58rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.three-3d-color-channel:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 62%, transparent);
+  outline-offset: 2px;
+}
+
+.three-3d-color-follow {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--theme-muted-text);
+  font: inherit;
+  font-size: 0.54rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.three-3d-color-follow[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 9%, transparent);
+  color: var(--theme-card-text);
+}
+
+.three-3d-color-follow:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 62%, transparent);
+  outline-offset: 2px;
+}
+
+/* The guard overrode a pick. That is the one place the panel disagrees with the visitor, so it names
+ * both colours rather than only the result. */
+
+.three-3d-color-guard {
+  margin: 0;
+  color: color-mix(in srgb, var(--theme-accent) 62%, var(--theme-muted-text));
+  font-size: 0.53rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.three-3d-legibility {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--theme-text) 8%, transparent);
+  color: var(--theme-muted-text);
+  font-size: 0.55rem;
+  line-height: 1.5;
+}
+
 /* ---------- Preview block ---------- */
 
 .three-3d-preview {
@@ -395,6 +569,18 @@
   line-height: 1.45;
 }
 
+/* What the stage is actually doing this second, as opposed to what the sliders asked for. Tabular
+ * figures because the governor rewrites this line while you watch it. */
+
+.three-3d-governor {
+  margin: 0;
+  color: color-mix(in srgb, var(--theme-primary) 42%, var(--theme-muted-text));
+  font-size: 0.55rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+
 @media (max-width: 479.98px) {
   .three-3d-styles {
     grid-template-columns: minmax(0, 1fr);
@@ -408,10 +594,27 @@
   .three-3d-stage.is-preview {
     height: 158px;
   }
+
+  /* At this width the swatch, three channels and the follow chip no longer share a line; the channels
+   * grow to fill instead of pushing the chip off the pane. */
+  .three-3d-color-channel {
+    flex: 1 1 0;
+    max-width: none;
+  }
+
+  .three-3d-color-follow {
+    width: 100%;
+  }
+
+  .three-3d-surfaces,
+  .three-3d-colors {
+    padding: 9px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .three-3d-style {
+  .three-3d-style,
+  .three-3d-color-follow {
     transition: none;
   }
 

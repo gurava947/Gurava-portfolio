@@ -597,6 +597,129 @@
   background: color-mix(in srgb, #070d16 72%, transparent);
 }
 
+/* The backlog is the one home section that must not look like the work above it. No band colour, no
+ * lift, no thumbnail and a dashed rule instead of a card edge: a planned entry borrows none of the
+ * visual language that says "this is built", so the disclosure is readable at a glance rather than
+ * only in the sentence. */
+.home-backlog-section {
+  padding: clamp(52px, 6vw, 84px) 0;
+}
+
+.backlog-list {
+  display: grid;
+  gap: 12px;
+  margin: clamp(26px, 3vw, 38px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.backlog-entry {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px dashed color-mix(in srgb, var(--theme-text) 22%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--theme-card-bg) 55%, transparent);
+}
+
+.backlog-entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.backlog-area {
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.backlog-title {
+  margin: 3px 0 0;
+  color: var(--theme-card-text);
+  font-size: 1.02rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.backlog-status {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 42%, transparent);
+  border-radius: 999px;
+  color: var(--theme-card-text);
+  background: color-mix(in srgb, var(--theme-accent) 12%, transparent);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.backlog-summary {
+  margin: 0;
+  color: var(--theme-card-text);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.backlog-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.backlog-detail > div {
+  min-width: 0;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--theme-text) 4%, transparent);
+}
+
+.backlog-detail dt {
+  color: var(--theme-muted-text);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.backlog-detail dd {
+  margin: 5px 0 0;
+  color: var(--theme-card-text);
+  font-size: 0.74rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.backlog-runs {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--theme-text) 8%, transparent);
+  color: var(--theme-muted-text);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.backlog-runs strong {
+  color: color-mix(in srgb, var(--theme-accent) 72%, var(--theme-card-text));
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+}
+
 .home-section-heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 450px);
@@ -607,7 +730,10 @@
 
 .home-section-heading .eyebrow {
   margin: 0 0 10px;
-  color: var(--theme-primary);
+  /* Pure primary is only ~4.4:1 against the light page, and the featured and backlog sections sit on
+     the bare page rather than a band. Pulling toward the theme text darkens it in light mode and
+     lightens it in dark mode, so the small caps clear the line on both. */
+  color: color-mix(in srgb, var(--theme-primary) 72%, var(--theme-text));
 }
 
 .home-section-heading .section-title {
@@ -2158,6 +2284,7 @@
 
   .home-collections-section,
   .home-certificates-section,
+  .home-backlog-section,
   .home-featured-section {
     padding: 54px 0;
   }

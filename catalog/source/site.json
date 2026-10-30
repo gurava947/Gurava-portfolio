@@ -45,6 +45,46 @@
       "links": []
     },
     "eyebrow": "Profile",
+    "bio": {
+      "eyebrow": "The short version",
+      "lead": "{name} writes the code twice: once to make it work, and once after reading the error properly. Python and the web, in the open — every build named below is on a shelf in this catalog, and every one of them runs.",
+      "debugging": {
+        "label": "How the debugging goes",
+        "lines": [
+          "Reproduce it first. A bug that cannot be reproduced has not been fixed, only quieted.",
+          "Read the line above the throw. The exception reports the scene, rarely the culprit.",
+          "Bisect the change, not the file — the last commit that worked already knows the answer.",
+          "Measure at 390, 820, 1100 and 1440. A layout that only breaks at 768px still breaks.",
+          "One hypothesis at a time, console open, and the experiment deleted once it has proven itself."
+        ]
+      },
+      "skills": {
+        "label": "What the catalog proves",
+        "note": "No badges. Each line is work that is already here, with the count that backs it.",
+        "items": [
+          {
+            "name": "Python",
+            "detail": "{python} briefs — data types, control flow, functions and file handling — running in the browser on Pyodide, so there is no local setup between the question and the answer."
+          },
+          {
+            "name": "HTML & CSS",
+            "detail": "{static} static builds: semantics, the box model, Bootstrap components and multi-section page composition."
+          },
+          {
+            "name": "Responsive layout",
+            "detail": "{responsive} sections measured across mobile, tablet and desktop — flex, grid and breakpoints that were tested rather than assumed."
+          },
+          {
+            "name": "JavaScript & React",
+            "detail": "This portfolio is the build: React with a lazily loaded WebGL stage, a settings studio that previews before it applies, and a catalogue that reads from build-time data."
+          },
+          {
+            "name": "Backend & data",
+            "detail": "An Express API over SQLite, with the same catalogue flattened to JSON so the site also ships as a static deploy."
+          }
+        ]
+      }
+    },
     "tabs": {
       "profile": "Profile",
       "cards": "Card studio"
@@ -179,6 +219,17 @@
       "title": "Certificates",
       "note": "Every certificate record below comes directly from the supplied course results.",
       "action": "View all certificates"
+    },
+    "backlog": {
+      "eyebrow": "Filed, not shipped",
+      "title": "Backlog",
+      "note": "Everything above this line is built and runs. Everything here is not: no code, no preview, no route to open.",
+      "status": "Planned · not built",
+      "runs": "Runs today?",
+      "runsAnswer": "No",
+      "whyLabel": "Why it is not built",
+      "evidenceLabel": "How to check",
+      "countLabel": "planned entries"
     },
     "achievement": {
       "ariaLabel": "Certificate results",

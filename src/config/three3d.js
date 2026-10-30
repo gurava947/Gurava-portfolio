@@ -10,6 +10,8 @@
       instance ceiling before it touches WebGL, so a stored value from an older build, a hand-edited
       localStorage entry, or a slider dragged to its stop can never make the stage unbounded. */
 
+import { blendOver, contrastRatio, normalizeHexColor, towardLegible } from "../utils/stageColor";
+
 export const MAX_PIXEL_RATIO = 2;
 export const MAX_INSTANCES = 2400;
 
@@ -103,6 +105,78 @@ export const THREE_3D_LIMITS = Object.freeze({
   depth: Object.freeze({ min: 1, max: 9, step: 1 }),
   brightness: Object.freeze({ min: 20, max: 100, step: 5 }),
   pixelRatioCap: Object.freeze({ min: 1, max: MAX_PIXEL_RATIO, step: 0.25 }),
+  // One dial per surface, and it is a percentage of the instance budget rather than a count: the
+  // absolute number a visitor dials in stays meaningful when they move between pages.
+  surfacePresence: Object.freeze({ min: 0, max: 150, step: 5 }),
+});
+
+/* The surfaces the single site canvas modulates itself between.
+
+   One canvas covers the whole site, so "different on each surface" has to be a parameter change
+   rather than a second scene. Density is the honest lever: it is free to change per frame because an
+   InstancedMesh draws however many instances you ask it to, and it is the quantity the frame cost is
+   proportional to. Depth follows it, because a thin field on a busy page reads as flat.
+
+   `page` is the fallback for every route without a declared surface — project detail, playground, 404
+   — and it exists so the stage never has to invent a profile for a region it was not told about. */
+export const THREE_3D_SURFACES = Object.freeze([
+  Object.freeze({
+    id: "hero",
+    label: "Landing",
+    note: "The full field: this region has no copy beside the canvas for particles to obscure.",
+    defaultPresence: 100,
+  }),
+  Object.freeze({
+    id: "projects",
+    label: "Projects",
+    note: "Thinned so a wall of cards stays the subject and the stage stays the background.",
+    defaultPresence: 70,
+  }),
+  Object.freeze({
+    id: "certificates",
+    label: "Certificates",
+    note: "A little more depth for the artwork tiles, at a density that leaves the credentials readable.",
+    defaultPresence: 85,
+  }),
+  Object.freeze({
+    id: "page",
+    label: "Every other page",
+    note: "The default for any route that does not declare a surface of its own.",
+    defaultPresence: 55,
+  }),
+]);
+
+export const DEFAULT_THREE_3D_SURFACE_PRESENCE = Object.freeze(
+  THREE_3D_SURFACES.reduce((map, surface) => ({ ...map, [surface.id]: surface.defaultPresence }), {}),
+);
+
+/* The three stops of the stage's colour ramp. Empty means "take the theme's", which is what shipped
+   before this control existed, so an untouched store still renders the palette the Look studio picks. */
+export const THREE_3D_COLOR_KEYS = Object.freeze(["primary", "secondary", "accent"]);
+export const DEFAULT_THREE_3D_COLORS = Object.freeze({ primary: "", secondary: "", accent: "" });
+
+/* The frame-rate governor.
+
+   These are engine constants, not preferences: the panel turns the governor on or off, and the engine
+   decides with them. The target is derived from the display rather than assumed — `stage3d` measures
+   the shortest frame interval it has seen, which on a vsync-locked page is the refresh period, and
+   asks for a frame budget of `targetMultiplier` times that. So a 60Hz screen starts degrading around
+   33ms of work per frame and a 120Hz screen around 16ms, which is the part of "adapt to the refresh
+   rate" a browser can actually observe: it cannot change the panel's rate, only whether it keeps up.
+
+   `floor` is how far density may be cut before the stage stays there; `step` is multiplicative so one
+   correction on a 1800-instance field removes the same proportion of work as on a 200-instance one.
+   `settleMs` is the hysteresis: without it, one slow frame while the catalogue paints would start a
+   slide, because recovering density makes the next frame slow again. */
+export const THREE_3D_GOVERNOR = Object.freeze({
+  targetMultiplier: 2,
+  minTargetFrameMs: 16.7,
+  maxTargetFrameMs: 33,
+  step: 0.12,
+  floor: 0.35,
+  ceiling: 1,
+  samplesPerWindow: 45,
+  settleMs: 800,
 });
 
 export const DEFAULT_THREE_3D = Object.freeze({
@@ -116,10 +190,13 @@ export const DEFAULT_THREE_3D = Object.freeze({
   pointer: true,
   scrim: true,
   reveal: true,
+  adaptive: true,
+  colors: DEFAULT_THREE_3D_COLORS,
+  surfaces: DEFAULT_THREE_3D_SURFACE_PRESENCE,
 });
 
 const NUMBER_KEYS = ["count", "speed", "size", "depth", "brightness", "pixelRatioCap"];
-const BOOLEAN_KEYS = ["pointer", "scrim", "reveal"];
+const BOOLEAN_KEYS = ["pointer", "scrim", "reveal", "adaptive"];
 const STYLE_IDS = new Set(THREE_3D_STYLE_OPTIONS.map(({ id }) => id));
 
 function clampStep(value, { min, max, step }, fallback) {
@@ -134,6 +211,24 @@ function clampStep(value, { min, max, step }, fallback) {
   return Math.min(max, Math.max(min, Math.round(snapped * 1e6) / 1e6));
 }
 
+function normalizeColors(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const colors = { ...DEFAULT_THREE_3D_COLORS };
+  THREE_3D_COLOR_KEYS.forEach((key) => {
+    colors[key] = normalizeHexColor(source[key]);
+  });
+  return colors;
+}
+
+function normalizeSurfaces(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const surfaces = { ...DEFAULT_THREE_3D_SURFACE_PRESENCE };
+  THREE_3D_SURFACES.forEach(({ id, defaultPresence }) => {
+    surfaces[id] = clampStep(source[id], THREE_3D_LIMITS.surfacePresence, defaultPresence);
+  });
+  return surfaces;
+}
+
 export function normalizeThree3d(value = {}) {
   const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
   const normalized = { ...DEFAULT_THREE_3D };
@@ -144,6 +239,11 @@ export function normalizeThree3d(value = {}) {
     if (typeof source[key] === "boolean") normalized[key] = source[key];
   });
   normalized.style = STYLE_IDS.has(source.style) ? source.style : DEFAULT_THREE_3D.style;
+  // Nested groups are rebuilt rather than merged, so a stored object cannot smuggle an unknown key
+  // through to the engine, and an absent one (every store written before this existed) lands on the
+  // default instead of `undefined`.
+  normalized.colors = normalizeColors(source.colors);
+  normalized.surfaces = normalizeSurfaces(source.surfaces);
   // The cap is a ceiling on the device ratio, not a target: the engine still takes the minimum of
   // this and `devicePixelRatio`. Values above MAX_PIXEL_RATIO are unreachable through the slider,
   // but a hand-edited store must not be able to ask for a 3x buffer.
@@ -156,7 +256,9 @@ export function sameThree3d(first, second) {
   const right = normalizeThree3d(second);
   return NUMBER_KEYS.every((key) => left[key] === right[key])
     && BOOLEAN_KEYS.every((key) => left[key] === right[key])
-    && left.style === right.style;
+    && left.style === right.style
+    && THREE_3D_COLOR_KEYS.every((key) => left.colors[key] === right.colors[key])
+    && THREE_3D_SURFACES.every(({ id }) => left.surfaces[id] === right.surfaces[id]);
 }
 
 export function isThree3dActive(value = {}) {
@@ -185,6 +287,100 @@ export function resolvePixelRatio(devicePixelRatio, cap = MAX_PIXEL_RATIO) {
 export function resolveInstanceCount(value = {}) {
   const { count } = normalizeThree3d(value);
   return Math.min(count, MAX_INSTANCES);
+}
+
+/* How loud the stage is on one surface.
+
+   Density is the presence itself — the engine draws `presence/100` of the instance budget, and the
+   cost of a frame is proportional to the instance count, so this dial is a direct request for that
+   fraction of the work. Depth follows it on a compressive curve rather than linearly: a field thinned
+   to 40% still needs most of its parallax or it reads as a flat pattern behind the cards, and the
+   `depthFloor` is what keeps that from happening at the low end. */
+const DEPTH_FLOOR = 0.55;
+
+export function getThree3dSurfaceFactor(value = {}, surfaceId) {
+  const { surfaces } = normalizeThree3d(value);
+  const surface = THREE_3D_SURFACES.some(({ id }) => id === surfaceId) ? surfaceId : "page";
+  const presence = surfaces[surface];
+  const density = presence / 100;
+  return { surface, presence, density, depth: DEPTH_FLOOR + (1 - DEPTH_FLOOR) * density };
+}
+
+/* The shipped ink of the page, per mode, as the stylesheet declares it in styles/theme.css. The guard
+   below compares against these rather than against the theme palette, because what has to stay
+   readable is the copy that sits on top of the canvas — and that copy is a token, not a preference. */
+export const STAGE_PAGE_INK = Object.freeze({
+  light: Object.freeze({ background: "#f1f5fb", text: "#172033" }),
+  dark: Object.freeze({ background: "#070b14", text: "#f8fafc" }),
+});
+
+/* The fraction of a pixel the instances can paint over the page at full alpha, per mode.
+
+   Normal blending in light mode draws at 0.82-0.9; dark mode switches to additive blending at 0.45
+   per instance, which accumulates where the field is dense — so the honest worst case is the shipped
+   material alpha, not the average. Multiplied by the brightness dial, which is the canvas element's
+   own opacity, this is how much of the background the ramp is actually replacing. */
+const STAGE_WASH_ALPHA = Object.freeze({ light: 0.9, dark: 0.45 });
+const STAGE_MIN_CONTRAST = 4.5;
+
+/* The user's three colours, guarded against the page they will sit behind.
+
+   Two properties are worth stating because they are the reason this function exists:
+
+   - Only colours the visitor actually picked are corrected. The theme palette is curated and has been
+     checked as a whole, so an untouched store renders exactly what shipped — the guard can never make
+     a difference to someone who did not ask for one.
+   - The stricter the brightness dial, the stricter the guard: the same hue that is a whisper at 20%
+     canvas opacity is a wash at 100%, and readability has to be judged at the setting it will be seen
+     under rather than at the default.
+
+   `adjusted` names which stops were pulled back, so the panel can say so instead of silently
+   overriding a colour the visitor chose. */
+export function resolveThree3dPalette(value = {}, themePalette = {}) {
+  const settings = normalizeThree3d(value);
+  const mode = themePalette.mode === "dark" ? "dark" : "light";
+  const ink = STAGE_PAGE_INK[mode];
+  const coverage = (settings.brightness / 100) * STAGE_WASH_ALPHA[mode];
+  const adjusted = [];
+  const palette = { mode, primary: "", secondary: "", accent: "" };
+  THREE_3D_COLOR_KEYS.forEach((key) => {
+    const chosen = settings.colors[key];
+    if (!chosen) {
+      palette[key] = themePalette[key] || "";
+      return;
+    }
+    const legible = towardLegible({
+      color: chosen,
+      background: ink.background,
+      text: ink.text,
+      minimum: STAGE_MIN_CONTRAST,
+      coverage,
+    });
+    palette[key] = legible.color;
+    if (legible.adjusted) adjusted.push(key);
+  });
+  return { ...palette, coverage, adjusted };
+}
+
+/* What the worst user colour would do to the copy, reported to one decimal. The panel uses this to
+   show the consequence of a choice before it is applied, and it is the same arithmetic the guard
+   enforces, so the number and the behaviour cannot drift apart. */
+export function describeThree3dLegibility(value = {}, themePalette = {}) {
+  const settings = normalizeThree3d(value);
+  const mode = themePalette.mode === "dark" ? "dark" : "light";
+  const ink = STAGE_PAGE_INK[mode];
+  const coverage = (settings.brightness / 100) * STAGE_WASH_ALPHA[mode];
+  const picked = THREE_3D_COLOR_KEYS.filter((key) => settings.colors[key]);
+  if (!picked.length) return null;
+  const resolved = resolveThree3dPalette(settings, { ...themePalette, mode });
+  const ratios = picked
+    .map((key) => contrastRatio(blendOver(resolved[key], ink.background, coverage), ink.text))
+    .filter((ratio) => Number.isFinite(ratio));
+  return {
+    coverage,
+    worstRatio: ratios.length ? Math.min(...ratios) : null,
+    adjusted: resolved.adjusted,
+  };
 }
 
 export const THREE_3D_ATTRIBUTE_NAMES = Object.freeze([
@@ -234,5 +430,8 @@ export function describeThree3d(value = {}, devicePixelRatio = 1) {
   ];
   if (scene.kind === "shelf") summary.push("fixed layout");
   if (scene.kind === "particles" && settings.pointer) summary.push("pointer-reactive");
+  if (settings.adaptive && scene.kind !== "shelf") summary.push("frame-adaptive");
+  const pickedColors = THREE_3D_COLOR_KEYS.filter((key) => settings.colors[key]).length;
+  if (pickedColors) summary.push(`${pickedColors} custom colour${pickedColors === 1 ? "" : "s"}`);
   return `${getThree3dStyle(settings.style).label} · ${summary.join(" · ")}`;
 }

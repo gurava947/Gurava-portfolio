@@ -1,23 +1,31 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_THREE_3D,
+  DEFAULT_THREE_3D_SURFACE_PRESENCE,
   MAX_INSTANCES,
   MAX_PIXEL_RATIO,
+  STAGE_PAGE_INK,
+  THREE_3D_GOVERNOR,
   THREE_3D_LIMITS,
   THREE_3D_STYLES,
   THREE_3D_STYLE_OPTIONS,
+  THREE_3D_SURFACES,
   THREE_3D_VARIABLE_NAMES,
   describeThree3d,
+  describeThree3dLegibility,
   getThree3dAttributes,
   getThree3dScene,
   getThree3dStyle,
+  getThree3dSurfaceFactor,
   getThree3dVariables,
   isThree3dActive,
   normalizeThree3d,
   resolveInstanceCount,
   resolvePixelRatio,
+  resolveThree3dPalette,
   sameThree3d,
 } from "./three3d";
+import { blendOver, contrastRatio } from "../utils/stageColor";
 
 describe("the 3D style list", () => {
   it("offers ten modern styles and keeps the shipped flat look as the eleventh choice", () => {
@@ -176,10 +184,155 @@ describe("describeThree3d", () => {
 
   it("reports the real instance count and capped ratio for a chosen style", () => {
     expect(describeThree3d({ style: "swarm", count: 720 }, 3)).toBe(
-      "Interactive swarm · 720 instances · 2x max · 100% speed · pointer-reactive",
+      "Interactive swarm · 720 instances · 2x max · 100% speed · pointer-reactive · frame-adaptive",
     );
+    // The shelf is a fixed layout: holding back frames there costs the cards, not the motion, so the
+    // governor does not claim to be working on it.
     expect(describeThree3d({ style: "shelf", count: 160 }, 1)).toBe(
       "Project shelf · 160 instances · 1x max · 100% speed · fixed layout",
     );
+    expect(describeThree3d({ style: "swarm", adaptive: false }, 1)).toContain("pointer-reactive");
+    expect(describeThree3d({ style: "swarm", adaptive: false }, 1)).not.toContain("frame-adaptive");
+    expect(describeThree3d({ style: "swarm", colors: { primary: "#ff0000" } }, 1)).toContain("1 custom colour");
+  });
+});
+
+describe("the surfaces of one canvas", () => {
+  it("names a surface for every part of the site and a fallback for the rest", () => {
+    expect(THREE_3D_SURFACES.map(({ id }) => id)).toEqual(["hero", "projects", "certificates", "page"]);
+    expect(THREE_3D_SURFACES.at(-1).id).toBe("page");
+  });
+
+  it("keeps a wall of cards quieter than the landing page", () => {
+    expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.hero).toBe(100);
+    expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.projects).toBeLessThan(DEFAULT_THREE_3D_SURFACE_PRESENCE.hero);
+    expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.page).toBeLessThan(DEFAULT_THREE_3D_SURFACE_PRESENCE.projects);
+  });
+
+  it("turns presence into the fraction of the field the engine draws", () => {
+    expect(getThree3dSurfaceFactor({ surfaces: { projects: 40 } }, "projects")).toMatchObject({
+      surface: "projects",
+      presence: 40,
+      density: 0.4,
+    });
+  });
+
+  it("compresses depth so a thin field still reads as three-dimensional", () => {
+    const full = getThree3dSurfaceFactor({ surfaces: { hero: 100 } }, "hero");
+    const thin = getThree3dSurfaceFactor({ surfaces: { hero: 0 } }, "hero");
+    expect(full.depth).toBe(1);
+    // Not zero: at 0% presence the field is invisible anyway, and at any real presence the parallax
+    // survives as a proportion of the density rather than vanishing with it.
+    expect(thin.depth).toBeGreaterThan(0.5);
+    expect(thin.depth).toBeLessThan(full.depth);
+  });
+
+  it("answers an unknown surface with the fallback instead of the landing profile", () => {
+    expect(getThree3dSurfaceFactor({}, "playground").surface).toBe("page");
+    expect(getThree3dSurfaceFactor({}, undefined).surface).toBe("page");
+  });
+
+  it("clamps a hand-edited presence back onto the dial", () => {
+    expect(normalizeThree3d({ surfaces: { hero: 900, projects: -20 } }).surfaces).toEqual({
+      ...DEFAULT_THREE_3D_SURFACE_PRESENCE,
+      hero: 150,
+      projects: 0,
+    });
+  });
+});
+
+describe("the guarded stage palette", () => {
+  const dark = { primary: "#8b5cf6", secondary: "#22d3ee", accent: "#f472b6", mode: "dark" };
+  const light = { primary: "#6d5ce8", secondary: "#0891b2", accent: "#db2777", mode: "light" };
+
+  it("hands back the theme untouched while no stop is picked", () => {
+    const resolved = resolveThree3dPalette(DEFAULT_THREE_3D, dark);
+    expect([resolved.primary, resolved.secondary, resolved.accent]).toEqual(["#8b5cf6", "#22d3ee", "#f472b6"]);
+    expect(resolved.adjusted).toEqual([]);
+    expect(resolved.mode).toBe("dark");
+  });
+
+  it("judges a colour by the wash it produces at the current brightness", () => {
+    const atDefault = resolveThree3dPalette(DEFAULT_THREE_3D, dark).coverage;
+    const atFull = resolveThree3dPalette({ ...DEFAULT_THREE_3D, brightness: 100 }, dark).coverage;
+    expect(atFull).toBeGreaterThan(atDefault);
+    // Light mode blends normally at a higher material alpha than dark mode's additive pass.
+    expect(resolveThree3dPalette(DEFAULT_THREE_3D, light).coverage).toBeGreaterThan(atDefault);
+  });
+
+  it("pulls an unreadable stop toward the page instead of refusing it", () => {
+    // A black start colour in light mode darkens the strip the ramp paints over to under 3:1 against
+    // the body copy; the guard has to move it, and it has to say that it did.
+    const resolved = resolveThree3dPalette(
+      { ...DEFAULT_THREE_3D, colors: { ...DEFAULT_THREE_3D.colors, primary: "#000000" } },
+      light,
+    );
+    expect(resolved.adjusted).toEqual(["primary"]);
+    expect(resolved.primary).not.toBe("#000000");
+    const coverage = resolveThree3dPalette(DEFAULT_THREE_3D, light).coverage;
+    expect(contrastRatio(blendOver(resolved.primary, STAGE_PAGE_INK.light.background, coverage), STAGE_PAGE_INK.light.text))
+      .toBeGreaterThanOrEqual(4.5);
+    // The stops nobody touched are never corrected, so an unchanged store paints what shipped.
+    expect(resolved.secondary).toBe("#0891b2");
+    expect(resolved.accent).toBe("#db2777");
+  });
+
+  it("keeps a colour that is already legible exactly as picked", () => {
+    const resolved = resolveThree3dPalette(
+      { ...DEFAULT_THREE_3D, colors: { ...DEFAULT_THREE_3D.colors, accent: "#1a1a2e" } },
+      dark,
+    );
+    expect(resolved.accent).toBe("#1a1a2e");
+    expect(resolved.adjusted).toEqual([]);
+  });
+
+  it("reads a malformed pick as following the theme", () => {
+    const resolved = resolveThree3dPalette(
+      { ...DEFAULT_THREE_3D, colors: { ...DEFAULT_THREE_3D.colors, primary: "not a colour" } },
+      dark,
+    );
+    expect(resolved.primary).toBe("#8b5cf6");
+    expect(resolved.adjusted).toEqual([]);
+  });
+
+  it("reports legibility only for the stops the visitor picked", () => {
+    expect(describeThree3dLegibility(DEFAULT_THREE_3D, dark)).toBeNull();
+    const report = describeThree3dLegibility(
+      { ...DEFAULT_THREE_3D, colors: { ...DEFAULT_THREE_3D.colors, primary: "#000000" } },
+      light,
+    );
+    expect(report.adjusted).toEqual(["primary"]);
+    expect(report.worstRatio).toBeGreaterThanOrEqual(4.5);
+    expect(report.coverage).toBeCloseTo(resolveThree3dPalette(DEFAULT_THREE_3D, light).coverage);
+  });
+
+  it("treats a guarded pick and its corrected colour as different settings", () => {
+    const picked = { ...DEFAULT_THREE_3D, colors: { ...DEFAULT_THREE_3D.colors, primary: "#000000" } };
+    expect(sameThree3d(picked, DEFAULT_THREE_3D)).toBe(false);
+    expect(sameThree3d(picked, { ...picked })).toBe(true);
+  });
+});
+
+describe("the frame-rate governor", () => {
+  it("asks for a frame budget derived from the display, not assumed", () => {
+    // Two frames at the measured refresh period, so a 60Hz screen starts degrading at ~33ms and a
+    // 120Hz screen at ~17ms, and neither is allowed to ask for less than a frame's worth of slack.
+    expect(THREE_3D_GOVERNOR.targetMultiplier).toBe(2);
+    expect(THREE_3D_GOVERNOR.minTargetFrameMs).toBeCloseTo(1000 / 60, 1);
+    expect(THREE_3D_GOVERNOR.maxTargetFrameMs).toBe(33);
+  });
+
+  it("leaves the stage somewhere it can still read as a stage", () => {
+    expect(THREE_3D_GOVERNOR.floor).toBeGreaterThan(0.3);
+    expect(THREE_3D_GOVERNOR.floor).toBeLessThan(1);
+    expect(THREE_3D_GOVERNOR.ceiling).toBe(1);
+    expect(THREE_3D_GOVERNOR.step).toBeGreaterThan(0);
+    expect(THREE_3D_GOVERNOR.settleMs).toBeGreaterThan(0);
+  });
+
+  it("is on by default and off is a setting, not a missing value", () => {
+    expect(DEFAULT_THREE_3D.adaptive).toBe(true);
+    expect(normalizeThree3d({ adaptive: false }).adaptive).toBe(false);
+    expect(normalizeThree3d({ adaptive: "yes" }).adaptive).toBe(true);
   });
 });

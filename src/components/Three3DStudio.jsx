@@ -1,15 +1,19 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Three3DStage from "./Three3DStage";
 import {
   DEFAULT_THREE_3D,
   MAX_PIXEL_RATIO,
   THREE_3D_LIMITS,
   THREE_3D_STYLE_OPTIONS,
+  THREE_3D_SURFACES,
   describeThree3d,
+  describeThree3dLegibility,
   normalizeThree3d,
   resolvePixelRatio,
+  resolveThree3dPalette,
   sameThree3d,
 } from "../config/three3d";
+import { hexToRgb, rgbToHex } from "../utils/stageColor";
 import "../styles/three-3d-studio.css";
 
 const RANGE_CONTROLS = [
@@ -25,7 +29,73 @@ const SWITCHES = [
   ["pointer", "Pointer field"],
   ["scrim", "Readability scrim"],
   ["reveal", "Reveal on load"],
+  ["adaptive", "Frame-rate governor"],
 ];
+
+/* The ramp the engine falls back to when a stop is missing, mirrored here so the swatch shows the
+   colour the stage will actually paint rather than an empty box. */
+const RAMP_FALLBACK = { primary: "#8b5cf6", secondary: "#22d3ee", accent: "#f472b6" };
+
+const COLOR_CHANNELS = [
+  ["primary", "Start colour"],
+  ["secondary", "Middle colour"],
+  ["accent", "End colour"],
+];
+
+function StageColorRow({ channel, label, picked, effective, onPick, onFollowTheme, pulledBack }) {
+  const shown = picked || effective || RAMP_FALLBACK[channel] || "#888888";
+  const rgb = hexToRgb(shown) || { r: 136, g: 136, b: 136 };
+  const setChannel = (key) => (event) => {
+    const value = Number(event.target.value);
+    if (!Number.isFinite(value)) return;
+    onPick(rgbToHex({ ...rgb, [key]: value }));
+  };
+
+  return (
+    <div className="three-3d-color-row" data-follow-theme={!picked}>
+      <div className="three-3d-color-head">
+        <label htmlFor={`three-3d-color-${channel}`}>{label}</label>
+        <output htmlFor={`three-3d-color-${channel}`}>{shown.toUpperCase()}</output>
+      </div>
+      <div className="three-3d-color-controls">
+        <input
+          id={`three-3d-color-${channel}`}
+          className="three-3d-color-swatch"
+          type="color"
+          value={shown}
+          onChange={(event) => onPick(event.target.value)}
+          aria-label={`${label} picker`}
+        />
+        {["r", "g", "b"].map((key) => (
+          <input
+            key={key}
+            className="three-3d-color-channel"
+            type="number"
+            min={0}
+            max={255}
+            step={1}
+            value={rgb[key]}
+            onChange={setChannel(key)}
+            aria-label={`${label} ${key.toUpperCase()} (0-255)`}
+          />
+        ))}
+        <button
+          type="button"
+          className="three-3d-color-follow"
+          aria-pressed={!picked}
+          onClick={onFollowTheme}
+        >
+          {picked ? "Follow theme" : "Following theme"}
+        </button>
+      </div>
+      {pulledBack && (
+        <p className="three-3d-color-guard">
+          Pulled back from {picked.toUpperCase()} so the page copy stays readable over it.
+        </p>
+      )}
+    </div>
+  );
+}
 
 function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotion = false }) {
   const applied = normalizeThree3d(settings);
@@ -37,6 +107,10 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
   const dirty = !sameThree3d(draft, applied);
   const atDefault = sameThree3d(draft, DEFAULT_THREE_3D) && sameThree3d(applied, DEFAULT_THREE_3D);
   const activeStyle = THREE_3D_STYLE_OPTIONS.find(({ id }) => id === draft.style) || THREE_3D_STYLE_OPTIONS[0];
+  /* The preview paints the guarded palette, not the raw picks: what the panel shows is what the stage
+     will actually draw, including any colour the readability guard had to pull back. */
+  const previewPalette = useMemo(() => resolveThree3dPalette(draft, palette), [draft, palette]);
+  const legibility = useMemo(() => describeThree3dLegibility(draft, palette), [draft, palette]);
 
   useEffect(() => {
     if (sameThree3d(appliedRef.current, applied)) return;
@@ -79,12 +153,17 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
   };
 
   // Returning the same object when nothing moved keeps this callback from feeding its own re-render:
-  // the stage reports after every update, and an unconditional setState would loop.
+  // the stage reports after every update, and an unconditional setState would loop. The governor's own
+  // numbers are part of the comparison because they are the reason the panel is being told at all.
   const readStats = (next) => setStats((current) => (
     current
     && current.drawCalls === next.drawCalls
     && current.instances === next.instances
     && current.pixelRatio === next.pixelRatio
+    && current.drawn === next.drawn
+    && current.governorScale === next.governorScale
+    && current.meanFrameMs === next.meanFrameMs
+    && current.surface === next.surface
       ? current
       : next
   ));
@@ -147,6 +226,63 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
         })}
       </div>
 
+      <div className="three-3d-surfaces" role="group" aria-label="Presence by surface">
+        <p className="three-3d-subhead">
+          One canvas sits behind the whole site, so these dials are how it changes between the parts of
+          it: they set how many of the instances it draws and how deep the field sits on that surface,
+          and it moves between them by easing rather than by rebuilding, which is why crossing from the
+          landing page into the catalogue costs nothing.
+        </p>
+        {THREE_3D_SURFACES.map(({ id, label, note }) => {
+          const { min, max, step } = THREE_3D_LIMITS.surfacePresence;
+          return (
+            <div className="card-ui-range three-3d-surface" key={id}>
+              <div>
+                <label htmlFor={`three-3d-surface-${id}`}>{label}</label>
+                <output htmlFor={`three-3d-surface-${id}`}>{draft.surfaces[id]}%</output>
+              </div>
+              <input
+                id={`three-3d-surface-${id}`}
+                type="range"
+                min={min}
+                max={max}
+                step={step}
+                value={draft.surfaces[id]}
+                onChange={(event) => updateDraft({ surfaces: { ...draft.surfaces, [id]: Number(event.target.value) } })}
+              />
+              <small className="three-3d-surface-note">{note}</small>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="three-3d-colors" role="group" aria-label="Stage colours">
+        <p className="three-3d-subhead">
+          The three stops of the colour ramp, as hex or as RGB. Leaving a stop on <em>Following theme</em>
+          keeps the palette the Look studio picks — that is the shipped design, and nothing here changes
+          it until you set a colour of your own.
+        </p>
+        {COLOR_CHANNELS.map(([channel, label]) => (
+          <StageColorRow
+            key={channel}
+            channel={channel}
+            label={label}
+            picked={draft.colors[channel]}
+            effective={previewPalette[channel]}
+            pulledBack={previewPalette.adjusted.includes(channel)}
+            onPick={(value) => updateDraft({ colors: { ...draft.colors, [channel]: value } }, `${label} previewed`)}
+            onFollowTheme={() => updateDraft({ colors: { ...draft.colors, [channel]: "" } }, `${label} follows the theme`)}
+          />
+        ))}
+        {legibility?.worstRatio && (
+          <p className="three-3d-legibility">
+            At {draft.brightness}% brightness the ramp can cover about {Math.round(legibility.coverage * 100)}%
+            of the page; held to that, the copy keeps a {legibility.worstRatio.toFixed(1)}:1 contrast ratio.
+            {legibility.adjusted.length ? ` ${legibility.adjusted.length} colour${legibility.adjusted.length === 1 ? " was" : "s were"} pulled back to hold it.` : ""}
+          </p>
+        )}
+      </div>
+
       <div className="three-3d-switches">
         {SWITCHES.map(([key, label]) => (
           <label className="card-ui-toggle" key={key} htmlFor={`three-3d-toggle-${key}`}>
@@ -169,7 +305,8 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
         <Three3DStage
           settings={draft}
           projects={projects}
-          palette={palette}
+          palette={previewPalette}
+          surface="hero"
           reducedMotion={reducedMotion || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches}
           onStats={readStats}
           className="is-preview"
@@ -179,6 +316,13 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
             </p>
           )}
         />
+        <p className="three-3d-governor">
+          {stats
+            ? `${stats.drawn} of ${stats.instances} instances drawn · ${draft.surfaces.hero}% presence on this surface`
+              + `${stats.governorScale < 1 ? `, ${Math.round(stats.governorScale * 100)}% left by the governor` : ""}`
+              + `${stats.pixelRatioScale < 1 ? ` · device ratio held to ${Math.round(stats.pixelRatioScale * 100)}%` : ""}`
+            : "Counting the first frames…"}
+        </p>
         <p className="three-3d-preview-note">
           {activeStyle.id === "off"
             ? "The preview is empty because 3D is off — that is the shipped design."
