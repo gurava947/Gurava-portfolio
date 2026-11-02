@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { DEFAULT_SHELF_MOTION, getShelfMotionStyles, normalizeShelfMotion } from "../config/cardMotion";
 import { DEFAULT_SHELF_3D, getShelf3dAttributes, getShelf3dStyles, normalizeShelf3d } from "../config/shelf3d";
+import { normalizeFeatureRail } from "../config/featureRail";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/collection-shelf.css";
 
@@ -105,10 +106,16 @@ export default function CollectionShelf({
   label = "Collection",
   motion = DEFAULT_SHELF_MOTION,
   shelf3d = DEFAULT_SHELF_3D,
+  rail,
   preview = false,
 }) {
   const settings = normalizeShelfMotion(motion);
   const geometry = normalizeShelf3d(shelf3d);
+  const railSettings = useMemo(() => normalizeFeatureRail(rail), [rail]);
+  // A wrapped or gridded shelf lays every collection out at once, so there is nothing left to slide
+  // through. The gesture, the arrow keys and the paging chrome all follow that one decision, which is
+  // the same one the card rails make.
+  const scrollable = railSettings.layout === "carousel" && !railSettings.wrap;
   const [scrollState, setScrollState] = useState({ start: true, end: true, progress: 0, fraction: 1 });
   const trackRef = useRef(null);
   const frameRef = useRef(0);
@@ -250,7 +257,7 @@ export default function CollectionShelf({
   }, [preview, activeCollection, collections.length, centerCard]);
 
   const handleKeyDown = (event) => {
-    if (!SCROLL_KEYS.includes(event.key)) return;
+    if (!scrollable || !SCROLL_KEYS.includes(event.key)) return;
     const forwards = event.key === "ArrowRight";
     const backwards = event.key === "ArrowLeft";
     if (event.key === "Home") {
@@ -268,10 +275,44 @@ export default function CollectionShelf({
     stepShelf(forwards ? 1 : -1);
   };
 
+  // Drag with a mouse; a finger already scrolls, and stealing that gesture would break both the
+  // momentum and the tap target.
+  const drag = useRef(null);
+  const suppressClick = useRef(false);
+  const onPointerDown = (event) => {
+    if (!railSettings.drag || !scrollable || event.pointerType !== "mouse" || event.button !== 0) return;
+    const node = trackRef.current;
+    if (!node) return;
+    suppressClick.current = false;
+    drag.current = { x: event.clientX, left: node.scrollLeft, moved: false };
+  };
+  const onPointerMove = (event) => {
+    const state = drag.current;
+    const node = trackRef.current;
+    if (!state || !node) return;
+    const dx = event.clientX - state.x;
+    if (!state.moved && Math.abs(dx) < 6) return;
+    state.moved = true;
+    node.classList.add("is-dragging");
+    node.scrollLeft = state.left - dx;
+  };
+  // The click arrives after pointerup, so the gesture has to leave its verdict behind rather than
+  // being read off a ref that has already been cleared.
+  const endDrag = () => {
+    if (drag.current?.moved) suppressClick.current = true;
+    drag.current = null;
+    trackRef.current?.classList.remove("is-dragging");
+  };
+  const onClickCapture = (event) => {
+    if (!suppressClick.current) return;
+    suppressClick.current = false;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   const style = { ...getShelfMotionStyles(settings), ...getShelf3dStyles(geometry) };
   const shelf3dAttributes = getShelf3dAttributes(geometry);
   const stateClass = `${settings.preset !== "studio" ? " has-motion" : ""}${preview ? " is-preview" : ""}`;
-
   if (preview) {
     return (
       <div
@@ -321,6 +362,12 @@ export default function CollectionShelf({
             aria-describedby={hintId}
             tabIndex={0}
             onScroll={scheduleSync}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onPointerLeave={endDrag}
+            onClickCapture={onClickCapture}
             onKeyDown={handleKeyDown}
           >
             {collections.map((collection, index) => (

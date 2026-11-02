@@ -198,7 +198,7 @@ export function SelectField({ id, label, icon, value, options, onChange }) {
   );
 }
 
-export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {}, shelfMotion = DEFAULT_SHELF_MOTION, shelf3d = DEFAULT_SHELF_3D }) {
+export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate, copy, cardUI = {}, cardEffects = {}, shelfMotion = DEFAULT_SHELF_MOTION, shelf3d = DEFAULT_SHELF_3D, featureRail = {} }) {
   const [filters, setFilters] = useState(() => parseFilters(routeSearch));
   const deferredQuery = useDeferredValue(filters.query);
   const gridRef = useRef(null);
@@ -279,6 +279,7 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
             label={copy.collectionLabel}
             motion={shelfMotion}
             shelf3d={shelf3d}
+            rail={featureRail}
           />
         </div>
       </section>
@@ -355,6 +356,7 @@ export default function ProjectsCatalog({ catalog, routeSearch = "", onNavigate,
                   layout={cardLayout}
                   cardUI={cardUI}
                   effects={cardEffects}
+                  rail={featureRail}
                   onNavigate={onNavigate}
                   resetKey={`${filterSignature}|${pagination.page}`}
                   className="lab-catalog-grid"

@@ -141,10 +141,15 @@
 }
 
 .collection-shelf-track {
-  --shelf-gap: var(--shelf-3d-gap, clamp(16px, 1.8vw, 26px));
+  /* The card studio's gap and card width reach the shelf through the root, and they slot in *behind*
+   * the shelf's own 3D numbers: `--shelf-3d-*` is written on the track itself the moment a size is
+   * picked in 3D Settings, and an inline value outranks every fallback below it. Nothing picked
+   * anywhere leaves the shipped `--shelf-window-width` in charge. */
+  --shelf-gap: var(--shelf-3d-gap, var(--fr-gap, clamp(16px, 1.8vw, 26px)));
+  --shelf-window-width: 720px;
   /* One window at a time, the way the phone already does it: the card takes the track up to a
    * readable measure instead of the row dividing itself into ever narrower tiles. */
-  --shelf-card-width: var(--shelf-3d-card-width, min(100%, 720px));
+  --shelf-card-width: var(--shelf-3d-card-width, min(100%, var(--fr-card-width, var(--shelf-window-width))));
   /* A 3D grid shares the row between the chosen columns; one column leaves the measure above
    * untouched, which is what keeps the shipped shelf identical. */
   --shelf-tile-width: min(
@@ -153,7 +158,7 @@
   );
   display: flex;
   gap: var(--shelf-gap);
-  padding: 24px 18px 40px;
+  padding: calc(24px + var(--fr-padding, 0px)) calc(18px + var(--fr-padding, 0px)) calc(40px + var(--fr-padding, 0px));
   margin: -10px -4px -10px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -164,6 +169,53 @@
   overscroll-behavior-x: contain;
   scrollbar-color: color-mix(in srgb, var(--theme-text) 14%, transparent) transparent;
   scrollbar-width: thin;
+}
+
+/* A picked card height is a floor, never a lid — the same bargain the rails struck, because a card
+   that hides its own label panel is a broken setting rather than a shorter design. The artwork band
+   already floors itself at 112px, so the print keeps its room whatever the number says. */
+.collection-shelf {
+  --shelf-card-total-height: var(--shelf-3d-card-height, max(
+      calc(var(--shelf-glass-height) + var(--shelf-art-band)),
+      var(--fr-card-height, 0px)
+    ));
+}
+
+/* A wrapping shelf is not a sliding one. Grid and list lay every collection out at once, so the track
+ * stops being a viewport, the paging chrome has nothing to page through, and the gesture that only
+ * ever made sense on a scroller goes with it. The studio's preview keeps its own shape: it is there
+ * to show the 3D settings, not the rail ones. */
+html[data-fr-wrap="on"] .collection-shelf:not([data-preview="true"]) .collection-shelf-track {
+  display: grid;
+  cursor: auto;
+  overflow: visible;
+  scroll-snap-type: none;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--shelf-card-width), 100%), 1fr));
+  grid-auto-rows: minmax(var(--fr-card-height, 0px), auto);
+}
+
+html[data-fr-layout="list"] .collection-shelf:not([data-preview="true"]) .collection-shelf-track {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+html[data-fr-drag="on"] .collection-shelf:not([data-preview="true"]) .collection-shelf-track {
+  cursor: grab;
+}
+
+.collection-shelf-track.is-dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+html[data-fr-arrows="off"] .collection-shelf-buttons,
+html[data-fr-arrows="off"] .collection-shelf-fade {
+  display: none;
+}
+
+html[data-fr-indicators="off"] .collection-shelf-progress {
+  display: none;
 }
 
 .collection-shelf-track:focus-visible {
@@ -1039,7 +1091,7 @@
    both sides and the card keeps its proportions instead of turning into a banner. */
 @media (max-width: 1199.98px) {
   .collection-shelf-track {
-    --shelf-card-width: var(--shelf-3d-card-width, min(100%, 620px));
+    --shelf-window-width: 620px;
   }
 
   .collection-shelf {
@@ -1054,7 +1106,7 @@
 @media (min-width: 1600px) {
   .collection-shelf-track {
     --shelf-per-view: min(4, var(--shelf-items, 4));
-    --shelf-card-width: var(--shelf-3d-card-width, calc((100% - (var(--shelf-per-view) - 1) * var(--shelf-gap)) / var(--shelf-per-view)));
+    --shelf-window-width: calc((100% - (var(--shelf-per-view) - 1) * var(--shelf-gap)) / var(--shelf-per-view));
   }
 
   .collection-shelf {
@@ -1095,12 +1147,12 @@
   }
 
   .collection-shelf-track {
-    --shelf-gap: var(--shelf-3d-gap, 14px);
-    --shelf-card-width: var(--shelf-3d-card-width, 100%);
+    --shelf-gap: var(--shelf-3d-gap, var(--fr-gap, 14px));
+    --shelf-window-width: 100%;
     /* A phone is one window wide, full stop: the grid columns fold back into a single lane. */
     --shelf-3d-columns: 1;
     --shelf-3d-rows: 1;
-    padding: 16px 12px 24px;
+    padding: calc(16px + var(--fr-padding, 0px)) calc(12px + var(--fr-padding, 0px)) calc(24px + var(--fr-padding, 0px));
     margin: -8px -4px -8px;
   }
 
@@ -1156,7 +1208,7 @@
 
 @media (max-width: 479.98px) {
   .collection-shelf-track {
-    --shelf-card-width: var(--shelf-3d-card-width, 100%);
+    --shelf-window-width: 100%;
   }
 
   .collection-shelf {

@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import ProjectCard from "./ProjectCard";
+import { normalizeFeatureRail } from "../config/featureRail";
 import { prefersReducedMotion } from "../utils/motion";
 
 const SLIDER_KEYS = ["ArrowLeft", "ArrowRight", "Home", "End"];
@@ -18,12 +19,14 @@ export default function ProjectSlider({
   layout = "rail",
   cardUI = {},
   effects = {},
+  rail,
   onNavigate,
   resetKey = "",
   className = "",
   label = "",
   hintLabel,
 }) {
+  const settings = useMemo(() => normalizeFeatureRail(rail), [rail]);
   const [scrollState, setScrollState] = useState({
     start: true, end: true, progress: 0, fraction: 1, page: 1, pages: 1, cols: 0, rows: 0,
   });
@@ -33,10 +36,15 @@ export default function ProjectSlider({
   const hintId = `${generatedId}-slider-hint`;
   const depth = layout === "depth";
   const regionLabel = label || "Project cards, horizontally scrollable";
+  // Grid, list and a wrapped band lay the whole set out at once, so there is nothing to drag and
+  // nothing to page. The stylesheet already opened the band; this is the gesture half of the same
+  // decision, and the two have to agree or a pointer would be scrolling an unscrollable grid.
+  const scrollable = settings.layout === "carousel" && !settings.wrap;
 
-  /* The grid itself decides how many cards fit: --rail-cols and --rail-rows come from theme.css,
-   * so the control below always pages by exactly what the visitor can see and can never change the
-   * count. One column step is the distance between the first card and the first card of the next
+  /* The grid itself decides how many cards fit: --rail-cols and --rail-rows come from the stylesheet,
+   * or from the count the visitor picked in the card studio, which the theme hook puts on the root
+   * where it outranks the per-device numbers. Either way the control below pages by exactly what is
+   * on screen. One column step is the distance between the first card and the first card of the next
    * column, which the stylesheet's gap is folded into for free. */
   const metrics = useCallback(() => {
     const node = trackRef.current;
@@ -119,7 +127,7 @@ export default function ProjectSlider({
 
   const scrollByPage = (direction) => {
     const node = trackRef.current;
-    if (!node) return;
+    if (!node || !scrollable) return;
     const current = metrics();
     if (!current) return;
     const max = node.scrollWidth - node.clientWidth;
@@ -128,7 +136,7 @@ export default function ProjectSlider({
   };
 
   const handleKeyDown = (event) => {
-    if (!SLIDER_KEYS.includes(event.key)) return;
+    if (!scrollable || !SLIDER_KEYS.includes(event.key)) return;
     const node = trackRef.current;
     if (!node) return;
     event.preventDefault();
@@ -143,6 +151,42 @@ export default function ProjectSlider({
       return;
     }
     node.scrollBy({ left: (event.key === "ArrowRight" ? 1 : -1) * (current?.column ?? 260), behavior });
+  };
+
+  // Drag with a mouse; a finger already scrolls, and stealing that gesture would break both the
+  // momentum and the tap target. The rail on the home page does the same, so the two strips answer
+  // to the same switch and the same feel.
+  const drag = useRef(null);
+  const suppressClick = useRef(false);
+  const onPointerDown = (event) => {
+    if (!settings.drag || !scrollable || event.pointerType !== "mouse" || event.button !== 0) return;
+    const node = trackRef.current;
+    if (!node) return;
+    suppressClick.current = false;
+    drag.current = { x: event.clientX, left: node.scrollLeft, moved: false };
+  };
+  const onPointerMove = (event) => {
+    const state = drag.current;
+    const node = trackRef.current;
+    if (!state || !node) return;
+    const dx = event.clientX - state.x;
+    if (!state.moved && Math.abs(dx) < 6) return;
+    state.moved = true;
+    node.classList.add("is-dragging");
+    node.scrollLeft = state.left - dx;
+  };
+  // The click arrives after pointerup, so the gesture has to leave its verdict behind rather than
+  // being read off a ref that has already been cleared.
+  const endDrag = () => {
+    if (drag.current?.moved) suppressClick.current = true;
+    drag.current = null;
+    trackRef.current?.classList.remove("is-dragging");
+  };
+  const onClickCapture = (event) => {
+    if (!suppressClick.current) return;
+    suppressClick.current = false;
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   const singlePage = scrollState.start && scrollState.end;
@@ -170,6 +214,12 @@ export default function ProjectSlider({
           aria-describedby={hintId}
           tabIndex={0}
           onScroll={scheduleMeasure}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={endDrag}
+          onClickCapture={onClickCapture}
           onKeyDown={handleKeyDown}
         >
           {projects.map((project) => (

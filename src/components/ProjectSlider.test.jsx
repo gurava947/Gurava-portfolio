@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import ProjectSlider from "./ProjectSlider";
 
@@ -39,6 +39,17 @@ function renderSlider({ cols = 2, rows = 3, columnStep = 300, clientWidth = 600,
 async function measured(track, label) {
   fireEvent.scroll(track);
   await waitFor(() => expect(screen.getByText(label)).toBeInTheDocument());
+}
+
+// jsdom has no PointerEvent, so the fallback Testing Library builds carries none of the properties a
+// gesture needs and React reads them straight off the native event. Same workaround the rail uses.
+function pointer(node, type, init) {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.assign(event, init);
+  act(() => {
+    node.dispatchEvent(event);
+  });
+  return event;
 }
 
 describe("ProjectSlider", () => {
@@ -124,6 +135,54 @@ describe("ProjectSlider", () => {
 
     rerender(<ProjectSlider projects={projects} resetKey="page-2" />);
 
+    expect(track.scrollLeft).toBe(0);
+  });
+
+  it("drags the band sideways with a mouse and lets go without opening a card", () => {
+    const { track } = renderSlider();
+
+    pointer(track, "pointerdown", { pointerType: "mouse", button: 0, clientX: 500, clientY: 200 });
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 496, clientY: 200 });
+    expect(track.scrollLeft).toBe(0);
+    expect(track).not.toHaveClass("is-dragging");
+
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 400, clientY: 200 });
+    expect(track.scrollLeft).toBe(100);
+    expect(track).toHaveClass("is-dragging");
+
+    pointer(track, "pointerup", { pointerType: "mouse", clientX: 400, clientY: 200 });
+    expect(track).not.toHaveClass("is-dragging");
+    // The click the browser fires after a release must not navigate out of the catalogue.
+    expect(fireEvent.click(track)).toBe(false);
+  });
+
+  it("leaves the gesture alone when the drag switch is off or a finger is doing it", () => {
+    const { track } = renderSlider({ rail: { drag: false } });
+
+    pointer(track, "pointerdown", { pointerType: "mouse", button: 0, clientX: 500, clientY: 200 });
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 400, clientY: 200 });
+    expect(track.scrollLeft).toBe(0);
+
+    pointer(track, "pointerdown", { pointerType: "touch", button: 0, clientX: 500, clientY: 200 });
+    pointer(track, "pointermove", { pointerType: "touch", clientX: 400, clientY: 200 });
+    expect(track.scrollLeft).toBe(0);
+    expect(track).not.toHaveClass("is-dragging");
+  });
+
+  it("stops paging and dragging once the layout wraps the whole set", () => {
+    const { track } = renderSlider({ rail: { layout: "grid" } });
+    const next = screen.getByRole("button", { name: "Go to the next page of project cards" });
+
+    fireEvent.keyDown(track, { key: "ArrowRight" });
+    fireEvent.keyDown(track, { key: "End" });
+    expect(track.scrollTo).not.toHaveBeenCalled();
+    expect(track.scrollBy).not.toHaveBeenCalled();
+
+    fireEvent.click(next);
+    expect(track.scrollTo).not.toHaveBeenCalled();
+
+    pointer(track, "pointerdown", { pointerType: "mouse", button: 0, clientX: 500, clientY: 200 });
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 400, clientY: 200 });
     expect(track.scrollLeft).toBe(0);
   });
 });

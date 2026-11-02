@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ProjectCard from "./ProjectCard";
 import useFeaturedAxis from "../hooks/useFeaturedAxis";
-import { normalizeFeatureRail } from "../config/featureRail";
+import { getFeatureRailLocalVariables, normalizeFeatureRail } from "../config/featureRail";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/feature-rail.css";
 
@@ -131,19 +131,7 @@ export default function FeatureRail({
     }
   };
 
-  const variables = {
-    "--rail-card-width": `${settings.cardWidth}px`,
-    "--rail-card-height": `${settings.cardHeight}px`,
-    "--rail-gap": `${settings.gap}px`,
-    "--rail-padding": `${settings.padding}px`,
-    // Cards-per-view shares the visible width; with none picked, the typed width is the card.
-    "--rail-basis": settings.cardsPerView > 0
-      ? `calc((100% - ${settings.gap * (settings.cardsPerView - 1)}px) / ${settings.cardsPerView})`
-      : `min(${settings.cardWidth}px, 100%)`,
-    "--rail-grid": settings.cardsPerView > 0
-      ? `repeat(${settings.cardsPerView}, minmax(0, 1fr))`
-      : `repeat(auto-fill, minmax(min(${settings.cardWidth}px, 100%), 1fr))`,
-  };
+  const variables = getFeatureRailLocalVariables(settings);
 
   const showChrome = scrollable && pages > 1;
 

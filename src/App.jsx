@@ -2177,7 +2177,7 @@ function App() {
       <div className={pageClass} id="top" data-three3d-surface="projects">
         <SiteNav {...navProps} activeNav="projects" />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
-          <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} shelf3d={settings.shelf3d} />
+          <ProjectsCatalog catalog={catalog} routeSearch={routeSearch} onNavigate={navigate} copy={site.catalog} cardUI={settings.cardUI} cardEffects={settings.effects} shelfMotion={settings.motion} shelf3d={settings.shelf3d} featureRail={settings.featureRail} />
         </Suspense>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>

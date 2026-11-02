@@ -12,7 +12,13 @@ import {
   normalizeThree3d,
 } from "../config/three3d";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
-import { DEFAULT_FEATURE_RAIL, normalizeFeatureRail } from "../config/featureRail";
+import {
+  DEFAULT_FEATURE_RAIL,
+  FEATURE_RAIL_ROOT_VARIABLES,
+  getFeatureRailRootAttributes,
+  getFeatureRailRootVariables,
+  normalizeFeatureRail,
+} from "../config/featureRail";
 import { DEFAULT_SITE_LOOK, getSiteLookVariables, normalizeSiteLook } from "../config/siteLook";
 import { DEFAULT_PLAYGROUND_THEME, normalizePlaygroundTheme } from "../config/themeSync";
 
@@ -300,6 +306,15 @@ export function useTheme() {
     const shelf3d = normalizeShelf3d(settings.shelf3d);
     const three3d = normalizeThree3d(settings.three3d);
     const featureRail = normalizeFeatureRail(settings.featureRail);
+    // The rail numbers are no longer only the home strip's business: the catalog's scrolling results
+    // and the 3D collection shelf read the same choices, so they go out on the root as `--fr-*`
+    // properties. A rail that is handed its settings as a prop still writes its own copy inline, and
+    // an inline value always wins, so the studio preview stays exact. Anything the visitor put back
+    // to its shipped value is removed rather than written as zero, which hands the strip its own
+    // default layout back instead of pinning it to a number nobody chose.
+    FEATURE_RAIL_ROOT_VARIABLES.forEach((name) => root.style.removeProperty(name));
+    Object.entries(getFeatureRailRootVariables(featureRail)).forEach(([name, value]) => root.style.setProperty(name, value));
+    Object.entries(getFeatureRailRootAttributes(featureRail)).forEach(([name, value]) => root.setAttribute(name, value));
     // Off leaves no attribute and no property on <html> at all, which is how the default stays the
     // shipped design rather than a look the stylesheet has to undo.
     THREE_3D_ATTRIBUTE_NAMES.forEach((name) => {

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import CollectionShelf from "./CollectionShelf";
 
@@ -49,6 +49,24 @@ function renderShelf(overrides = {}) {
     />,
   );
   return { onSelect, geometry: GEOMETRY, ...view };
+}
+
+/* jsdom has no PointerEvent, so the fallback Testing Library builds carries none of the properties a
+   pointer gesture needs and React reads them off the native event. Same workaround the rail uses. */
+function pointer(node, type, init) {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.assign(event, init);
+  act(() => {
+    node.dispatchEvent(event);
+  });
+  return event;
+}
+
+function scrollableTrack() {
+  const track = screen.getByRole("region", { name: "Project collections" });
+  Object.defineProperty(track, "scrollLeft", { configurable: true, writable: true, value: 0 });
+  track.scrollTo = vi.fn();
+  return track;
 }
 
 afterEach(() => {
@@ -207,5 +225,49 @@ describe("CollectionShelf", () => {
     expect(screen.queryByRole("button", { name: /projects/ })).not.toBeInTheDocument();
     expect(container.querySelectorAll(".collection-shelf-card")).toHaveLength(3);
     expect(container.querySelectorAll(".collection-shelf-stack i")).toHaveLength(6);
+  });
+
+  it("drags the shelf sideways with a mouse and lets go without picking a collection", () => {
+    const { onSelect } = renderShelf();
+    const track = scrollableTrack();
+
+    pointer(track, "pointerdown", { pointerType: "mouse", button: 0, clientX: 700, clientY: 300 });
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 696, clientY: 300 });
+    expect(track.scrollLeft).toBe(0);
+    expect(track).not.toHaveClass("is-dragging");
+
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 600, clientY: 300 });
+    expect(track.scrollLeft).toBe(100);
+    expect(track).toHaveClass("is-dragging");
+
+    pointer(track, "pointerup", { pointerType: "mouse", clientX: 600, clientY: 300 });
+    expect(track).not.toHaveClass("is-dragging");
+    // The click the browser fires after a release must not filter the catalogue.
+    fireEvent.click(screen.getByRole("button", { name: "Python, 71 projects" }));
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("leaves a finger alone, because the thumb already slides the shelf", () => {
+    const { container } = renderShelf();
+    const track = scrollableTrack();
+
+    pointer(track, "pointerdown", { pointerType: "touch", button: 0, clientX: 700, clientY: 300 });
+    pointer(track, "pointermove", { pointerType: "touch", clientX: 600, clientY: 300 });
+    expect(track.scrollLeft).toBe(0);
+    expect(container.querySelector(".collection-shelf-track")).not.toHaveClass("is-dragging");
+  });
+
+  it("stops sliding and stepping once the layout wraps the whole shelf", () => {
+    const { container } = renderShelf({ rail: { layout: "grid" } });
+    const track = scrollableTrack();
+    stubShelfGeometry(container, track);
+
+    fireEvent.keyDown(track, { key: "ArrowRight" });
+    fireEvent.keyDown(track, { key: "End" });
+    expect(track.scrollTo).not.toHaveBeenCalled();
+
+    pointer(track, "pointerdown", { pointerType: "mouse", button: 0, clientX: 700, clientY: 300 });
+    pointer(track, "pointermove", { pointerType: "mouse", clientX: 600, clientY: 300 });
+    expect(track.scrollLeft).toBe(0);
   });
 });

@@ -44,8 +44,12 @@ function FeatureRailStudio({ settings, onChange, projects = [], cardUI = {}, fx 
         <span>Applies immediately</span>
       </div>
       <p className="rail-studio-note">
-        The suggested-builds rail on the home page and the "More from" rail on a project page. Every
-        control changes the live rail as you move it — there is nothing to apply.
+        The suggested-builds rail on the home page, the &quot;More from&quot; rail on a project page,
+        the catalogue&apos;s scrolling band and the 3D collection shelf. Every control changes them as
+        you move it — there is nothing to apply. Two things keep their own mind: a size you set in
+        3D Settings wins here, because the shelf&apos;s posters are measured for depth, and the
+        sliding direction in Site look belongs to the two card rails — the catalogue band is a grid
+        whose paging is measured against its columns.
       </p>
 
       <div className="rail-studio-layouts" role="group" aria-label="Card layout">
