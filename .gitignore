@@ -36,3 +36,8 @@ __pycache__/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# A Python runtime the installer unpacked inside the repo folder, plus its logs. Neither is project
+# code, and the runtime alone is ~170 MB of interpreter and wheels.
+/Python/
+/python_install_*.log
