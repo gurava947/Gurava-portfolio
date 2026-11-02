@@ -10,7 +10,7 @@ const BIO_LINE_ROTATE_MS = 5200;
 
    The swap is opacity-only and the lines share a single grid cell, which reserves the height of the
    longest rule before the first frame — rotation that cannot move the layout below it. */
-export default memo(function ProfileBio({ bio, figures, reducedMotion = false, paused = false }) {
+export default memo(function ProfileBio({ bio, figures, reducedMotion = false }) {
   const lines = bio?.debugging?.lines || [];
   const skills = bio?.skills?.items || [];
   const [active, setActive] = useState(0);
@@ -18,12 +18,12 @@ export default memo(function ProfileBio({ bio, figures, reducedMotion = false, p
   const rotating = !reducedMotion && lines.length > 1;
 
   useEffect(() => {
-    if (!rotating || held || paused) return undefined;
+    if (!rotating || held) return undefined;
     const timer = window.setInterval(() => {
       setActive((line) => (line + 1) % lines.length);
     }, BIO_LINE_ROTATE_MS);
     return () => window.clearInterval(timer);
-  }, [rotating, held, paused, lines.length]);
+  }, [rotating, held, lines.length]);
 
   if (!bio) return null;
 
@@ -33,7 +33,7 @@ export default memo(function ProfileBio({ bio, figures, reducedMotion = false, p
       onMouseEnter={() => setHeld(true)}
       onMouseLeave={() => setHeld(false)}
     >
-      <p className="profile-bio-eyebrow">{bio.eyebrow}</p>
+      <h2 className="profile-bio-eyebrow">{bio.eyebrow}</h2>
       <p className="profile-bio-lead">{fillBioTokens(bio.lead, figures)}</p>
       {lines.length > 0 && (
         <div className="profile-bio-block">

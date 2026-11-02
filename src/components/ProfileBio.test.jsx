@@ -52,7 +52,7 @@ describe("ProfileBio", () => {
   it("opens with the lead, carrying the name the visitor saved", () => {
     renderBio();
 
-    expect(screen.getByText("The short version")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "The short version" })).toBeInTheDocument();
     expect(screen.getByText(/^Guravva writes the code twice/)).toBeInTheDocument();
   });
 
@@ -87,12 +87,6 @@ describe("ProfileBio", () => {
     fireEvent.mouseOut(container.querySelector(".profile-bio"));
     act(() => { vi.advanceTimersByTime(5200); });
     expect(litLine(container)).toBe(1);
-  });
-
-  it("asks for no clock at all when the profile tab is hidden", () => {
-    renderBio({ paused: true });
-
-    expect(vi.getTimerCount()).toBe(0);
   });
 
   it("shows the whole list, unwounded, to a reader who asked for reduced motion", () => {

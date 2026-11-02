@@ -1008,8 +1008,6 @@ function GuravvaProfilePopover({
   const studioCopy = copy.cardStudio || {};
   const tabCopy = copy.tabs || {};
   const profileInitial = (profile.name || copy.eyebrow || "G").trim().charAt(0).toUpperCase();
-  const bio = copy.bio || null;
-  const bioFigures = useMemo(() => profileBioFigures(profile, shelfCollections), [profile, shelfCollections]);
 
   useEffect(() => {
     if (editing) firstInputRef.current?.focus();
@@ -1180,7 +1178,6 @@ function GuravvaProfilePopover({
       <div className="profile-panel" id="guravva-profile-panel" role="tabpanel" aria-labelledby="guravva-profile-tab" hidden={tab !== "profile"}>
         {!editing ? (
           <>
-            <ProfileBio bio={bio} figures={bioFigures} reducedMotion={reducedMotion} paused={tab !== "profile"} />
             <dl className="profile-details">
               {profileRows.map(({ field, value, href }) => (
                 <div key={field}>
@@ -1649,6 +1646,10 @@ function PortfolioHome({
     accent: settings.accent,
     mode: themeMode,
   }), [settings.primary, settings.secondary, settings.accent, themeMode]);
+  /* The bio is the landing page's own claim, so its numbers are taken from the collections the shelf
+     underneath it renders — not from a saved profile the visitor may never have opened. */
+  const bio = site.profile?.bio || null;
+  const bioFigures = useMemo(() => profileBioFigures(profile, catalog.collections), [profile, catalog.collections]);
   const navigate = (event, destination) => onNavigate(event, destination);
 
   return (
@@ -1745,6 +1746,14 @@ function PortfolioHome({
             </div>
           </div>
         </section>
+
+        {bio && (
+          <section className="home-bio-section" data-three3d-surface="projects">
+            <div className="container">
+              <ProfileBio bio={bio} figures={bioFigures} reducedMotion={settings.reducedMotion} />
+            </div>
+          </section>
+        )}
 
         <section className="home-collections-section" id="collections" data-three3d-surface="projects">
           <div className="container">
