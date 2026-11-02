@@ -137,9 +137,12 @@
   animation-delay: calc(var(--word-index, 0) * var(--look-hero-stagger, 70ms));
 }
 
+/* `both` leaves the end state in force for the life of the word, so the resting rectangle has to be
+ * larger than the box: a display line-height of 0.94 makes the box shorter than the letters, and an
+ * inset of 0 on top and bottom shaved the ascenders and descenders off every word. */
 @keyframes hero-word-mask {
-  from { opacity: 0; clip-path: inset(0 100% 0 0); transform: translate3d(-0.18em, 0, 0); }
-  to { opacity: 1; clip-path: inset(0 -12% 0 0); transform: none; }
+  from { opacity: 0; clip-path: inset(-40% 100% -40% -40%); transform: translate3d(-0.18em, 0, 0); }
+  to { opacity: 1; clip-path: inset(-40% -20% -40% -20%); transform: none; }
 }
 
 :root[data-hero-text="wave"] .hero-word {

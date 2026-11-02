@@ -848,6 +848,33 @@
   padding: 8px;
 }
 
+/* Editorial puts its words beside a fixed 148-168px print in a column sized for the full page width.
+ * Three of them across a preview tile leaves the title a 15px gutter: it wraps one word per line,
+ * grows past the card and the description walks out of the box. Inside the preview it stacks the way
+ * it already does on a phone, which is the only arrangement a tile this narrow can hold. */
+.layout-preview-cards .lab-project-card[data-card-layout="editorial"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "index"
+    "media"
+    "body";
+  column-gap: 0;
+  row-gap: 8px;
+  padding: 10px 0 12px;
+}
+
+.layout-preview-cards .lab-project-card[data-card-layout="editorial"] .lab-card-media {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+}
+
+.layout-preview-cards .lab-project-card[data-card-layout="editorial"] .lab-card-heading h3 {
+  font-size: 0.86rem;
+  line-height: 1.16;
+}
+
 .layout-preview-cards .lab-card-description {
   display: -webkit-box;
   overflow: hidden;

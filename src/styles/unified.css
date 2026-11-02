@@ -1303,6 +1303,11 @@
 
 .lab-project-nav a > strong {
   overflow: hidden;
+  /* `is-next` aligns its column to flex-end, and an item that is not stretched keeps its own
+   * intrinsic cross size — for a nowrap title that is the full width of the words, so a long
+   * project name walked out of the card and off the 320px page. Capped to the card, the ellipsis
+   * the rule already asks for can actually run. */
+  max-width: 100%;
   font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
   font-size: 1rem;
   font-weight: 700;

@@ -2102,15 +2102,26 @@
 /* Portrait tile: the preview keeps the top half and the words take what is left. */
 .lab-card-rail-shell .lab-project-grid.is-card-rail .lab-card-media {
   height: auto;
-  flex: 0 0 50%;
+  /* The print is the part that can give room. With the default shrink the two halves fight over a
+   * short card and the words lose: a description box ends up shorter than its own line box, which
+   * cuts the last line in half. The media takes the loss instead, because a smaller screenshot is
+   * still a screenshot. */
+  flex: 1 1 50%;
+  min-height: 0;
   margin: 5px 5px 0;
   border-radius: 10px 10px 6px 6px;
 }
 
 .lab-card-rail-shell .lab-project-grid.is-card-rail .lab-card-body {
   min-height: 0;
+  flex: 0 0 auto;
   gap: 3px;
   padding: 7px 10px 8px;
+}
+
+/* No line of the body may be squeezed either — see the media above. */
+.lab-card-rail-shell .lab-project-grid.is-card-rail .lab-card-body > * {
+  flex: 0 0 auto;
 }
 
 .lab-card-rail-shell .lab-project-grid.is-card-rail .lab-card-heading {
@@ -2236,7 +2247,10 @@
   }
 
   .lab-card-rail-shell .lab-project-grid.is-card-rail .lab-card-media {
-    flex: 0 0 54%;
+    /* Same trade as the stacked tile: the print keeps its share but is allowed to give some of it
+     * back, so a short card never takes it out of the words' lines. */
+    flex: 1 1 54%;
+    min-height: 0;
   }
 
   .lab-card-rail-edge {

@@ -404,15 +404,24 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 6px;
   /* The label panel floats over the bottom of the art box, so the terminal keeps clear of it
    * instead of running its output pill underneath the glass. */
-  padding: 16px 20px calc(var(--shelf-glass-height) + 12px);
+  padding: 12px 20px calc(var(--shelf-glass-height) + 8px);
   background:
     radial-gradient(120% 110% at 88% 0%, color-mix(in srgb, var(--collection-accent) 36%, transparent), transparent 62%),
     linear-gradient(155deg, #121a2b, #0a1019);
   color: #dbe7ff;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+/* The band this terminal paints into is `--shelf-art-height` minus the 20px of padding above, and
+ * that is the only room it ever gets: the card's total height is a user setting. So the band's own
+ * content has to have a floor too — bar (14px) + two code lines (38px) + the output pill (23px) +
+ * two gaps (12px) = 87px, and the 112px art floor leaves 92px. Nothing here may shrink, because a
+ * flex item shorter than its own line box cuts the last line through its descenders. */
+.collection-shelf-terminal > * {
+  flex: 0 0 auto;
 }
 
 .collection-shelf-terminal-bar {
@@ -449,7 +458,9 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  /* Two lines, not four: see the band budget above. Longer snippets lose their tail to the
+   * ellipsis the clamp draws, which is legible; a squeezed box loses it mid-glyph. */
+  -webkit-line-clamp: 2;
 }
 
 .collection-shelf-terminal-output {
@@ -510,6 +521,14 @@
   backdrop-filter: blur(18px) saturate(1.45);
 }
 
+/* Nothing in the panel may shrink. Its height is fixed and its content is a flex column, so the
+ * default `flex-shrink: 1` takes a few pixels off every line when the panel runs short, and the
+ * panel's own `overflow: hidden` then cuts each line mid-glyph instead of running out of room. The
+ * description's line clamp is the thing that gives space back — see the small-screen blocks below. */
+.collection-shelf-glass > * {
+  flex: 0 0 auto;
+}
+
 .collection-shelf-glass::before {
   position: absolute;
   inset: 0;
@@ -531,6 +550,16 @@
   font-weight: 750;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* The card's width is a Studio setting, so this row has to survive a panel only as wide as its own
+ * type. Each side keeps to one line and loses its tail to an ellipsis rather than riding out over
+ * the frosted panel's edge. */
+.collection-shelf-topline > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .collection-shelf-name {
@@ -660,7 +689,7 @@
 
 .collection-shelf.is-preview .collection-shelf-track {
   --shelf-gap: calc(var(--shelf-3d-gap, 22px) * 0.42);
-  --shelf-card-width: min(100%, calc(var(--shelf-3d-card-width, 720px) * 0.42));
+  --shelf-card-width: var(--shelf-mini-width);
   padding: 18px 8px 28px;
   margin: -6px -4px;
 }
@@ -668,8 +697,13 @@
 /* One 0.42 scale for the whole miniature — width, height and spacing. The label panel keeps its
  * real type because a 42%-sized headline would be unreadable, so it takes a fixed measure and the
  * artwork band gets whatever the scaled card leaves over: a taller card visibly means more print,
- * which is the thing the Studio is actually adjusting. */
+ * which is the thing the Studio is actually adjusting.
+ *
+ * The width floor is what that trade needs to stay honest: at the narrowest setting the scaled card
+ * is only ~110px across, and a panel of real-size type cannot fit in it, so the label row used to
+ * ride out over the glass. The miniature stops shrinking before the type does. */
 .collection-shelf.is-preview {
+  --shelf-mini-width: min(100%, max(168px, calc(var(--shelf-3d-card-width, 720px) * 0.42)));
   --shelf-card-total-height: calc(var(--shelf-3d-card-height, 476px) * 0.42);
   --shelf-glass-height: 100px;
   --shelf-art-height: max(76px, calc(var(--shelf-card-total-height) - var(--shelf-glass-height)));
@@ -677,7 +711,7 @@
 
 .collection-shelf.is-preview .collection-shelf-item {
   height: calc(var(--shelf-glass-height) + var(--shelf-art-height));
-  flex-basis: min(100%, calc(var(--shelf-3d-card-width, 720px) * 0.42));
+  flex-basis: var(--shelf-mini-width);
 }
 
 .collection-shelf.is-preview .collection-shelf-card {
@@ -689,12 +723,8 @@
   gap: 2px;
 }
 
-/* The miniature's panel is short, and the label is a flex column — without this the name and the
- * count line get squeezed to a few pixels tall instead of simply running out of room. */
-.collection-shelf.is-preview .collection-shelf-glass > * {
-  flex: 0 0 auto;
-}
-
+/* The miniature's panel is short, so its label loses the cue and one line of description rather
+ * than being squeezed. The no-shrink rule on `.collection-shelf-glass > *` covers its lines. */
 .collection-shelf.is-preview .collection-shelf-name {
   font-size: 1.05rem;
 }
@@ -706,6 +736,41 @@
 
 .collection-shelf.is-preview .collection-shelf-cue {
   display: none;
+}
+
+/* The miniature's artwork band is the scaled card minus the 100px panel it shares with the real
+ * card, so at the shortest setting it is only 76px tall — the same budget the full card gets, at
+ * 42% of a page. Its terminal therefore keeps the same shape (bar, snippet, then the glass) but
+ * drops the output chip, which is a 10px-tall decorative pill at this size and the first thing to
+ * be cut when the band runs short. */
+.collection-shelf.is-preview .collection-shelf-terminal {
+  padding: 9px 12px calc(var(--shelf-glass-height) + 6px);
+  gap: 4px;
+}
+
+.collection-shelf.is-preview .collection-shelf-terminal-bar em {
+  font-size: 0.55rem;
+}
+
+.collection-shelf.is-preview .collection-shelf-terminal code {
+  font-size: 0.62rem;
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+}
+
+.collection-shelf.is-preview .collection-shelf-terminal-output {
+  display: none;
+}
+
+/* Two real-size labels on one row inside a 168px panel: the count is the one that can be dropped
+ * without losing anything the headline does not already say. */
+.collection-shelf.is-preview .collection-shelf-count b {
+  font-size: 1.12rem;
+}
+
+.collection-shelf.is-preview .collection-shelf-topline {
+  gap: 6px;
+  font-size: 0.5rem;
 }
 
 /* Motion presets */
@@ -1021,7 +1086,11 @@
    * card are built from these two tokens, so the deck grows with the panel instead of being left
    * behind it. */
   .collection-shelf {
-    --shelf-glass-height: clamp(152px, 25vh, 204px);
+    /* 190px is the shortest panel that still holds everything it puts in itself at these widths:
+     * topline, name, count, three lines of description and the cue, plus their gaps and the
+     * padding. Anything shorter and the label has to be cut, which is the bug the no-shrink rule
+     * above makes visible instead of hiding it. */
+    --shelf-glass-height: clamp(190px, 25vh, 210px);
     --shelf-art-band: clamp(148px, 30vh, 268px);
   }
 
@@ -1091,7 +1160,7 @@
   }
 
   .collection-shelf {
-    --shelf-glass-height: clamp(150px, 27vh, 190px);
+    --shelf-glass-height: clamp(190px, 27vh, 200px);
     --shelf-art-band: clamp(140px, 31vh, 230px);
   }
 

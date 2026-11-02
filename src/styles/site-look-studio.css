@@ -198,9 +198,12 @@
   18% { transform: translateY(6px); opacity: 0.15; }
 }
 
+/* `none` and `inset()` cannot interpolate, so the old pair switched discretely at half-time and the
+ * tile blinked instead of sweeping. Both steps are now insets, and the resting one is expanded past
+ * the box the way the page keyframe is, so the letters keep their ascenders and descenders. */
 @keyframes look-demo-mask {
-  0%, 60%, 100% { clip-path: none; transform: none; }
-  20% { clip-path: inset(0 100% 0 0); transform: translateX(-3px); }
+  0%, 60%, 100% { clip-path: inset(-40% -20% -40% -20%); transform: none; }
+  20% { clip-path: inset(-40% 100% -40% -40%); transform: translateX(-3px); }
 }
 
 @keyframes look-demo-wave {

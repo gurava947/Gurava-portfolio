@@ -94,10 +94,19 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Descendant spans (the accent word in a page title) have to opt out of their own colour or the
- * clipped background never reaches them. */
+/* A word-split title keeps each word in its own inline-block span, and an inline-block is its own
+ * paint box: an ancestor's `background-clip: text` never reaches glyphs that live inside one. With
+ * only the fill taken away, the headline painted nothing at all and the title vanished. So a span
+ * that has to opt out of the inherited colour also carries the same gradient and clips it to its
+ * own text — the sweep restarts per word, which is what makes it survive the word split. */
 [data-look-heading="gradient"] :is(.section-title, .lab-hero h1, .lab-section-heading h2) :is(span, .hero-word),
 .look-studio-demo-title[data-look-heading="gradient"] :is(span, .hero-word) {
+  background-image: linear-gradient(96deg,
+    var(--look-wash-a, var(--theme-primary)) 4%,
+    var(--look-wash-b, var(--theme-primary)) 48%,
+    var(--look-wash-c, var(--theme-primary)) 96%);
+  background-clip: text;
+  -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
