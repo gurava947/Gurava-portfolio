@@ -65,7 +65,7 @@ The catalog route (`/projects`) used to report NO_LCP, which left it with no tim
 - `python-projects/tests/` — separate unittest files for the supplied Python solutions.
 - `backend/db/projects/python-playground.json` — Python playground definition and exercises.
 - `catalog/source/certificates.json` — certificate records; facts mirror the supplied certificate assets.
-- `catalog/source/components/` — imported React project components used by the isolated preview.
+- `catalog/source/components/` — imported React project components used by the isolated preview. The catalog build copies each one into `src/projects/<kind>/<Name>/`, so `src/projects/` is generated output: change the file under `catalog/source/`, not the copy, or the next `npm run build` quietly reverts it.
 - `catalog/source/assets/` — local project imagery and certificate files. Source images are optimized to WebP thumbnails during the catalog build.
 
 ## Original materials

@@ -45,7 +45,7 @@ const MAX_FILE_BYTES = 2 * 1024 * 1024;
 // a local session wrote, and .env by definition holds the values that must not leave the machine.
 const FORBIDDEN_TRACKED = /(^|[/\\])\.env([.-]|$)|\.db(-wal|-shm)?$|\.sqlite3?$|(^|[/\\])logs?[/\\]|\.log$|^dist[/\\]|(^|[/\\])\.npmrc$|(^|[/\\])id_rsa$|\.pem$|\.key$/;
 
-function run(command, args, options = {}) {
+function run(command, args, { input, ...options } = {}) {
   return new Promise((resolveRun) => {
     const child = spawn(command, args, { cwd: ROOT, ...options });
     const chunks = [];
@@ -54,6 +54,11 @@ function run(command, args, options = {}) {
     child.stderr.on("data", (chunk) => errChunks.push(chunk));
     // A missing tool is a finding for the caller to report, not a crash for the audit itself.
     child.on("error", (error) => resolveRun({ code: 127, stdout: "", stderr: error.message }));
+    // spawn has no input option of its own: a command that reads stdin would wait for EOF forever.
+    if (input !== undefined) {
+      child.stdin.on("error", () => {});
+      child.stdin.end(input);
+    }
     child.on("close", (code) => {
       const stdout = Buffer.concat(chunks).toString("utf8");
       const stderr = Buffer.concat(errChunks).toString("utf8");
@@ -96,10 +101,24 @@ async function scanWorkingTree(findings) {
   };
   walk(ROOT);
 
-  let scanned = 0;
+  const candidates = [];
   for (const file of files) {
     const repoPath = relative(ROOT, file).replaceAll("\\", "/");
     if (IGNORED_PATH.test(repoPath) || BINARY_SUFFIX.test(repoPath)) continue;
+    candidates.push({ file, repoPath });
+  }
+  // Something git is told to ignore cannot reach a commit, so a real token in a local `.env` is not a
+  // repository finding. The count is printed instead of hidden, because the owner should still see that
+  // a credential-bearing file exists and confirm it is meant to stay on this machine.
+  const ignored = await pathsIgnoredByGit(candidates.map((candidate) => candidate.repoPath));
+
+  let scanned = 0;
+  let skippedIgnored = 0;
+  for (const { file, repoPath } of candidates) {
+    if (ignored.has(repoPath)) {
+      skippedIgnored += 1;
+      continue;
+    }
     let size;
     try {
       size = statSync(file).size;
@@ -124,7 +143,16 @@ async function scanWorkingTree(findings) {
       }
     });
   }
-  return { scanned };
+  return { scanned, skippedIgnored };
+}
+
+// One batched `git check-ignore` for every candidate path. Exit status 1 is the ordinary answer when
+// nothing matches, so only a real failure to run git stops the filter from being applied.
+async function pathsIgnoredByGit(repoPaths) {
+  if (repoPaths.length === 0) return new Set();
+  const { code, stdout } = await run("git", ["check-ignore", "-z", "--stdin"], { input: repoPaths.join("\0") });
+  if (code !== 0 && code !== 1) return new Set();
+  return new Set(stdout.split("\0").filter(Boolean));
 }
 
 async function scanHistory(findings) {
@@ -154,10 +182,15 @@ async function scanHistory(findings) {
   return { commits: scoped.length, hits };
 }
 
+// A template documents the variable names and carries no values, so it is the one `.env` file that is
+// meant to be committed.
+const ENV_TEMPLATE = /\.env\.(?:example|sample|template)$/i;
+
 async function scanTrackedPaths(findings) {
   const tracked = await gitLines(["ls-files", "-z"], "\0");
   if (!tracked) return { tracked: 0, skipped: "not a git repository" };
   for (const repoPath of tracked) {
+    if (ENV_TEMPLATE.test(repoPath)) continue;
     if (FORBIDDEN_TRACKED.test(repoPath)) findings.push({ kind: "exposed file tracked in git", repoPath, text: "server state, a key store or an environment file is committed" });
   }
   // A template is meant to be committed, so only a real .env (or .env.local, .env.production…) that
@@ -203,7 +236,7 @@ const trackedRun = await scanTrackedPaths(findings);
 console.log(`tracked files: ${trackedRun.tracked ?? 0}${trackedRun.skipped ? ` (${trackedRun.skipped})` : ""}`);
 
 const treeRun = await scanWorkingTree(findings);
-console.log(`working tree: ${treeRun.scanned} source files scanned`);
+console.log(`working tree: ${treeRun.scanned} source files scanned${treeRun.skippedIgnored ? ` (${treeRun.skippedIgnored} more held back by .gitignore)` : ""}`);
 
 if (process.env.AUDIT_SKIP_HISTORY !== "1") {
   const historyRun = await scanHistory(findings);

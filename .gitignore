@@ -43,3 +43,7 @@ yarn-error.log*
 # code, and the runtime alone is ~170 MB of interpreter and wheels.
 /Python/
 /python_install_*.log
+
+# Vercel CLI link state: project and organisation ids, plus the .env.local it writes next to them,
+# which carries a short-lived OIDC token.
+.vercel
