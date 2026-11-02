@@ -27,11 +27,12 @@ import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import SiteLookStudio from "./components/SiteLookStudio";
 import Shelf3DStudio from "./components/Shelf3DStudio";
+import FeatureRailStudio from "./components/FeatureRailStudio";
 import Three3DStudio from "./components/Three3DStudio";
 import Three3DStage from "./components/Three3DStage";
 import ProfileBio from "./components/ProfileBio";
 import ProjectBacklog from "./components/ProjectBacklog";
-import PosterRail from "./components/PosterRail";
+import FeatureRail from "./components/FeatureRail";
 import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
 import { playgroundThemeDrivesSite } from "./config/themeSync";
@@ -481,6 +482,7 @@ const STUDIO_SECTIONS = [
   { id: "effects", label: "Effects", headingId: "card-studio-effects" },
   { id: "motion", label: "Motion", headingId: "card-studio-motion" },
   { id: "shelf3d", label: "Shelf 3D", headingId: "card-studio-shelf-3d" },
+  { id: "rail", label: "Card rail", headingId: "card-studio-rail" },
   { id: "stage3d", label: "Stage 3D", headingId: "card-studio-three-3d" },
   { id: "fine", label: "Fine-tune", selector: ".card-ui-settings" },
 ];
@@ -525,6 +527,8 @@ function CardStudio({
   onMotionApply,
   shelf3dSettings,
   onShelf3dApply,
+  featureRailSettings,
+  onFeatureRailChange,
   three3dSettings,
   onThree3dApply,
   three3dPalette,
@@ -891,6 +895,14 @@ function CardStudio({
             motion={motionSettings}
           />
 
+          <FeatureRailStudio
+            settings={featureRailSettings}
+            onChange={onFeatureRailChange}
+            projects={previewProjects}
+            cardUI={previewCardUI}
+            fx={effectsSettings}
+          />
+
           <Three3DStudio
             settings={three3dSettings}
             onApply={onThree3dApply}
@@ -988,6 +1000,8 @@ function GuravvaProfilePopover({
   onMotionChange,
   shelf3dSettings,
   onShelf3dChange,
+  featureRailSettings,
+  onFeatureRailChange,
   three3dSettings,
   onThree3dChange,
   three3dPalette,
@@ -1281,6 +1295,8 @@ function GuravvaProfilePopover({
           onMotionApply={onMotionChange}
           shelf3dSettings={shelf3dSettings}
           onShelf3dApply={onShelf3dChange}
+          featureRailSettings={featureRailSettings}
+          onFeatureRailChange={onFeatureRailChange}
           three3dSettings={three3dSettings}
           onThree3dApply={onThree3dChange}
           three3dPalette={three3dPalette}
@@ -1427,6 +1443,8 @@ function SiteNav({
   onMotionChange,
   shelf3dSettings,
   onShelf3dChange,
+  featureRailSettings,
+  onFeatureRailChange,
   three3dSettings,
   onThree3dChange,
   three3dPalette,
@@ -1517,6 +1535,8 @@ function SiteNav({
               onMotionChange={onMotionChange}
               shelf3dSettings={shelf3dSettings}
               onShelf3dChange={onShelf3dChange}
+              featureRailSettings={featureRailSettings}
+              onFeatureRailChange={onFeatureRailChange}
               three3dSettings={three3dSettings}
               onThree3dChange={onThree3dChange}
               three3dPalette={three3dPalette}
@@ -1599,6 +1619,7 @@ function PortfolioHome({
   onEffectsChange,
   onMotionChange,
   onShelf3dChange,
+  onFeatureRailChange,
   onThree3dChange,
   onLookChange,
 }) {
@@ -1675,6 +1696,8 @@ function PortfolioHome({
         onMotionChange={onMotionChange}
         shelf3dSettings={settings.shelf3d}
         onShelf3dChange={onShelf3dChange}
+        featureRailSettings={settings.featureRail}
+        onFeatureRailChange={onFeatureRailChange}
         three3dSettings={settings.three3d}
         onThree3dChange={onThree3dChange}
         three3dPalette={three3dPalette}
@@ -1797,11 +1820,14 @@ function PortfolioHome({
                 {featured.map((project) => <ProjectCard key={project.id} project={project} onNavigate={navigate} cardUI={settings.cardUI} fx={settings.effects} />)}
               </div>
             ) : (
-              <PosterRail
+              <FeatureRail
                 projects={featured}
                 onNavigate={navigate}
-                variant={settings.look.featured}
+                rail={settings.featureRail}
+                cardUI={settings.cardUI}
+                fx={settings.effects}
                 eyebrow={copy.projects.title}
+                art={settings.look.featured === "poster" ? "cover" : "contain"}
               />
             )}
             <div className="home-featured-action">
@@ -1911,6 +1937,7 @@ function App() {
     updateCardEffectsSettings,
     updateShelfMotionSettings,
     updateShelf3dSettings,
+    updateFeatureRailSettings,
     updateThree3dSettings,
     updateSiteLookSettings,
     updatePlaygroundThemeSettings,
@@ -2103,6 +2130,8 @@ function App() {
     onMotionChange: updateShelfMotionSettings,
     shelf3dSettings: settings.shelf3d,
     onShelf3dChange: updateShelf3dSettings,
+    featureRailSettings: settings.featureRail,
+    onFeatureRailChange: updateFeatureRailSettings,
     three3dSettings: settings.three3d,
     onThree3dChange: updateThree3dSettings,
     three3dPalette,
@@ -2138,6 +2167,7 @@ function App() {
         onEffectsChange={updateCardEffectsSettings}
         onMotionChange={updateShelfMotionSettings}
         onShelf3dChange={updateShelf3dSettings}
+        onFeatureRailChange={updateFeatureRailSettings}
         onThree3dChange={updateThree3dSettings}
         onLookChange={updateSiteLookSettings}
       />
@@ -2202,6 +2232,9 @@ function App() {
             previousProject={previousProject}
             nextProject={nextProject}
             relatedProjects={relatedProjects}
+            featureRail={settings.featureRail}
+            cardUI={settings.cardUI}
+            fx={settings.effects}
             featuredVariant={settings.look.featured === "rail" ? "rail" : "poster"}
             copy={site.detail}
             loader={settings.loader}

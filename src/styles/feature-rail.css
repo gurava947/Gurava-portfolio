@@ -1,0 +1,328 @@
+/* The suggestion rail: separate project cards in a row you can scroll, wrap, or lay out as a grid
+   or a list. Every number the studio exposes arrives as a custom property on `.feature-rail`, so a
+   change repaints the rail without touching anything outside it. */
+
+.feature-rail {
+  position: relative;
+  max-width: 100%;
+}
+
+.feature-rail-scroller {
+  display: flex;
+  gap: var(--rail-gap, 18px);
+  padding: var(--rail-padding, 8px);
+  margin: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* Reaching the end of the rail should not start scrolling the page beside it. */
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.feature-rail-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.feature-rail-scroller:focus-visible {
+  outline: 2px solid var(--theme-primary, #6d5ce8);
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+.feature-rail-scroller.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  user-select: none;
+}
+
+.feature-rail[data-axis="vertical"] .feature-rail-scroller {
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+  max-height: 78vh;
+}
+
+/* One card per item. `min-width: 0` is the whole trick: without it a long title would push the
+   flex item past its basis and the rail would grow the page sideways instead of wrapping the words. */
+.feature-rail-item {
+  flex: 0 0 var(--rail-basis, 300px);
+  min-width: 0;
+  scroll-snap-align: start;
+  display: flex;
+}
+
+.feature-rail-item > .lab-project-card {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* A height the visitor picked is paid for by the print, never by the lines: the body keeps its own
+   height and the artwork absorbs the rest. It is a floor rather than a hard box, because a card whose
+   text the reader cannot see is a broken setting, not a shorter design — at 120px the print simply
+   gives up its spare room and the card grows to show every line. */
+.feature-rail.is-tall .feature-rail-item {
+  min-height: var(--rail-card-height, auto);
+  height: auto;
+}
+
+.feature-rail.is-tall .feature-rail-item > .lab-project-card {
+  height: 100%;
+}
+
+.feature-rail.is-tall .feature-rail-item .lab-card-media {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+
+.feature-rail.is-tall .feature-rail-item .lab-card-body {
+  flex: 0 0 auto;
+}
+
+.feature-rail.is-tall .feature-rail-item .lab-card-body > * {
+  flex: 0 0 auto;
+}
+
+.feature-rail[data-art="cover"] .feature-rail-item .lab-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Carousel that wraps: the row becomes a shelf and stops scrolling, so the chrome goes with it. */
+.feature-rail.is-wrap .feature-rail-scroller {
+  flex-wrap: wrap;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.feature-rail.is-grid .feature-rail-scroller {
+  display: grid;
+  grid-template-columns: var(--rail-grid, repeat(auto-fill, minmax(300px, 1fr)));
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.feature-rail.is-list .feature-rail-scroller {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.feature-rail.is-list .feature-rail-item {
+  flex: none;
+  width: 100%;
+}
+
+.feature-rail-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.feature-rail-arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #6d5ce8) 34%, transparent);
+  background: color-mix(in srgb, var(--theme-card-bg, #fff) 82%, transparent);
+  color: var(--theme-text, #172033);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.feature-rail-arrow:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.feature-rail-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.feature-rail-arrow:focus-visible {
+  outline: 2px solid var(--theme-primary, #6d5ce8);
+  outline-offset: 3px;
+}
+
+.feature-rail-dots {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.feature-rail-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-text, #172033) 24%, transparent);
+  cursor: pointer;
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.feature-rail-dot[aria-current="true"] {
+  width: 22px;
+  background: var(--theme-primary, #6d5ce8);
+}
+
+.feature-rail-dot:focus-visible {
+  outline: 2px solid var(--theme-primary, #6d5ce8);
+  outline-offset: 3px;
+}
+
+.feature-rail-empty {
+  margin: 0;
+  padding: 22px 16px;
+  border: 1px dashed color-mix(in srgb, var(--theme-text, #172033) 24%, transparent);
+  border-radius: 16px;
+  color: var(--theme-muted-text, #526176);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ---------- Studio ----------
+   The panel that sets these numbers lives beside the rail it drives, so it borrows the card
+   studio's grid, range and toggle classes and only adds the three shapes that are its own. */
+
+.rail-studio-note {
+  margin: 0 0 14px;
+  color: var(--theme-muted-text);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.rail-studio-layouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.rail-studio-layout {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 9%, transparent);
+  border-radius: 11px;
+  background: var(--theme-card-bg);
+  color: var(--theme-card-text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.rail-studio-layout strong {
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.rail-studio-layout small {
+  color: var(--theme-muted-text);
+  font-size: 0.6rem;
+  line-height: 1.45;
+}
+
+.rail-studio-layout:hover {
+  border-color: color-mix(in srgb, var(--theme-primary) 26%, transparent);
+}
+
+.rail-studio-layout.is-active {
+  border-color: color-mix(in srgb, var(--theme-primary) 62%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-card-bg));
+}
+
+.rail-studio-ranges {
+  margin-bottom: 14px;
+}
+
+.rail-studio-switches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.rail-studio-switches .card-ui-toggle:has(input:disabled) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.rail-studio-preview {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--theme-text) 9%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--theme-card-bg) 82%, transparent);
+}
+
+.rail-studio-preview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: var(--theme-muted-text);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.rail-studio-preview-head strong {
+  color: var(--theme-text);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* The preview is a rail inside a panel that is already a rail: it must never be the thing that
+   makes the panel wide enough to scroll sideways. */
+.rail-studio-preview .feature-rail,
+.rail-studio-preview .feature-rail-scroller {
+  max-width: 100%;
+}
+
+.rail-studio-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rail-studio-hint {
+  flex: 1 1 220px;
+  min-width: 0;
+  margin: 0;
+  color: var(--theme-muted-text);
+  font-size: 0.64rem;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-rail-scroller {
+    scroll-behavior: auto;
+  }
+
+  .feature-rail-arrow,
+  .feature-rail-dot {
+    transition: none;
+  }
+}

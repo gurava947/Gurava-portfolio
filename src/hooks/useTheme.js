@@ -12,6 +12,7 @@ import {
   normalizeThree3d,
 } from "../config/three3d";
 import { DEFAULT_LAYOUT_SETTINGS, LAYOUT_AREAS, normalizeLayoutSettings } from "../config/layoutPatterns";
+import { DEFAULT_FEATURE_RAIL, normalizeFeatureRail } from "../config/featureRail";
 import { DEFAULT_SITE_LOOK, getSiteLookVariables, normalizeSiteLook } from "../config/siteLook";
 import { DEFAULT_PLAYGROUND_THEME, normalizePlaygroundTheme } from "../config/themeSync";
 
@@ -173,6 +174,7 @@ export const DEFAULT_THEME_SETTINGS = {
   motion: DEFAULT_SHELF_MOTION,
   shelf3d: DEFAULT_SHELF_3D,
   three3d: DEFAULT_THREE_3D,
+  featureRail: DEFAULT_FEATURE_RAIL,
   look: DEFAULT_SITE_LOOK,
   playgroundTheme: DEFAULT_PLAYGROUND_THEME,
 };
@@ -231,6 +233,7 @@ function getInitialSettings() {
         motion: normalizeShelfMotion(parsed?.motion),
         shelf3d: normalizeShelf3d(parsed?.shelf3d),
         three3d: normalizeThree3d(parsed?.three3d),
+        featureRail: normalizeFeatureRail(parsed?.featureRail),
         look: normalizeSiteLook(parsed?.look),
         playgroundTheme: normalizePlaygroundTheme(parsed?.playgroundTheme),
       };
@@ -296,6 +299,7 @@ export function useTheme() {
     root.dataset.shelfMotion = motion.preset;
     const shelf3d = normalizeShelf3d(settings.shelf3d);
     const three3d = normalizeThree3d(settings.three3d);
+    const featureRail = normalizeFeatureRail(settings.featureRail);
     // Off leaves no attribute and no property on <html> at all, which is how the default stays the
     // shipped design rather than a look the stylesheet has to undo.
     THREE_3D_ATTRIBUTE_NAMES.forEach((name) => {
@@ -320,7 +324,7 @@ export function useTheme() {
     try {
       window.localStorage.setItem(
         THEME_STORAGE_KEY,
-        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, shelf3d, three3d, look, playgroundTheme }),
+        JSON.stringify({ schema: SETTINGS_SCHEMA_VERSION, mode, cardUI, loader, layout, effects, motion, shelf3d, three3d, featureRail, look, playgroundTheme }),
       );
       window.localStorage.setItem("portfolio-theme", mode);
     } catch (error) {
@@ -469,6 +473,13 @@ export function useTheme() {
       shelf3d: normalizeShelf3d({ ...normalizeShelf3d(current.shelf3d), ...changes }),
     }));
   }, []);
+  const updateFeatureRailSettings = useCallback((changes) => {
+    userChangedSettings.current = true;
+    setSettings((current) => ({
+      ...current,
+      featureRail: normalizeFeatureRail({ ...normalizeFeatureRail(current.featureRail), ...changes }),
+    }));
+  }, []);
   const updatePlaygroundThemeSettings = useCallback((changes) => {
     userChangedSettings.current = true;
     setSettings((current) => ({
@@ -495,6 +506,7 @@ export function useTheme() {
     updateCardEffectsSettings,
     updateShelfMotionSettings,
     updateShelf3dSettings,
+    updateFeatureRailSettings,
     updateThree3dSettings,
     updateSiteLookSettings,
     updatePlaygroundThemeSettings,

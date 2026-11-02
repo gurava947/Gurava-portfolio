@@ -1,9 +1,6 @@
 /*
- * The code plate — one terminal-flavoured tile, two homes.
- *
- * PosterRail uses it as the artwork slot for a build with no screenshot, and the project detail
- * hero uses it in place of the initials placeholder. Both are the same object, so the styling
- * lives here once; a context only sets `--plate-size` and where the plate sits.
+ * The code plate — one terminal-flavoured tile for the project detail hero, where a build with no
+ * screenshot still deserves artwork. A context only sets `--plate-size` and where the plate sits.
  *
  * The palette is deliberately fixed rather than theme-driven: a terminal is dark in a light theme
  * too, and it sits on its own dark backdrop, so it never needs a light-mode variant.
@@ -95,11 +92,8 @@
   white-space: nowrap;
 }
 
-/* Lit by whichever card owns the plate, so hovering the tile brightens its artwork. The owners are
+/* Lit by the hero frame that owns the plate, so hovering it brightens the artwork. The owner is
  * named here because a shared component cannot ask an unknown ancestor for its hover state. */
-.poster-card:hover .code-plate,
-.poster-card:focus-visible .code-plate,
-.poster-card:focus-within .code-plate,
 .lab-hero-poster:hover .code-plate {
   border-color: color-mix(in srgb, var(--look-wash-a, var(--theme-primary)) 62%, transparent);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%),
@@ -113,7 +107,6 @@
     transition: none;
   }
 
-  .poster-card:hover .code-plate,
   .lab-hero-poster:hover .code-plate {
     transform: none;
   }

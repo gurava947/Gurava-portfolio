@@ -3,7 +3,7 @@ import { LoaderOverlay, LoadSpinner } from "./LoadSpinner";
 import CodePlate from "./ui/CodePlate";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import HeroWords from "./HeroWords";
-import PosterRail from "./PosterRail";
+import FeatureRail from "./FeatureRail";
 import { PLAYGROUND_THEME_OPTIONS } from "../config/themeSync";
 import "../styles/project-detail-look.css";
 
@@ -401,7 +401,7 @@ function ReactAbout({ project, copy }) {
   );
 }
 
-export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader, relatedProjects = [], featuredVariant = "poster", siteMode = "light", playgroundTheme = "follow", onPlaygroundThemeChange, onPlaygroundThemeSwitched }) {
+export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader, relatedProjects = [], featureRail, featuredVariant = "poster", cardUI = {}, fx = {}, siteMode = "light", playgroundTheme = "follow", onPlaygroundThemeChange, onPlaygroundThemeSwitched }) {
   const fullProject = detail || project;
   const data = fullProject.data || {};
   const eyebrow = [...new Set([fullProject.collectionLabel, fullProject.category].filter(Boolean))].join(" · ");
@@ -497,10 +497,13 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
               </div>
               <p className="lab-section-note">Slide through the rest of the collection, or use the arrows.</p>
             </header>
-            <PosterRail
+            <FeatureRail
               projects={relatedProjects}
               onNavigate={onNavigate}
-              variant={featuredVariant}
+              rail={featureRail}
+              cardUI={cardUI}
+              fx={fx}
+              art={featuredVariant === "poster" ? "cover" : "contain"}
               eyebrow={`${fullProject.collectionLabel || "Collection"} builds`}
             />
           </div>

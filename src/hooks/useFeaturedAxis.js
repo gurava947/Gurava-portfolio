@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 // Every scrollable strip in the portfolio runs in the direction the visitor picked in
 // Card Studio -> Site look, which the theme hook publishes as `<html data-featured-axis>`.
-// Reading it from one place keeps the home poster rail, the catalog's project shelf and the
+// Reading it from one place keeps the home card rail, the catalog's project shelf and the
 // collection shelf turning together when the choice changes — including live, without a reload.
 //
 // Vertical is the shipped default: cards stack downward and the device count from theme.css
