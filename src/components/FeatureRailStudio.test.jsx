@@ -35,6 +35,23 @@ function renderStudio(overrides = {}) {
 }
 
 describe("FeatureRailStudio", () => {
+  it("points the rail from here, because the look panel no longer owns the direction", () => {
+    const { onChange, rail } = renderStudio();
+
+    // The "More from" rail used to read its axis off <html>, set only in Site look, so the studio that
+    // sizes these cards could not turn them sideways.
+    expect(rail()).toHaveAttribute("data-axis", "horizontal");
+
+    fireEvent.click(screen.getByRole("button", { name: "Vertical" }));
+
+    expect(onChange).toHaveBeenLastCalledWith({ orientation: "vertical" });
+    expect(rail()).toHaveAttribute("data-axis", "vertical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Horizontal" }));
+    expect(rail()).toHaveAttribute("data-axis", "horizontal");
+  });
+
+
   it("applies as you move a control instead of hiding it behind an Apply button", () => {
     const { onChange } = renderStudio();
 
@@ -68,9 +85,25 @@ describe("FeatureRailStudio", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /^Grid/ }));
 
-    expect(onChange).toHaveBeenCalledWith({ layout: "grid" });
+    expect(onChange).toHaveBeenCalledWith({ layout: "grid", wrap: true });
     expect(screen.getByLabelText("Card width")).toHaveValue("460");
     expect(screen.getByLabelText("Container padding")).toHaveValue("20");
+  });
+
+  // Grid forces the cards to fold, and that forced value used to be written back into the stored
+  // settings. Choosing Carousel again then read `wrap: true` as a choice the visitor had made, so the
+  // "row" you had just asked for came back as a wrapped block with no arrows and nothing to scroll.
+  it("hands the wrapping back to the carousel instead of leaving the grid's on", () => {
+    const { rail } = renderStudio();
+
+    fireEvent.click(screen.getByRole("button", { name: /^Grid/ }));
+    expect(rail()).toHaveClass("is-grid");
+
+    fireEvent.click(screen.getByRole("button", { name: /^Carousel/ }));
+
+    expect(screen.getByLabelText("Card wrapping")).not.toBeChecked();
+    expect(screen.getByLabelText("Navigation arrows")).toBeEnabled();
+    expect(rail()).toHaveClass("is-carousel");
   });
 
   it("follows the layout in the sample rail it draws", () => {
@@ -91,10 +124,9 @@ describe("FeatureRailStudio", () => {
   });
 
   it("puts the switches back in reach when the row scrolls again", () => {
-    renderStudio({ initialSettings: { ...DEFAULT_FEATURE_RAIL, wrap: true } });
+    renderStudio({ initialSettings: { ...DEFAULT_FEATURE_RAIL, layout: "grid", wrap: true } });
 
     fireEvent.click(screen.getByRole("button", { name: /^Carousel/ }));
-    fireEvent.click(screen.getByLabelText("Card wrapping"));
 
     ["Navigation arrows", "Scroll indicators", "Drag to scroll"].forEach((label) => {
       expect(screen.getByLabelText(label)).toBeEnabled();

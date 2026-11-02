@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import FeatureRail from "./FeatureRail";
-import { DEFAULT_FEATURE_RAIL, RAIL_LIMITS, RAIL_LAYOUTS, sameFeatureRail } from "../config/featureRail";
+import { DEFAULT_FEATURE_RAIL, RAIL_LIMITS, RAIL_LAYOUTS, RAIL_ORIENTATIONS, sameFeatureRail } from "../config/featureRail";
 
 const SAMPLE_COUNT = 6;
 
@@ -48,8 +48,8 @@ function FeatureRailStudio({ settings, onChange, projects = [], cardUI = {}, fx 
         the catalogue&apos;s scrolling band and the 3D collection shelf. Every control changes them as
         you move it — there is nothing to apply. Two things keep their own mind: a size you set in
         3D Settings wins here, because the shelf&apos;s posters are measured for depth, and the
-        sliding direction in Site look belongs to the two card rails — the catalogue band is a grid
-        whose paging is measured against its columns.
+        catalogue band is a grid whose paging is measured against its columns, so the direction and
+        the arrows belong to the two card rails.
       </p>
 
       <div className="rail-studio-layouts" role="group" aria-label="Card layout">
@@ -59,12 +59,32 @@ function FeatureRailStudio({ settings, onChange, projects = [], cardUI = {}, fx 
             type="button"
             className={`rail-studio-layout${settings.layout === layout.id ? " is-active" : ""}`}
             aria-pressed={settings.layout === layout.id}
-            onClick={() => update({ layout: layout.id }, layout.label)}
+            onClick={() => update({ layout: layout.id, wrap: layout.id !== "carousel" }, layout.label)}
           >
             <strong>{layout.label}</strong>
             <small>{layout.note}</small>
           </button>
         ))}
+      </div>
+
+      {/* Which way the strip runs is a rail choice, not a look choice: it decides what the width,
+          the count and the paging mean, so it sits with them instead of in Site look. */}
+      <div className="card-studio-quick-row">
+        <span className="card-studio-quick-label">Direction</span>
+        <div className="card-studio-segments" role="group" aria-label="Card direction">
+          {RAIL_ORIENTATIONS.map((orientation) => (
+            <button
+              key={orientation.id}
+              type="button"
+              className="card-studio-segment"
+              aria-pressed={settings.orientation === orientation.id}
+              title={orientation.note}
+              onClick={() => update({ orientation: orientation.id }, `${orientation.label} direction`)}
+            >
+              {orientation.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="card-ui-settings-grid rail-studio-ranges">
@@ -112,7 +132,7 @@ function FeatureRailStudio({ settings, onChange, projects = [], cardUI = {}, fx 
         <div className="rail-studio-preview">
           <div className="rail-studio-preview-head">
             <span>In-panel preview</span>
-            <strong>{RAIL_LAYOUTS.find((layout) => layout.id === settings.layout)?.label}</strong>
+            <strong>{`${RAIL_LAYOUTS.find((layout) => layout.id === settings.layout)?.label} · ${RAIL_ORIENTATIONS.find((orientation) => orientation.id === settings.orientation)?.label}`}</strong>
           </div>
           <FeatureRail
             projects={sample}

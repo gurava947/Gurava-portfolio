@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import FeatureRail from "./FeatureRail";
 import { DEFAULT_FEATURE_RAIL } from "../config/featureRail";
 
@@ -48,14 +48,6 @@ function renderRail({ rail = DEFAULT_FEATURE_RAIL, extent = 2400, view = 900, po
   return { ...view_, scroller };
 }
 
-/* The axis hook listens through a MutationObserver, which delivers its callback as a microtask, so
-   both sides of the attribute have to be changed inside an async act scope. */
-afterEach(async () => {
-  await act(async () => {
-    document.documentElement.removeAttribute("data-featured-axis");
-  });
-});
-
 /* jsdom has no PointerEvent, and the fallback event Testing Library builds carries none of the
    properties a pointer gesture needs. React reads them straight off the native event, so the test
    puts them there itself. */
@@ -78,7 +70,6 @@ describe("FeatureRail", () => {
   });
 
   it("says which way the row runs and pages it with the dots", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const { container } = renderRail();
 
     expect(container.querySelector(".feature-rail")).toHaveAttribute("data-axis", "horizontal");
@@ -89,7 +80,6 @@ describe("FeatureRail", () => {
   });
 
   it("disables the arrow that would scroll off the end and steps a page", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const { scroller } = renderRail();
 
     expect(screen.getByRole("button", { name: "Scroll cards left" })).toBeDisabled();
@@ -100,7 +90,6 @@ describe("FeatureRail", () => {
   });
 
   it("walks the row from the keyboard", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const { scroller } = renderRail();
 
     fireEvent.keyDown(scroller, { key: "ArrowRight" });
@@ -117,7 +106,6 @@ describe("FeatureRail", () => {
   });
 
   it("jumps to a page when its dot is pressed", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const { scroller } = renderRail();
 
     fireEvent.click(screen.getByRole("button", { name: "Show page 3 of 3" }));
@@ -125,7 +113,6 @@ describe("FeatureRail", () => {
   });
 
   it("drags the row with a mouse and swallows the click it leaves behind", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const open = vi.fn();
     const { container, scroller } = renderRail({ onNavigate: (event, route) => { event.preventDefault(); open(route); } });
     const link = container.querySelector(".lab-project-card a");
@@ -141,7 +128,6 @@ describe("FeatureRail", () => {
   });
 
   it("opens the card when a press never turned into a drag", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const open = vi.fn();
     const { container, scroller } = renderRail({ onNavigate: (event, route) => { event.preventDefault(); open(route); } });
     const link = container.querySelector(".lab-project-card a");
@@ -155,7 +141,6 @@ describe("FeatureRail", () => {
   });
 
   it("leaves a touch alone, because the finger already scrolls", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     const open = vi.fn();
     const { container, scroller } = renderRail({ onNavigate: (event, route) => { event.preventDefault(); open(route); } });
     const link = container.querySelector(".lab-project-card a");
@@ -201,6 +186,19 @@ describe("FeatureRail", () => {
     expect(container.querySelector(".feature-rail").style.getPropertyValue("--rail-card-height")).toBe("420px");
   });
 
+  it("stacks downward only when the rail itself is pointed that way", () => {
+    // The direction used to be a Site-look key the rail read off `<html>` through a MutationObserver,
+    // so the studio that sizes the cards said nothing about which way the row ran — and the shipped
+    // default stacked one card per screen. It is a rail setting now, and sideways is the default.
+    expect(DEFAULT_FEATURE_RAIL.orientation).toBe("horizontal");
+
+    const { container } = renderRail({ rail: { ...DEFAULT_FEATURE_RAIL, orientation: "vertical" } });
+    expect(container.querySelector(".feature-rail")).toHaveAttribute("data-axis", "vertical");
+
+    const horizontal = render(<FeatureRail projects={projects} rail={DEFAULT_FEATURE_RAIL} />);
+    expect(horizontal.container.querySelector(".feature-rail")).toHaveAttribute("data-axis", "horizontal");
+  });
+
   it("says so when there is nothing to show", () => {
     const { container } = render(<FeatureRail projects={[]} rail={DEFAULT_FEATURE_RAIL} />);
 
@@ -209,7 +207,6 @@ describe("FeatureRail", () => {
   });
 
   it("keeps a row that fits the window free of chrome", () => {
-    document.documentElement.setAttribute("data-featured-axis", "horizontal");
     renderRail({ extent: 900, view: 900 });
 
     expect(screen.queryAllByRole("group", { name: "Card pages" })).toHaveLength(0);

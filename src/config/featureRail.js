@@ -14,6 +14,15 @@ export const RAIL_LAYOUTS = [
   { id: "list", label: "List", note: "One card per row, full width, no scrolling." },
 ];
 
+// Which way the strip runs. This used to live in Site look as "shuffle direction", where it sat apart
+// from every other number that decides a rail and shipped pointing downward — so the home rail and
+// the "More from" rail stacked one card per screen while the studio that sizes them said nothing
+// about it. It belongs with the rail, and sideways is what a row of cards looks like.
+export const RAIL_ORIENTATIONS = [
+  { id: "horizontal", label: "Horizontal", note: "Cards run sideways in a row you scroll or wrap." },
+  { id: "vertical", label: "Vertical", note: "Cards stack downward inside a band the height of the screen." },
+];
+
 export const RAIL_LIMITS = Object.freeze({
   cardWidth: Object.freeze({ min: 180, max: 560, step: 10 }),
   cardHeight: Object.freeze({ min: 0, max: 560, step: 10 }),
@@ -26,6 +35,7 @@ export const RAIL_LIMITS = Object.freeze({
 // own content needs, and the width takes the number you typed rather than a share of the viewport.
 export const DEFAULT_FEATURE_RAIL = Object.freeze({
   layout: "carousel",
+  orientation: "horizontal",
   cardWidth: 300,
   cardHeight: 0,
   gap: 18,
@@ -38,6 +48,7 @@ export const DEFAULT_FEATURE_RAIL = Object.freeze({
 });
 
 const LAYOUT_IDS = new Set(RAIL_LAYOUTS.map((layout) => layout.id));
+const ORIENTATION_IDS = new Set(RAIL_ORIENTATIONS.map((orientation) => orientation.id));
 
 function bounded(value, { min, max }, fallback) {
   // An absent key is not zero: a saved group with `cardHeight: null` means "never chosen", while a
@@ -52,6 +63,7 @@ export function normalizeFeatureRail(value = {}) {
   const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
   const normalized = { ...DEFAULT_FEATURE_RAIL };
   if (LAYOUT_IDS.has(source.layout)) normalized.layout = source.layout;
+  if (ORIENTATION_IDS.has(source.orientation)) normalized.orientation = source.orientation;
   normalized.cardWidth = bounded(source.cardWidth, RAIL_LIMITS.cardWidth, normalized.cardWidth);
   normalized.cardHeight = bounded(source.cardHeight, RAIL_LIMITS.cardHeight, normalized.cardHeight);
   normalized.gap = bounded(source.gap, RAIL_LIMITS.gap, normalized.gap);
@@ -155,6 +167,7 @@ export function getFeatureRailRootAttributes(value = {}) {
   const settings = normalizeFeatureRail(value);
   return {
     "data-fr-layout": settings.layout,
+    "data-fr-axis": settings.orientation,
     "data-fr-wrap": settings.wrap ? "on" : "off",
     "data-fr-tall": settings.cardHeight > 0 ? "on" : "off",
     "data-fr-arrows": settings.arrows ? "on" : "off",

@@ -25,6 +25,7 @@ describe("featureRail settings", () => {
       "gap",
       "indicators",
       "layout",
+      "orientation",
       "padding",
       "wrap",
     ]);
@@ -47,6 +48,8 @@ describe("featureRail settings", () => {
 
   it("only takes a layout it ships and only takes real booleans for the switches", () => {
     expect(normalizeFeatureRail({ layout: "marquee" }).layout).toBe(DEFAULT_FEATURE_RAIL.layout);
+    expect(normalizeFeatureRail({ orientation: "sideways" }).orientation).toBe(DEFAULT_FEATURE_RAIL.orientation);
+    expect(normalizeFeatureRail({ orientation: "vertical" }).orientation).toBe("vertical");
     expect(normalizeFeatureRail({ arrows: "yes" }).arrows).toBe(DEFAULT_FEATURE_RAIL.arrows);
     expect(normalizeFeatureRail({ drag: 1 }).drag).toBe(DEFAULT_FEATURE_RAIL.drag);
     expect(normalizeFeatureRail({ wrap: false }).wrap).toBe(false);
@@ -125,6 +128,7 @@ describe("featureRail values published to the page", () => {
   it("spells the chrome switches out instead of leaving them away", () => {
     expect(getFeatureRailRootAttributes(DEFAULT_FEATURE_RAIL)).toEqual({
       "data-fr-layout": "carousel",
+      "data-fr-axis": "horizontal",
       "data-fr-wrap": "off",
       "data-fr-tall": "off",
       "data-fr-arrows": "on",

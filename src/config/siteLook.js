@@ -68,15 +68,14 @@ export const FEATURED_STYLES = [
   { id: "poster", label: "Wide posters", note: "A slower rail with landscape posters." },
 ];
 
-// Which way the shelf runs. Vertical is the shipped default: the same cards, at the same size,
-// stacked top to bottom, so the device count (--rail-cards: 3 on a phone, 4 on a tablet, 6 on a
-// desktop) divides the height of the band instead of its width. Horizontal stays available for
-// the classic side-scrolling row. The Projects catalogue is not part of this — it is a two-way grid
-// with its own per-device column and row counts (--rail-cols / --rail-rows).
-export const FEATURED_AXES = [
-  { id: "vertical", label: "Vertical", note: "The featured strip and the collection shelf stack downward, showing 3 cards on a phone, 4 on a tablet and 6 on a desktop." },
-  { id: "horizontal", label: "Horizontal", note: "The same cards in the classic side-scrolling row, three to six of them wide." },
-];
+// Which way a card strip runs is no longer here. It sat in this group as "shuffle direction", apart
+// from every number that actually sizes a rail, and shipped pointing downward — so the home rail and
+// the "More from" rail stacked one card per screen while the rail studio said nothing about it. It
+// lives with the rail now: see RAIL_ORIENTATIONS in config/featureRail.js. A stored `axis` key from
+// before the move is simply ignored on load, and the rail group's own default takes over.
+
+// The Projects catalogue is not part of this — it is a two-way grid with its own per-device column
+// and row counts (--rail-cols / --rail-rows).
 
 // Section headings (not the hero title, which has its own motion group). Each of these is a
 // treatment on the heading itself, so it has to survive every gradient and both themes — which
@@ -95,7 +94,6 @@ const HERO_TEXT_IDS = new Set(HERO_TEXT_STYLES.map(({ id }) => id));
 const PATTERN_IDS = new Set(BACKGROUND_PATTERNS.map(({ id }) => id));
 const GRADIENT_IDS = new Set(LOOK_GRADIENTS.map(({ id }) => id));
 const FEATURED_IDS = new Set(FEATURED_STYLES.map(({ id }) => id));
-const FEATURED_AXIS_IDS = new Set(FEATURED_AXES.map(({ id }) => id));
 const HEADLINE_IDS = new Set(HEADLINE_STYLES.map(({ id }) => id));
 
 // Saved settings from before this group existed have no `look` key, so normalizeSiteLook
@@ -110,7 +108,6 @@ export const DEFAULT_SITE_LOOK = Object.freeze({
   textFx: true,
   logo3d: true,
   featured: "grid",
-  axis: "vertical",
 });
 
 export function normalizeSiteLook(value = {}) {
@@ -124,7 +121,6 @@ export function normalizeSiteLook(value = {}) {
     textFx: typeof source.textFx === "boolean" ? source.textFx : DEFAULT_SITE_LOOK.textFx,
     logo3d: typeof source.logo3d === "boolean" ? source.logo3d : DEFAULT_SITE_LOOK.logo3d,
     featured: FEATURED_IDS.has(source.featured) ? source.featured : DEFAULT_SITE_LOOK.featured,
-    axis: FEATURED_AXIS_IDS.has(source.axis) ? source.axis : DEFAULT_SITE_LOOK.axis,
   };
 }
 
@@ -138,8 +134,7 @@ export function sameSiteLook(first, second) {
     && left.heading === right.heading
     && left.textFx === right.textFx
     && left.logo3d === right.logo3d
-    && left.featured === right.featured
-    && left.axis === right.axis;
+    && left.featured === right.featured;
 }
 
 export function getLookPreset(presetId) {
@@ -160,10 +155,6 @@ export function getLookGradient(gradientId) {
 
 export function getFeaturedStyle(styleId) {
   return FEATURED_STYLES.find(({ id }) => id === styleId) || FEATURED_STYLES[0];
-}
-
-export function getFeaturedAxis(axisId) {
-  return FEATURED_AXES.find(({ id }) => id === axisId) || FEATURED_AXES[0];
 }
 
 export function getHeadlineStyle(styleId) {

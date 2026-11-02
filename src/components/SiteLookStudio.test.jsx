@@ -121,37 +121,14 @@ describe("SiteLookStudio", () => {
     expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, featured: "rail" });
   });
 
-  it("previews the shuffle direction and only ships it on Apply look", () => {
-    const { onApply, container } = renderStudio({
-      initialSettings: { ...DEFAULT_SITE_LOOK, featured: "rail" },
-    });
-    const strip = () => container.querySelector(".look-studio-strip");
-
-    expect(strip()).toHaveAttribute("data-axis", "vertical");
-
-    fireEvent.click(screen.getByRole("button", { name: "Horizontal" }));
-
-    expect(strip()).toHaveAttribute("data-axis", "horizontal");
-    expect(screen.getByText(/Horizontal shuffle previewed\. Choose Apply look to keep it/i)).toBeInTheDocument();
-    expect(onApply).not.toHaveBeenCalled();
-
-    fireEvent.click(screen.getByRole("button", { name: /Apply look/i }));
-    expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_SITE_LOOK, featured: "rail", axis: "horizontal" });
-  });
-
-  it("keeps the direction usable when the featured strip is a grid", () => {
+  it("leaves the direction of a rail to the rail studio", () => {
     const { container } = renderStudio();
 
-    expect(container.querySelector(".look-studio-strip")).toHaveClass("is-grid");
-    // The catalogue rail and the collection shelf turn with it too, so a grid home page still
-    // has a direction to choose.
-    const horizontal = screen.getByRole("button", { name: "Horizontal" });
-    expect(horizontal).toBeEnabled();
-
-    fireEvent.click(horizontal);
-
-    expect(horizontal).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Vertical" })).toHaveAttribute("aria-pressed", "false");
+    // Which way the cards run used to be a shuffle control here, published on <html> for the rails to
+    // read. It is a rail setting now, so the look group neither stores it nor renders a button for it.
+    expect(screen.queryByRole("button", { name: "Horizontal" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Vertical" })).toBeNull();
+    expect(container.querySelector(".look-studio-strip")).not.toHaveAttribute("data-axis");
   });
 
   it("discards an unsaved preview through Cancel", () => {

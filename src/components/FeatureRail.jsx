@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ProjectCard from "./ProjectCard";
-import useFeaturedAxis from "../hooks/useFeaturedAxis";
 import { getFeatureRailLocalVariables, normalizeFeatureRail } from "../config/featureRail";
 import { prefersReducedMotion } from "../utils/motion";
 import "../styles/feature-rail.css";
@@ -26,11 +25,12 @@ export default function FeatureRail({
 }) {
   const settings = useMemo(() => normalizeFeatureRail(rail), [rail]);
   const scrollerRef = useRef(null);
-  const axis = useFeaturedAxis();
   const [edges, setEdges] = useState({ start: false, end: true });
   const [pages, setPages] = useState(1);
   const [page, setPage] = useState(0);
-  const vertical = axis === "vertical";
+  // A wrapped row is not scrolled, so it never runs on its axis as a scroll direction — the cards
+  // simply stack across as many rows as they need, whichever way the strip was pointed.
+  const vertical = settings.orientation === "vertical";
   const scrollable = settings.layout === "carousel" && !settings.wrap;
 
   const measure = useCallback(() => {
@@ -138,7 +138,7 @@ export default function FeatureRail({
   return (
     <div
       className={`feature-rail is-${settings.layout}${settings.wrap ? " is-wrap" : ""}${settings.cardHeight > 0 ? " is-tall" : ""}`}
-      data-axis={scrollable ? axis : "horizontal"}
+      data-axis={scrollable ? settings.orientation : "horizontal"}
       data-art={art}
       style={variables}
     >

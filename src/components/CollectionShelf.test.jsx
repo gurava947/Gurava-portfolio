@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import CollectionShelf from "./CollectionShelf";
 
 const collections = [
@@ -69,10 +69,6 @@ function scrollableTrack() {
   return track;
 }
 
-afterEach(() => {
-  delete document.documentElement.dataset.featuredAxis;
-});
-
 describe("CollectionShelf", () => {
   it("shows the supplied names, counts and descriptions in stacked glass windows", () => {
     const { container } = renderShelf();
@@ -88,8 +84,9 @@ describe("CollectionShelf", () => {
     expect(container.querySelectorAll(".collection-shelf-reflection")).toHaveLength(3);
   });
 
+  // The shelf is a deck whose depth is drawn sideways; the rail direction never reached it, and the
+  // attribute it used to read is gone with the rail's own setting.
   it("slides sideways whatever the site-wide shuffle direction says, and carries the count", () => {
-    document.documentElement.dataset.featuredAxis = "vertical";
     const { container } = renderShelf();
     const shelf = container.querySelector(".collection-shelf");
 

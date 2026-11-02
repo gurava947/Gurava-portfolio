@@ -27,14 +27,16 @@ describe("normalizeSiteLook", () => {
   });
 
   it("keeps every valid choice, including the gradient and featured strip", () => {
-    expect(normalizeSiteLook({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail", axis: "horizontal" }))
-      .toEqual({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail", axis: "horizontal" });
+    expect(normalizeSiteLook({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail" }))
+      .toEqual({ preset: "cinematic", heroText: "wave", background: "mesh", gradient: "sunset", heading: "marker", textFx: false, logo3d: false, featured: "rail" });
   });
 
-  it("ships the shuffle running vertically and drops an axis it does not know", () => {
-    expect(DEFAULT_SITE_LOOK.axis).toBe("vertical");
-    expect(normalizeSiteLook({ axis: "diagonal" }).axis).toBe("vertical");
-    expect(normalizeSiteLook({ featured: "poster" }).axis).toBe("vertical");
+  it("has no opinion about which way a rail runs", () => {
+    // Direction moved to the rail group (config/featureRail.js), where the width, the count and the
+    // paging are decided. A browser that saved `look.axis` before the move simply has the key dropped.
+    expect(DEFAULT_SITE_LOOK.axis).toBeUndefined();
+    expect(normalizeSiteLook({ axis: "horizontal" }).axis).toBeUndefined();
+    expect(normalizeSiteLook({ axis: "diagonal" })).toEqual(DEFAULT_SITE_LOOK);
   });
 
   it("treats settings saved before the look group existed as the default look", () => {
@@ -48,7 +50,6 @@ describe("normalizeSiteLook", () => {
     expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, heading: "glow" })).toBe(false);
     expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, textFx: false })).toBe(false);
     expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, logo3d: false })).toBe(false);
-    expect(sameSiteLook(DEFAULT_SITE_LOOK, { ...DEFAULT_SITE_LOOK, axis: "horizontal" })).toBe(false);
   });
 
   it("offers the controls the studio renders", () => {
