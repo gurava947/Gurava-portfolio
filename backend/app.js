@@ -6,6 +6,8 @@ import { dirname } from "node:path";
 import { gzipSync } from "node:zlib";
 import { createApiController } from "./controllers/apiController.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+import { createRateLimiter } from "./middleware/rateLimit.js";
+import { createWriteGuard } from "./middleware/writeGuard.js";
 import { createApiRoutes } from "./routes/apiRoutes.js";
 import { createProjectService } from "./services/projectService.js";
 import { createSettingsService } from "./services/settingsService.js";
@@ -18,13 +20,17 @@ const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
-  "script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net",
+  // script-src has no remote source at all. The Pyodide runtime behind the Python playground is
+  // committed under public/playground/pyodide and its worker loads it from that same-origin path,
+  // so nothing executable has to come from a CDN. 'wasm-unsafe-eval' is what lets the wasm image
+  // compile; without it the playground cannot start.
+  "script-src 'self' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://assets.ccbp.in https://d2clawv67efefq.cloudfront.net https://certificates.ccbp.in https://img.youtube.com https://media-content.ccbp.in https://new-assets.ccbp.in https://nxtwave-website-media-files.s3.ap-south-1.amazonaws.com",
   "media-src 'self' blob: https://assets.ccbp.in https://d2clawv67efefq.cloudfront.net",
   "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
-  "connect-src 'self' https://cdn.jsdelivr.net",
+  "connect-src 'self'",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "frame-ancestors 'self'",
@@ -91,7 +97,14 @@ function compressWithGzip(request, response, next) {
   return next();
 }
 
-export function createApp({ database, databaseName, staticDirectory = resolve(projectRoot, "dist") }) {
+export function createApp({
+  database,
+  databaseName,
+  staticDirectory = resolve(projectRoot, "dist"),
+  bindHost = "127.0.0.1",
+  writeToken = "",
+  rateLimit = {},
+} = {}) {
   const app = express();
   const projectService = createProjectService(database.projectRepository);
   const settingsService = createSettingsService(database.settingsRepository);
@@ -103,6 +116,10 @@ export function createApp({ database, databaseName, staticDirectory = resolve(pr
   });
 
   app.disable("x-powered-by");
+  // No proxy is in front of this process in any supported setup, so forwarded headers must not be
+  // believed: an attacker-supplied X-Forwarded-For would otherwise mint a fresh rate-limit bucket per
+  // request, and X-Forwarded-Host would let a client choose the origin the write guard compares to.
+  app.set("trust proxy", false);
   app.use((_request, response, next) => {
     response.setHeader("X-Content-Type-Options", "nosniff");
     response.setHeader("Referrer-Policy", "no-referrer");
@@ -115,8 +132,11 @@ export function createApp({ database, databaseName, staticDirectory = resolve(pr
     next();
   });
   app.use(compressWithGzip);
-  app.use(express.json({ limit: "32kb", strict: true }));
-  app.use("/api", createApiRoutes(controller));
+  // The guards run before express.json so a rejected or flooded request never gets its body parsed and
+  // buffered, and the body parser is scoped to /api because nothing else in the app accepts one.
+  const limiter = createRateLimiter(rateLimit);
+  const guard = createWriteGuard({ bindHost, writeToken });
+  app.use("/api", limiter, guard, express.json({ limit: "32kb", strict: true }), createApiRoutes(controller));
   app.use("/api", notFoundHandler);
 
   if (staticDirectory !== false && existsSync(staticDirectory)) {

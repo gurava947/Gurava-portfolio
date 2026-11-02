@@ -8,6 +8,8 @@ function BootstrapEmbed() {
           className="embed-responsive-item"
           src="https://www.youtube.com/embed/PLzhUUGdT_c?rel=0"
           title="Bootstrap Embed video"
+          loading="lazy"
+          referrerPolicy="no-referrer"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />

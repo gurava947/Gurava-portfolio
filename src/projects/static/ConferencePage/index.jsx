@@ -12,6 +12,8 @@ function ConferencePage({ data }) {
           <iframe
             src={data.details.videoUrl}
             title={data.details.title}
+            loading="lazy"
+            referrerPolicy="no-referrer"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />

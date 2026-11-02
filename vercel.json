@@ -20,7 +20,7 @@
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://assets.ccbp.in https://d2clawv67efefq.cloudfront.net https://certificates.ccbp.in https://img.youtube.com https://media-content.ccbp.in https://new-assets.ccbp.in https://nxtwave-website-media-files.s3.ap-south-1.amazonaws.com; media-src 'self' blob: https://assets.ccbp.in https://d2clawv67efefq.cloudfront.net; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'self'; form-action 'self'"
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://assets.ccbp.in https://d2clawv67efefq.cloudfront.net https://certificates.ccbp.in https://img.youtube.com https://media-content.ccbp.in https://new-assets.ccbp.in https://nxtwave-website-media-files.s3.ap-south-1.amazonaws.com; media-src 'self' blob: https://assets.ccbp.in https://d2clawv67efefq.cloudfront.net; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'self'; form-action 'self'"
         }
       ]
     },

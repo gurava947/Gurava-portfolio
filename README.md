@@ -40,9 +40,14 @@ npm run build           # catalog build + production frontend build
 npm run build:vercel    # Vercel-mode production build
 npm test                # Vitest unit tests + backend API tests
 npm run test:python     # Python exercise unittest suite (1042 checks)
+npm run audit:security  # advisories, credential sweep, exposed-file check (also a CI step)
 npm run lighthouse      # production build check against the Lighthouse budget
 npm start               # build and serve the production app with Express
 ```
+
+### Security
+
+`SECURITY.md` maps the hardening work — write-route guard, rate limiting, headers, CSP, input validation, dependency and secret hygiene — to the code and the tests that pin each one, and records the trade-offs. Run `npm run audit:security` before committing; CI runs it before the test suite.
 
 ### Performance budget
 

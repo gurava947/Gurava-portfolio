@@ -28,6 +28,11 @@ jobs:
       - name: Audit the catalogue against its source seeds
         run: node scripts/audit-catalog.mjs
 
+      - name: Security audit
+        # Dependency advisories, credential patterns across the working tree and every commit, and
+        # the files a running server owns (SQLite, logs, dist) must not be tracked.
+        run: npm run audit:security
+
       - name: Unit and API tests
         run: npm test
 

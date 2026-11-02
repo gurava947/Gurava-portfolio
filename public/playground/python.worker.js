@@ -7,9 +7,15 @@ let messageQueue = Promise.resolve();
 
 async function getRuntime() {
   if (!pyodidePromise) {
+    // The whole Pyodide bundle is committed under public/playground/pyodide and shipped in the
+    // build, so the runtime always resolves from disk. There is deliberately no CDN fallback
+    // here: fetching executable code from a third-party origin at page runtime is the exact
+    // supply-chain path the CSP's script-src 'self' exists to close.
     pyodidePromise = self.loadPyodide({ indexURL: pyodideIndexUrl }).catch((error) => {
-      console.warn('Local Pyodide assets unavailable; trying the CDN.', error);
-      return self.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/' });
+      // Without this the first failed fetch of the ~10 MB wasm would be memoised and every later
+      // Run would replay it, so a retry is allowed to load again.
+      pyodidePromise = undefined;
+      throw error;
     });
   }
   return pyodidePromise;
