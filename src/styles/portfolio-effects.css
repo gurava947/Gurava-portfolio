@@ -276,12 +276,20 @@
   color: var(--portfolio-card-custom-text-color, var(--theme-card-muted));
 }
 
-.project-card .project-card-title,
-.section-title,
-.detail-title,
+.project-card .project-card-title {
+  color: var(--portfolio-card-custom-text-color, var(--theme-card-text));
+}
+
+/* Page headings and the wordmark sit on the page background, not on a card, so they follow the page
+   text colour. Reading them from the card customisation instead made a near-white card title bleed
+   out onto the nav bar and footer band and drop the text below legibility. */
+.section-title {
+  color: var(--theme-text);
+}
+
 .portfolio-brand,
 .portfolio-brand:hover {
-  color: var(--portfolio-card-custom-text-color, var(--theme-card-text));
+  color: var(--theme-text);
 }
 
 .project-card[data-press-feedback="true"]:active {

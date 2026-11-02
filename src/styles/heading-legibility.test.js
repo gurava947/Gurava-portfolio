@@ -236,3 +236,34 @@ describe("preview tiles fit the cards they show", () => {
     expect(media[0].declarations.get("width")).toBe("100%");
   });
 });
+
+// The fifth way text disappears is a colour that belongs to a card being read onto the page. The card
+// studio writes `--portfolio-card-custom-text-color` on the document root, so any rule that consumes it
+// outside a card paints page furniture with the card's ink. With a dark-card customisation saved
+// (#f7faf6 on #0b1310) the wordmark measured 1.04:1 against the light nav bar and simply vanished.
+describe("page text keeps the page colour", () => {
+  const effects = scopedRules(readFileSync("src/styles/portfolio-effects.css", "utf8"));
+  const cardInk = "var(--portfolio-card-custom-text-color";
+  const onThePage = /\.portfolio-brand|\.section-title/;
+
+  it("paints no page heading or the wordmark with the card's ink", () => {
+    const bleed = effects.filter(
+      (rule) => (rule.declarations.get("color") || "").includes(cardInk) && onThePage.test(rule.selector),
+    );
+    expect(bleed.map((rule) => rule.selector), "page furniture must follow --theme-text, not the card customisation").toEqual([]);
+  });
+
+  it("keeps a real colour on both of them", () => {
+    for (const selector of [".portfolio-brand", ".section-title"]) {
+      const rules = effects.filter((rule) => rule.selector === selector);
+      expect(rules.length, `${selector} needs exactly one colour rule`).toBe(1);
+      expect(rules[0].declarations.get("color"), `${selector} is not reading the page text colour`).toContain("var(--theme-text)");
+    }
+  });
+
+  it("still lets a card title take the customised ink", () => {
+    const title = effects.find((rule) => rule.selector === ".project-card .project-card-title");
+    expect(title, "the guard above must not have taken the card its own colour").toBeTruthy();
+    expect(title.declarations.get("color")).toContain(cardInk);
+  });
+});
