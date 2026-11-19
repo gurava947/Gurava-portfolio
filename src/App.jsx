@@ -27,6 +27,7 @@ import CollectionCredits from "./components/ui/CollectionCredits";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import MaterialSymbol from "./components/MaterialSymbol";
+import FooterContactDrawer from "./components/FooterContactDrawer";
 import SiteLookStudio from "./components/SiteLookStudio";
 import Shelf3DStudio from "./components/Shelf3DStudio";
 import FeatureRailStudio from "./components/FeatureRailStudio";
@@ -1475,27 +1476,67 @@ function SiteFooter({ site, onNavigate }) {
   const home = site.home || {};
   const copy = home.footer || {};
   const credits = home.credits;
+  const [activeContactId, setActiveContactId] = useState("");
   // The footer carries the same contact details the profile card shows, read from the same saved
   // profile so the two never disagree. It is a lookup on render, not a second copy to keep in sync.
   const profile = readSavedProfile(site.profile?.defaultValues || {});
   const labels = site.profile?.labels || {};
+  const openContact = useCallback((id) => setActiveContactId(id), []);
+  const closeContact = useCallback(() => setActiveContactId(""), []);
   // An unfilled profile field still holds its "[mobile number]" style placeholder — never show that.
   const isFilled = (value) => Boolean(value) && !/^\[.*\]$/.test(String(value).trim());
   const phoneHref = profile.mobile ? `tel:${String(profile.mobile).replace(/[^\d+]/g, "")}` : "";
   const emailHref = String(profile.email || "").includes("@") ? `mailto:${profile.email}` : "";
   const contactRows = [
-    { field: "email", value: profile.email, href: emailHref },
-    { field: "mobile", value: profile.mobile, href: phoneHref },
+    { field: "email", value: profile.email, href: emailHref, icon: "mail", actionLabel: "Send email" },
+    { field: "mobile", value: profile.mobile, href: phoneHref, icon: "call", actionLabel: "Call" },
   ].filter((row) => isFilled(row.value) && row.href);
   const followRows = [
-    { field: "github", value: profile.github, href: externalProfileUrl(profile.github) },
-    { field: "linkedin", value: profile.linkedin, href: externalProfileUrl(profile.linkedin) },
-  ].filter((row) => row.href);
+    { field: "github", value: profile.github, href: externalProfileUrl(profile.github), icon: "code" },
+    { field: "linkedin", value: profile.linkedin, href: externalProfileUrl(profile.linkedin), icon: "work" },
+  ]
+    .filter((row) => row.href)
+    .map((row) => ({ ...row, actionLabel: `Open ${labels[row.field] || row.field} profile`, external: true }));
   // Only links that resolve to a real http(s) URL are listed; an empty href would render a link
   // back to this page.
   const extraLinks = (Array.isArray(profile.links) ? profile.links : [])
-    .map((link) => ({ ...link, href: externalProfileUrl(link.url) }))
+    .map((link, index) => ({
+      ...link,
+      id: `profile-link-${index}`,
+      icon: "link",
+      actionLabel: `Open ${link.label}`,
+      external: true,
+      href: externalProfileUrl(link.url),
+    }))
     .filter((link) => link.href);
+  const drawerItems = [
+    ...contactRows.map((row) => ({
+      ...row,
+      id: row.field,
+      label: labels[row.field] || row.field,
+      external: false,
+    })),
+    ...followRows.map((row) => ({
+      ...row,
+      id: row.field,
+      label: labels[row.field] || row.field,
+    })),
+    ...extraLinks.map((link) => ({
+      ...link,
+      label: link.label,
+      value: profileLinkLabel(link.url),
+    })),
+    {
+      id: "portfolio",
+      label: "Portfolio",
+      value: `${site.brand.prefix}${site.brand.separator}${site.brand.suffix}`,
+      href: "/",
+      icon: "language",
+      actionLabel: "Visit portfolio",
+      internal: true,
+      external: false,
+    },
+  ];
   const scrollToTop = () => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -1520,12 +1561,12 @@ function SiteFooter({ site, onNavigate }) {
           <CollectionCredits copy={credits} />
         </div>
       )}
-      {(copy.tagline || contactRows.length > 0 || followRows.length > 0) && (
+      {(copy.tagline || contactRows.length > 0 || followRows.length > 0 || extraLinks.length > 0) && (
         <div className="container footer-contact">
           <div className="footer-contact-brand">
-            <a className="footer-brand footer-brand-lg" href="/" onClick={(event) => onNavigate(event, "/")}>
+            <button className="footer-brand footer-brand-lg footer-contact-trigger" type="button" onClick={() => openContact("portfolio")}>
               {site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}
-            </a>
+            </button>
             {copy.tagline && <p className="footer-tagline">{copy.tagline}</p>}
             {copy.contactNote && <p className="footer-contact-note">{copy.contactNote}</p>}
           </div>
@@ -1536,7 +1577,9 @@ function SiteFooter({ site, onNavigate }) {
                 {contactRows.map((row) => (
                   <li key={row.field}>
                     <span className="footer-contact-key">{labels[row.field] || row.field}</span>
-                    <a className="footer-contact-value" href={row.href}>{row.value}</a>
+                    <button className="footer-contact-value footer-contact-trigger" type="button" onClick={() => openContact(row.field)}>
+                      {row.value}
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -1549,17 +1592,17 @@ function SiteFooter({ site, onNavigate }) {
                 {followRows.map((row) => (
                   <li key={row.field}>
                     <span className="footer-contact-key">{labels[row.field] || row.field}</span>
-                    <a className="footer-contact-value" href={row.href} title={row.href} target="_blank" rel="noreferrer">
+                    <button className="footer-contact-value footer-contact-trigger" type="button" onClick={() => openContact(row.field)} title={row.href}>
                       {profileLinkLabel(row.value)}
-                    </a>
+                    </button>
                   </li>
                 ))}
                 {extraLinks.map((link, index) => (
-                  <li key={`${link.label}-${index}`}>
+                  <li key={link.id || `${link.label}-${index}`}>
                     <span className="footer-contact-key">{link.label}</span>
-                    <a className="footer-contact-value" href={link.href} title={link.url} target="_blank" rel="noreferrer">
+                    <button className="footer-contact-value footer-contact-trigger" type="button" onClick={() => openContact(link.id)} title={link.url}>
                       {profileLinkLabel(link.url)}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -1569,11 +1612,20 @@ function SiteFooter({ site, onNavigate }) {
       )}
       <div className="container site-footer-inner">
         {!copy.tagline && (
-          <a className="footer-brand" href="/" onClick={(event) => onNavigate(event, "/")}>{site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}</a>
+          <button className="footer-brand footer-contact-trigger" type="button" onClick={() => openContact("portfolio")}>
+            {site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}
+          </button>
         )}
         <p className="site-footer-note">{copy.note}</p>
         <button type="button" className="back-to-top" onClick={scrollToTop}>{copy.backToTop}</button>
       </div>
+      <FooterContactDrawer
+        items={drawerItems}
+        activeId={activeContactId}
+        onSelect={openContact}
+        onClose={closeContact}
+        onNavigate={onNavigate}
+      />
     </footer>
   );
 }
