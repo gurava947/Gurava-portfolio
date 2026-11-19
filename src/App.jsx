@@ -27,7 +27,7 @@ import CollectionCredits from "./components/ui/CollectionCredits";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
 import MaterialSymbol from "./components/MaterialSymbol";
-import FooterContactDrawer from "./components/FooterContactDrawer";
+import FooterContactWindows from "./components/FooterContactWindows";
 import SiteLookStudio from "./components/SiteLookStudio";
 import Shelf3DStudio from "./components/Shelf3DStudio";
 import FeatureRailStudio from "./components/FeatureRailStudio";
@@ -1476,13 +1476,23 @@ function SiteFooter({ site, onNavigate }) {
   const home = site.home || {};
   const copy = home.footer || {};
   const credits = home.credits;
-  const [activeContactId, setActiveContactId] = useState("");
+  const [openContactIds, setOpenContactIds] = useState([]);
+  const [minimizedContactIds, setMinimizedContactIds] = useState([]);
   // The footer carries the same contact details the profile card shows, read from the same saved
   // profile so the two never disagree. It is a lookup on render, not a second copy to keep in sync.
   const profile = readSavedProfile(site.profile?.defaultValues || {});
   const labels = site.profile?.labels || {};
-  const openContact = useCallback((id) => setActiveContactId(id), []);
-  const closeContact = useCallback(() => setActiveContactId(""), []);
+  const openContact = useCallback((id) => {
+    setOpenContactIds((ids) => [...ids.filter((openId) => openId !== id), id]);
+    setMinimizedContactIds((ids) => ids.filter((minimizedId) => minimizedId !== id));
+  }, []);
+  const closeContact = useCallback((id) => {
+    setOpenContactIds((ids) => ids.filter((openId) => openId !== id));
+    setMinimizedContactIds((ids) => ids.filter((minimizedId) => minimizedId !== id));
+  }, []);
+  const minimizeContact = useCallback((id) => {
+    setMinimizedContactIds((ids) => ids.includes(id) ? ids : [...ids, id]);
+  }, []);
   // An unfilled profile field still holds its "[mobile number]" style placeholder — never show that.
   const isFilled = (value) => Boolean(value) && !/^\[.*\]$/.test(String(value).trim());
   const phoneHref = profile.mobile ? `tel:${String(profile.mobile).replace(/[^\d+]/g, "")}` : "";
@@ -1509,7 +1519,7 @@ function SiteFooter({ site, onNavigate }) {
       href: externalProfileUrl(link.url),
     }))
     .filter((link) => link.href);
-  const drawerItems = [
+  const contactWindowItems = [
     ...contactRows.map((row) => ({
       ...row,
       id: row.field,
@@ -1564,7 +1574,7 @@ function SiteFooter({ site, onNavigate }) {
       {(copy.tagline || contactRows.length > 0 || followRows.length > 0 || extraLinks.length > 0) && (
         <div className="container footer-contact">
           <div className="footer-contact-brand">
-            <button className="footer-brand footer-brand-lg footer-contact-trigger" type="button" onClick={() => openContact("portfolio")}>
+            <button className="footer-brand footer-brand-lg footer-contact-trigger" type="button" data-footer-contact-id="portfolio" onClick={() => openContact("portfolio")}>
               {site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}
             </button>
             {copy.tagline && <p className="footer-tagline">{copy.tagline}</p>}
@@ -1577,7 +1587,7 @@ function SiteFooter({ site, onNavigate }) {
                 {contactRows.map((row) => (
                   <li key={row.field}>
                     <span className="footer-contact-key">{labels[row.field] || row.field}</span>
-                    <button className="footer-contact-value footer-contact-trigger" type="button" onClick={() => openContact(row.field)}>
+                    <button className="footer-contact-value footer-contact-trigger" type="button" data-footer-contact-id={row.field} onClick={() => openContact(row.field)}>
                       {row.value}
                     </button>
                   </li>
@@ -1592,7 +1602,7 @@ function SiteFooter({ site, onNavigate }) {
                 {followRows.map((row) => (
                   <li key={row.field}>
                     <span className="footer-contact-key">{labels[row.field] || row.field}</span>
-                    <button className="footer-contact-value footer-contact-trigger" type="button" onClick={() => openContact(row.field)} title={row.href}>
+                    <button className="footer-contact-value footer-contact-trigger" type="button" data-footer-contact-id={row.field} onClick={() => openContact(row.field)} title={row.href}>
                       {profileLinkLabel(row.value)}
                     </button>
                   </li>
@@ -1600,7 +1610,7 @@ function SiteFooter({ site, onNavigate }) {
                 {extraLinks.map((link, index) => (
                   <li key={link.id || `${link.label}-${index}`}>
                     <span className="footer-contact-key">{link.label}</span>
-                    <button className="footer-contact-value footer-contact-trigger" type="button" onClick={() => openContact(link.id)} title={link.url}>
+                    <button className="footer-contact-value footer-contact-trigger" type="button" data-footer-contact-id={link.id} onClick={() => openContact(link.id)} title={link.url}>
                       {profileLinkLabel(link.url)}
                     </button>
                   </li>
@@ -1612,18 +1622,20 @@ function SiteFooter({ site, onNavigate }) {
       )}
       <div className="container site-footer-inner">
         {!copy.tagline && (
-          <button className="footer-brand footer-contact-trigger" type="button" onClick={() => openContact("portfolio")}>
+          <button className="footer-brand footer-contact-trigger" type="button" data-footer-contact-id="portfolio" onClick={() => openContact("portfolio")}>
             {site.brand.prefix}<span className="brand-dot">{site.brand.separator}</span>{site.brand.suffix}
           </button>
         )}
         <p className="site-footer-note">{copy.note}</p>
         <button type="button" className="back-to-top" onClick={scrollToTop}>{copy.backToTop}</button>
       </div>
-      <FooterContactDrawer
-        items={drawerItems}
-        activeId={activeContactId}
-        onSelect={openContact}
+      <FooterContactWindows
+        items={contactWindowItems}
+        openIds={openContactIds}
+        minimizedIds={minimizedContactIds}
+        onOpen={openContact}
         onClose={closeContact}
+        onMinimize={minimizeContact}
         onNavigate={onNavigate}
       />
     </footer>
