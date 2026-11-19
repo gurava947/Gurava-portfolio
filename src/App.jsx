@@ -30,14 +30,11 @@ import Shelf3DStudio from "./components/Shelf3DStudio";
 import FeatureRailStudio from "./components/FeatureRailStudio";
 import Three3DStudio from "./components/Three3DStudio";
 import Three3DStage from "./components/Three3DStage";
-import ProfileBio from "./components/ProfileBio";
-import ProjectBacklog from "./components/ProjectBacklog";
 import FeatureRail from "./components/FeatureRail";
 import HeroWords from "./components/HeroWords";
 import { CARD_QUICK_CONTROLS, CARD_STYLE_PRESETS, getActiveCardPresetId } from "./config/cardPresets";
 import { playgroundThemeDrivesSite } from "./config/themeSync";
 import { resolveThree3dPalette } from "./config/three3d";
-import { profileBioFigures } from "./utils/profileBio";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
 const PROFILE_STORAGE_KEY = "myapp.guravva.profile.v1";
@@ -1667,10 +1664,6 @@ function PortfolioHome({
     accent: settings.accent,
     mode: themeMode,
   }), [settings.primary, settings.secondary, settings.accent, themeMode]);
-  /* The bio is the landing page's own claim, so its numbers are taken from the collections the shelf
-     underneath it renders — not from a saved profile the visitor may never have opened. */
-  const bio = site.profile?.bio || null;
-  const bioFigures = useMemo(() => profileBioFigures(profile, catalog.collections), [profile, catalog.collections]);
   const navigate = (event, destination) => onNavigate(event, destination);
 
   return (
@@ -1770,14 +1763,6 @@ function PortfolioHome({
           </div>
         </section>
 
-        {bio && (
-          <section className="home-bio-section" data-three3d-surface="projects">
-            <div className="container">
-              <ProfileBio bio={bio} figures={bioFigures} reducedMotion={settings.reducedMotion} />
-            </div>
-          </section>
-        )}
-
         <section className="home-collections-section" id="collections" data-three3d-surface="projects">
           <div className="container">
             <header className="home-section-heading">
@@ -1860,9 +1845,6 @@ function PortfolioHome({
           </div>
         </section>
 
-        <ProjectBacklog backlog={catalog.backlog} copy={copy.backlog} />
-
-        {/* Guarded because the catalog can render from a cached copy that predates this block. */}
         {/* The program / mentor / maker credit moved into <SiteFooter>, which every page renders. */}
       </main>
       <SiteFooter site={site} onNavigate={navigate} />
