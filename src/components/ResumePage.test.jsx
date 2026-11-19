@@ -175,4 +175,16 @@ describe("ResumePage", () => {
     expect(onProjectLayoutChange).toHaveBeenCalledWith("list");
     expect(onProjectDensityChange).toHaveBeenCalledWith("comfortable");
   });
+
+  it("clears project filters from the separated filter panel", async () => {
+    render(<ResumePage profile={profile} certificates={certificates} projects={projectCatalog} collections={collections} />);
+
+    fireEvent.change(screen.getByRole("searchbox", { name: "Search portfolio projects" }), { target: { value: "WebRTC" } });
+    expect(await screen.findByText("Showing 1-1 of 1 matching builds")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+
+    expect(screen.getByRole("searchbox", { name: "Search portfolio projects" })).toHaveValue("");
+    expect(await screen.findByText("Showing 1-24 of 25 matching builds")).toBeInTheDocument();
+  });
 });

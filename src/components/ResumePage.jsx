@@ -256,6 +256,13 @@ export default function ResumePage({
     setProjectTechnology(value);
     setProjectPage(1);
   };
+  const clearProjectFilters = () => {
+    setProjectQuery("");
+    setProjectCollection("");
+    setProjectTechnology("");
+    setProjectPage(1);
+  };
+  const hasProjectFilters = Boolean(projectQuery || projectCollection || projectTechnology);
   const openProject = (event, route) => {
     if (onNavigate) onNavigate(event, route);
   };
@@ -410,54 +417,82 @@ export default function ResumePage({
               <p className="resume-library-intro">Browse the project records currently in the portfolio. This list is generated from the same catalog used by the Projects page.</p>
 
               <div className="resume-library-controls">
-                <label className="resume-library-search">
-                  <span>Search projects</span>
-                  <span className="resume-library-input-wrap">
-                    <MaterialSymbol name="search" />
-                    <input
-                      type="search"
-                      value={projectQuery}
-                      onChange={(event) => updateProjectQuery(event.target.value)}
-                      placeholder="Name, category or technology"
-                      aria-label="Search portfolio projects"
-                    />
-                  </span>
-                </label>
-                <label className="resume-library-filter">
-                  <span>Collection</span>
-                  <select value={projectCollection} onChange={(event) => updateProjectCollection(event.target.value)} aria-label="Filter projects by collection">
-                    <option value="">All collections</option>
-                    {projectCollections.map((collection) => (
-                      <option key={collection.id} value={collection.id}>{collection.label}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="resume-library-filter">
-                  <span>Technology</span>
-                  <select value={projectTechnology} onChange={(event) => updateProjectTechnology(event.target.value)} aria-label="Filter projects by technology">
-                    <option value="">All technologies</option>
-                    {technologies.map((technology) => (
-                      <option key={technology} value={technology}>{technology}</option>
-                    ))}
-                  </select>
-                </label>
-                <div className="resume-library-layout" role="group" aria-label="Project catalog layout">
-                  {RESUME_LAYOUT_OPTIONS.map(({ id, label, icon }) => (
-                    <button key={id} type="button" aria-pressed={projectLayout === id} onClick={() => updateProjectLayout(id)}>
-                      <MaterialSymbol name={icon} /> {label}
+                <section className="resume-library-filter-panel" aria-label="Project filters">
+                  <div className="resume-library-panel-heading">
+                    <div>
+                      <MaterialSymbol name="filter_list" />
+                      <h3>Find a build</h3>
+                    </div>
+                    <button type="button" onClick={clearProjectFilters} disabled={!hasProjectFilters}>
+                      Clear filters
                     </button>
-                  ))}
-                </div>
-                <div className="resume-library-layout" role="group" aria-label="Project card density">
-                  {[
-                    ["comfortable", "Comfortable"],
-                    ["compact", "Compact"],
-                  ].map(([value, label]) => (
-                    <button key={value} type="button" aria-pressed={projectDensity === value} onClick={() => updateProjectDensity(value)}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
+                  </div>
+                  <div className="resume-library-filter-grid">
+                    <label className="resume-library-search">
+                      <span>Search projects</span>
+                      <span className="resume-library-input-wrap">
+                        <MaterialSymbol name="search" />
+                        <input
+                          type="search"
+                          value={projectQuery}
+                          onChange={(event) => updateProjectQuery(event.target.value)}
+                          placeholder="Name, category or technology"
+                          aria-label="Search portfolio projects"
+                        />
+                      </span>
+                    </label>
+                    <label className="resume-library-filter">
+                      <span>Collection</span>
+                      <span className="resume-library-select-wrap">
+                        <select value={projectCollection} onChange={(event) => updateProjectCollection(event.target.value)} aria-label="Filter projects by collection">
+                          <option value="">All collections</option>
+                          {projectCollections.map((collection) => (
+                            <option key={collection.id} value={collection.id}>{collection.label}</option>
+                          ))}
+                        </select>
+                        <MaterialSymbol name="expand_more" />
+                      </span>
+                    </label>
+                    <label className="resume-library-filter">
+                      <span>Technology</span>
+                      <span className="resume-library-select-wrap">
+                        <select value={projectTechnology} onChange={(event) => updateProjectTechnology(event.target.value)} aria-label="Filter projects by technology">
+                          <option value="">All technologies</option>
+                          {technologies.map((technology) => (
+                            <option key={technology} value={technology}>{technology}</option>
+                          ))}
+                        </select>
+                        <MaterialSymbol name="expand_more" />
+                      </span>
+                    </label>
+                  </div>
+                </section>
+
+                <section className="resume-library-presentation" aria-label="Project display settings">
+                  <div className="resume-library-option-group">
+                    <span className="resume-library-option-label">Layout</span>
+                    <div className="resume-library-layout" role="group" aria-label="Project catalog layout">
+                      {RESUME_LAYOUT_OPTIONS.map(({ id, label, icon }) => (
+                        <button key={id} type="button" aria-pressed={projectLayout === id} onClick={() => updateProjectLayout(id)}>
+                          <MaterialSymbol name={icon} /> {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="resume-library-option-group">
+                    <span className="resume-library-option-label">Card spacing</span>
+                    <div className="resume-library-layout" role="group" aria-label="Project card density">
+                      {[
+                        ["comfortable", "Comfortable"],
+                        ["compact", "Compact"],
+                      ].map(([value, label]) => (
+                        <button key={value} type="button" aria-pressed={projectDensity === value} onClick={() => updateProjectDensity(value)}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </section>
               </div>
 
               <div className="resume-library-technology" aria-label="Common technologies in the project catalog">
