@@ -7,12 +7,12 @@ import MaterialSymbol from "./MaterialSymbol";
 import "./ResumePage.css";
 
 const RESUME_SECTIONS = [
-  ["experience", "Experience"],
-  ["skills", "Skills"],
-  ["projects", "Projects"],
-  ["project-library", "Project catalog"],
-  ["education", "Education"],
-  ["certifications", "Certifications"],
+  { id: "experience", label: "Experience", icon: "work" },
+  { id: "skills", label: "Skills", icon: "code" },
+  { id: "projects", label: "Projects", icon: "terminal" },
+  { id: "project-library", label: "Project catalog", icon: "grid_view" },
+  { id: "education", label: "Education", icon: "school" },
+  { id: "certifications", label: "Certifications", icon: "workspace_premium" },
 ];
 const RESUME_LAYOUT_OPTIONS = [
   { id: "cards", label: "Cards", icon: "grid_view" },
@@ -64,7 +64,7 @@ function safePhone(value) {
   return /^\+?\d{7,15}$/.test(dialable) ? { display: phone, href: `tel:${dialable}` } : null;
 }
 
-function ContactLink({ label, value, href, external = false }) {
+function ContactLink({ label, value, href, icon, external = false }) {
   if (!value || !href) return null;
   return (
     <a
@@ -73,19 +73,30 @@ function ContactLink({ label, value, href, external = false }) {
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
     >
-      <span>{label}</span>
-      <strong>{value}</strong>
+      <MaterialSymbol name={icon} />
+      <span className="resume-contact-copy">
+        <span>{label}</span>
+        <strong>{value}</strong>
+      </span>
     </a>
   );
 }
 
-function SectionHeading({ id, children }) {
+function SectionHeading({ id, icon, children }) {
   return (
     <div className="resume-section-heading">
-      <span aria-hidden="true" />
+      <span className="resume-section-icon" aria-hidden="true"><MaterialSymbol name={icon} /></span>
       <h2 id={id}>{children}</h2>
     </div>
   );
+}
+
+function technologyIcon(value) {
+  const technology = String(value).toLowerCase();
+  if (/postgres|redis|mongo|database|supabase|sql/.test(technology)) return "database";
+  if (/docker|kubernetes|nginx|vercel|cloud|ci\/cd|github|git/.test(technology)) return "cloud";
+  if (/api|node|express|socket|webrtc/.test(technology)) return "hub";
+  return "code";
 }
 
 function ProjectArchiveCard({ project, index, onNavigate }) {
@@ -125,7 +136,7 @@ function ProjectArchiveCard({ project, index, onNavigate }) {
       <p>{project.description}</p>
       <ul className="resume-archive-tech" aria-label={`${project.title} technologies`}>
         {(project.technologies || []).slice(0, 4).map((technology) => (
-          <li key={technology}>{technology}</li>
+          <li key={technology}><MaterialSymbol name={technologyIcon(technology)} /><span>{technology}</span></li>
         ))}
       </ul>
       <a className="resume-archive-open" href={route} onClick={(event) => onNavigate?.(event, route)}>
@@ -163,6 +174,8 @@ export default function ResumePage({
   onProjectLayoutChange,
   projectDensity: savedProjectDensity,
   onProjectDensityChange,
+  sectionLayout = "cards",
+  surface = "soft",
 }) {
   const [copyStatus, setCopyStatus] = useState("");
   const [pdfStatus, setPdfStatus] = useState("");
@@ -316,7 +329,7 @@ export default function ResumePage({
   };
 
   return (
-    <main className="resume-page" id="top">
+    <main className="resume-page" id="top" data-layout={sectionLayout} data-surface={surface}>
       <div className="resume-shell">
         <a className="resume-back-link" href={backHref} onClick={goBack}>
           <MaterialSymbol name="arrow_back" /> Back
@@ -342,37 +355,37 @@ export default function ResumePage({
         </header>
 
         <section className="resume-contact-bar" aria-label="Contact details">
-          <ContactLink label="Email" value={email} href={email ? `mailto:${email}` : ""} />
-          <ContactLink label="Phone" value={phone?.display} href={phone?.href} />
-          <ContactLink label="LinkedIn" value="Profile" href={linkedin} external />
-          <ContactLink label="GitHub" value="Profile" href={github} external />
+          <ContactLink label="Email" value={email} href={email ? `mailto:${email}` : ""} icon="mail" />
+          <ContactLink label="Phone" value={phone?.display} href={phone?.href} icon="call" />
+          <ContactLink label="LinkedIn" value="Profile" href={linkedin} icon="work" external />
+          <ContactLink label="GitHub" value="Profile" href={github} icon="code" external />
           {email && (
             <button type="button" className="resume-copy-email" onClick={copyEmail}>
-              Copy email
+              <MaterialSymbol name="content_copy" /> <span>Copy email</span>
             </button>
           )}
           <p className="resume-copy-status" role="status" aria-live="polite">{copyStatus}</p>
         </section>
 
         <nav className="resume-section-nav" aria-label="Resume sections">
-          {RESUME_SECTIONS.map(([id, label]) => (
-            <a key={id} href={`#${id}`}>{label}</a>
+          {RESUME_SECTIONS.map(({ id, label, icon }) => (
+            <a key={id} href={`#${id}`}><MaterialSymbol name={icon} /><span>{label}</span></a>
           ))}
         </nav>
 
         <div className="resume-columns">
           <div className="resume-main-column">
             <section className="resume-section" id="experience" aria-labelledby="resume-experience-heading">
-              <SectionHeading id="resume-experience-heading">Experience</SectionHeading>
-              <article className="resume-entry">
+              <SectionHeading id="resume-experience-heading" icon="work">Experience</SectionHeading>
+              <article className="resume-entry resume-experience-entry">
                 <div className="resume-entry-heading">
                   <div>
                     <h3>{RESUME_CONTENT.experience.title}</h3>
                     <p>{RESUME_CONTENT.experience.company}</p>
                   </div>
-                  <span className="resume-entry-dates">{RESUME_CONTENT.experience.dates}</span>
+                  <span className="resume-entry-dates"><MaterialSymbol name="calendar_month" /> {RESUME_CONTENT.experience.dates}</span>
                 </div>
-                <p className="resume-entry-meta">{RESUME_CONTENT.experience.location} · {RESUME_CONTENT.experience.workMode}</p>
+                <p className="resume-entry-meta"><MaterialSymbol name="location_on" /> {RESUME_CONTENT.experience.location} <span aria-hidden="true">·</span> <MaterialSymbol name="domain" /> {RESUME_CONTENT.experience.workMode}</p>
                 <ul>
                   {RESUME_CONTENT.experience.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
                 </ul>
@@ -380,7 +393,7 @@ export default function ResumePage({
             </section>
 
             <section className="resume-section" id="projects" aria-labelledby="resume-projects-heading">
-              <SectionHeading id="resume-projects-heading">Selected projects</SectionHeading>
+              <SectionHeading id="resume-projects-heading" icon="terminal">Selected projects</SectionHeading>
               <div className="resume-project-grid">
                 {RESUME_CONTENT.projects.map((project) => (
                   <article className="resume-project-card" key={project.title}>
@@ -390,12 +403,14 @@ export default function ResumePage({
                     </div>
                     <p>{project.description}</p>
                     {project.technologies.length > 0 && (
-                      <p className="resume-project-tech">{project.technologies.join(" · ")}</p>
+                      <p className="resume-project-tech"><MaterialSymbol name="code" /><span>{project.technologies.join(" · ")}</span></p>
                     )}
                     {project.links.length > 0 && (
                       <div className="resume-project-links" aria-label={`${project.title} links`}>
                         {project.links.map(({ label, url }) => (
-                          <a key={label} href={url} target="_blank" rel="noopener noreferrer">{label}<span aria-hidden="true"> ↗</span></a>
+                          <a key={label} href={url} target="_blank" rel="noopener noreferrer">
+                            <MaterialSymbol name={/live|demo/i.test(label) ? "open_in_new" : "code"} /> {label}
+                          </a>
                         ))}
                       </div>
                     )}
@@ -411,7 +426,7 @@ export default function ResumePage({
               data-density={projectDensity}
             >
               <div className="resume-library-heading">
-                <SectionHeading id="resume-library-heading">Portfolio project catalog</SectionHeading>
+                <SectionHeading id="resume-library-heading" icon="grid_view">Portfolio project catalog</SectionHeading>
                 <span className="resume-library-total">{projects.length} builds</span>
               </div>
               <p className="resume-library-intro">Browse the project records currently in the portfolio. This list is generated from the same catalog used by the Projects page.</p>
@@ -504,7 +519,7 @@ export default function ResumePage({
                     aria-pressed={projectTechnology === technology}
                     onClick={() => updateProjectTechnology(projectTechnology === technology ? "" : technology)}
                   >
-                    {technology}<small>{count}</small>
+                    <MaterialSymbol name={technologyIcon(technology)} /> <span>{technology}</span><small>{count}</small>
                   </button>
                 ))}
               </div>
@@ -584,28 +599,30 @@ export default function ResumePage({
 
           <aside className="resume-side-column">
             <section className="resume-section" id="skills" aria-labelledby="resume-skills-heading">
-              <SectionHeading id="resume-skills-heading">Technical skills</SectionHeading>
+              <SectionHeading id="resume-skills-heading" icon="code">Technical skills</SectionHeading>
               <ul className="resume-skill-list">
-                {RESUME_CONTENT.skills.map((skill) => <li key={skill}>{skill}</li>)}
+                {RESUME_CONTENT.skills.map((skill) => (
+                  <li key={skill}><MaterialSymbol name={technologyIcon(skill)} /><span>{skill}</span></li>
+                ))}
               </ul>
             </section>
 
             <section className="resume-section" id="education" aria-labelledby="resume-education-heading">
-              <SectionHeading id="resume-education-heading">Education</SectionHeading>
+              <SectionHeading id="resume-education-heading" icon="school">Education</SectionHeading>
               <div className="resume-entry-list">
                 {RESUME_CONTENT.education.map((item) => (
                   <article className="resume-entry" key={item.institution}>
-                    <h3>{item.qualification}</h3>
+                    <h3><MaterialSymbol name="school" /> <span>{item.qualification}</span></h3>
                     <p>{item.institution}</p>
                     <p className="resume-entry-meta">{item.focus}</p>
-                    <span className="resume-entry-dates">{item.dates}</span>
+                    <span className="resume-entry-dates"><MaterialSymbol name="calendar_month" /> {item.dates}</span>
                   </article>
                 ))}
               </div>
             </section>
 
             <section className="resume-section" id="certifications" aria-labelledby="resume-certifications-heading">
-              <SectionHeading id="resume-certifications-heading">Certifications</SectionHeading>
+              <SectionHeading id="resume-certifications-heading" icon="workspace_premium">Certifications</SectionHeading>
               <div className="resume-certificate-list">
                 {certificates.map((certificate) => {
                   const route = typeof certificate.route === "string" && certificate.route.startsWith("/certificates/")
@@ -615,20 +632,23 @@ export default function ResumePage({
                   const pdfUrl = certificate.certificatePdfUrl || certificate.pdfUrl;
                   return (
                     <article className="resume-certificate-card" key={certificate.slug || certificate.courseTitle}>
-                      {route
-                        ? <a className="resume-certificate-title" href={route} onClick={(event) => openInternal(event, route)}>{certificate.courseTitle}</a>
-                        : <h3 className="resume-certificate-title">{certificate.courseTitle}</h3>}
-                      <p>{certificate.issuer}{certificate.issueDate ? ` · ${certificate.issueDate}` : ""}</p>
+                      <div className="resume-certificate-heading">
+                        <MaterialSymbol name="workspace_premium" />
+                        {route
+                          ? <a className="resume-certificate-title" href={route} onClick={(event) => openInternal(event, route)}>{certificate.courseTitle}</a>
+                          : <h3 className="resume-certificate-title">{certificate.courseTitle}</h3>}
+                      </div>
+                      <p><MaterialSymbol name="verified" /> {certificate.issuer}{certificate.issueDate ? ` · ${certificate.issueDate}` : ""}</p>
                       <div className="resume-certificate-links">
-                        {credentialUrl && <a href={credentialUrl} target="_blank" rel="noopener noreferrer">Verify credential</a>}
-                        {pdfUrl && <a href={pdfUrl} target="_blank" rel="noopener noreferrer">Certificate PDF</a>}
+                        {credentialUrl && <a href={credentialUrl} target="_blank" rel="noopener noreferrer"><MaterialSymbol name="verified_user" /> Verify credential</a>}
+                        {pdfUrl && <a href={pdfUrl} target="_blank" rel="noopener noreferrer"><MaterialSymbol name="picture_as_pdf" /> Certificate PDF</a>}
                       </div>
                     </article>
                   );
                 })}
               </div>
               <a className="resume-all-certificates" href="/certificates" onClick={(event) => openInternal(event, "/certificates")}>
-                Browse all certificates <span aria-hidden="true">→</span>
+                <MaterialSymbol name="workspace_premium" /> Browse all certificates <MaterialSymbol name="arrow_outward" />
               </a>
             </section>
           </aside>

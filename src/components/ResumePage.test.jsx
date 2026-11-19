@@ -85,6 +85,16 @@ describe("ResumePage", () => {
     expect(await screen.findByText("Your resume PDF has been downloaded.")).toBeInTheDocument();
   });
 
+  it("opens the browser print flow from the resume action", () => {
+    const print = vi.spyOn(window, "print").mockImplementation(() => {});
+    render(<ResumePage profile={profile} certificates={certificates} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Print / Save as PDF" }));
+
+    expect(print).toHaveBeenCalledOnce();
+    print.mockRestore();
+  });
+
   it("keeps projects without supplied destinations as non-links", () => {
     render(<ResumePage profile={profile} certificates={certificates} />);
 
@@ -186,5 +196,29 @@ describe("ResumePage", () => {
 
     expect(screen.getByRole("searchbox", { name: "Search portfolio projects" })).toHaveValue("");
     expect(await screen.findByText("Showing 1-24 of 25 matching builds")).toBeInTheDocument();
+  });
+
+  it("applies the selected resume layout and keeps section and contact links usable", () => {
+    render(
+      <ResumePage
+        profile={profile}
+        certificates={certificates}
+        projects={projectCatalog}
+        collections={collections}
+        sectionLayout="horizontal"
+        surface="glass"
+      />,
+    );
+
+    const resume = document.querySelector(".resume-page");
+    expect(resume).toHaveAttribute("data-layout", "horizontal");
+    expect(resume).toHaveAttribute("data-surface", "glass");
+    expect(screen.getByRole("link", { name: /Email/ })).toHaveAttribute("href", "mailto:resume@example.com");
+    expect(screen.getByRole("link", { name: /Phone/ })).toHaveAttribute("href", "tel:+15551234567");
+    expect(screen.getByRole("link", { name: /LinkedIn/ })).toHaveAttribute("href", "https://www.linkedin.com/in/example");
+
+    for (const link of screen.getByRole("navigation", { name: "Resume sections" }).querySelectorAll("a")) {
+      expect(document.querySelector(link.getAttribute("href"))).not.toBeNull();
+    }
   });
 });

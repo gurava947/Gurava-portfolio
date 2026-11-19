@@ -26,6 +26,7 @@ import GlassFolderCard from "./components/ui/GlassFolderCard";
 import CollectionCredits from "./components/ui/CollectionCredits";
 import LayoutStudio from "./components/LayoutStudio";
 import StudioSelect from "./components/ui/StudioSelect";
+import MaterialSymbol from "./components/MaterialSymbol";
 import SiteLookStudio from "./components/SiteLookStudio";
 import Shelf3DStudio from "./components/Shelf3DStudio";
 import FeatureRailStudio from "./components/FeatureRailStudio";
@@ -43,6 +44,10 @@ const RESUME_PROJECT_LAYOUT_STORAGE_KEY = "practicefolio.resume-project-layout.v
 const RESUME_PROJECT_DENSITY_STORAGE_KEY = "practicefolio.resume-project-density.v1";
 const RESUME_PROJECT_LAYOUTS = ["cards", "tree", "list"];
 const RESUME_PROJECT_DENSITIES = ["comfortable", "compact"];
+const RESUME_LAYOUT_MODE_STORAGE_KEY = "practicefolio.resume-layout-mode.v1";
+const RESUME_SURFACE_STORAGE_KEY = "practicefolio.resume-surface.v1";
+const RESUME_LAYOUT_MODES = ["cards", "tree", "horizontal"];
+const RESUME_SURFACES = ["theme", "soft", "glass", "contrast"];
 
 function readResumePreference(key, allowedValues, fallback) {
   try {
@@ -572,6 +577,10 @@ function CardStudio({
   onResumeProjectLayoutChange,
   resumeProjectDensity,
   onResumeProjectDensityChange,
+  resumeLayoutMode,
+  onResumeLayoutModeChange,
+  resumeSurface,
+  onResumeSurfaceChange,
 }) {
   const appliedLoader = loaderSettings || DEFAULT_LOADER_SETTINGS;
   const [draftCardUI, setDraftCardUI] = useState(settings);
@@ -916,18 +925,59 @@ function CardStudio({
 
           <section className="card-studio-block" aria-labelledby="resume-project-presentation-heading">
             <div className="card-studio-block-head">
-              <h3 id="resume-project-presentation-heading">Resume project catalog</h3>
-              <span>Applies to /resume</span>
+              <h3 id="resume-project-presentation-heading">Resume presentation</h3>
+              <span>Applies across /resume</span>
             </div>
             <div className="card-studio-quick">
               <div className="card-studio-quick-row">
-                <span className="card-studio-quick-label">Layout</span>
-                <div className="card-studio-segments" role="group" aria-label="Resume project layout">
+                <span className="card-studio-quick-label">Sections</span>
+                <div className="card-studio-segments resume-studio-segments" role="group" aria-label="Resume section layout">
                   {[
-                    ["cards", "Cards"],
-                    ["tree", "Tree"],
-                    ["list", "List"],
-                  ].map(([value, label]) => (
+                    ["cards", "Cards", "grid_view"],
+                    ["tree", "Tree", "account_tree"],
+                    ["horizontal", "Horizontal", "view_carousel"],
+                  ].map(([value, label, icon]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className="card-studio-segment"
+                      aria-pressed={resumeLayoutMode === value}
+                      onClick={() => onResumeLayoutModeChange?.(value)}
+                    >
+                      <MaterialSymbol name={icon} /> {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="card-studio-quick-row">
+                <span className="card-studio-quick-label">Background</span>
+                <div className="card-studio-segments resume-studio-segments" role="group" aria-label="Resume card background">
+                  {[
+                    ["theme", "Theme", "palette"],
+                    ["soft", "Soft", "blur_on"],
+                    ["glass", "Glass", "layers"],
+                    ["contrast", "Tint", "contrast"],
+                  ].map(([value, label, icon]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className="card-studio-segment"
+                      aria-pressed={resumeSurface === value}
+                      onClick={() => onResumeSurfaceChange?.(value)}
+                    >
+                      <MaterialSymbol name={icon} /> {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="card-studio-quick-row">
+                <span className="card-studio-quick-label">Layout</span>
+                <div className="card-studio-segments resume-studio-segments" role="group" aria-label="Resume project layout">
+                  {[
+                    ["cards", "Cards", "grid_view"],
+                    ["tree", "Tree", "account_tree"],
+                    ["list", "List", "view_list"],
+                  ].map(([value, label, icon]) => (
                     <button
                       key={value}
                       type="button"
@@ -935,18 +985,18 @@ function CardStudio({
                       aria-pressed={resumeProjectLayout === value}
                       onClick={() => onResumeProjectLayoutChange?.(value)}
                     >
-                      {label}
+                      <MaterialSymbol name={icon} /> {label}
                     </button>
                   ))}
                 </div>
               </div>
               <div className="card-studio-quick-row">
                 <span className="card-studio-quick-label">Density</span>
-                <div className="card-studio-segments" role="group" aria-label="Resume project density">
+                <div className="card-studio-segments resume-studio-segments" role="group" aria-label="Resume project density">
                   {[
-                    ["comfortable", "Comfortable"],
-                    ["compact", "Compact"],
-                  ].map(([value, label]) => (
+                    ["comfortable", "Comfortable", "density_medium"],
+                    ["compact", "Compact", "density_small"],
+                  ].map(([value, label, icon]) => (
                     <button
                       key={value}
                       type="button"
@@ -954,7 +1004,7 @@ function CardStudio({
                       aria-pressed={resumeProjectDensity === value}
                       onClick={() => onResumeProjectDensityChange?.(value)}
                     >
-                      {label}
+                      <MaterialSymbol name={icon} /> {label}
                     </button>
                   ))}
                 </div>
@@ -1106,6 +1156,10 @@ function GuravvaProfilePopover({
   onResumeProjectLayoutChange,
   resumeProjectDensity,
   onResumeProjectDensityChange,
+  resumeLayoutMode,
+  onResumeLayoutModeChange,
+  resumeSurface,
+  onResumeSurfaceChange,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
@@ -1405,6 +1459,10 @@ function GuravvaProfilePopover({
           onResumeProjectLayoutChange={onResumeProjectLayoutChange}
           resumeProjectDensity={resumeProjectDensity}
           onResumeProjectDensityChange={onResumeProjectDensityChange}
+          resumeLayoutMode={resumeLayoutMode}
+          onResumeLayoutModeChange={onResumeLayoutModeChange}
+          resumeSurface={resumeSurface}
+          onResumeSurfaceChange={onResumeSurfaceChange}
         />
       </div>
 
@@ -1557,6 +1615,10 @@ function SiteNav({
   onResumeProjectLayoutChange,
   resumeProjectDensity,
   onResumeProjectDensityChange,
+  resumeLayoutMode,
+  onResumeLayoutModeChange,
+  resumeSurface,
+  onResumeSurfaceChange,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1654,6 +1716,10 @@ function SiteNav({
               onResumeProjectLayoutChange={onResumeProjectLayoutChange}
               resumeProjectDensity={resumeProjectDensity}
               onResumeProjectDensityChange={onResumeProjectDensityChange}
+              resumeLayoutMode={resumeLayoutMode}
+              onResumeLayoutModeChange={onResumeLayoutModeChange}
+              resumeSurface={resumeSurface}
+              onResumeSurfaceChange={onResumeSurfaceChange}
             />
           )}
         </div>
@@ -1746,6 +1812,10 @@ function PortfolioHome({
   onResumeProjectLayoutChange,
   resumeProjectDensity,
   onResumeProjectDensityChange,
+  resumeLayoutMode,
+  onResumeLayoutModeChange,
+  resumeSurface,
+  onResumeSurfaceChange,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1830,6 +1900,10 @@ function PortfolioHome({
         onResumeProjectLayoutChange={onResumeProjectLayoutChange}
         resumeProjectDensity={resumeProjectDensity}
         onResumeProjectDensityChange={onResumeProjectDensityChange}
+        resumeLayoutMode={resumeLayoutMode}
+        onResumeLayoutModeChange={onResumeLayoutModeChange}
+        resumeSurface={resumeSurface}
+        onResumeSurfaceChange={onResumeSurfaceChange}
       />
       <main>
         <section className="home-hero" data-three3d-surface="hero">
@@ -2068,6 +2142,16 @@ function App() {
     RESUME_PROJECT_DENSITIES,
     "comfortable",
   ));
+  const [resumeLayoutMode, setResumeLayoutMode] = useState(() => readResumePreference(
+    RESUME_LAYOUT_MODE_STORAGE_KEY,
+    RESUME_LAYOUT_MODES,
+    "cards",
+  ));
+  const [resumeSurface, setResumeSurface] = useState(() => readResumePreference(
+    RESUME_SURFACE_STORAGE_KEY,
+    RESUME_SURFACES,
+    "soft",
+  ));
 
   const pathname = route.split(/[?#]/, 1)[0];
   const normalizedPath = pathname !== "/" ? pathname.replace(/\/+$/, "") : "/";
@@ -2122,10 +2206,12 @@ function App() {
     try {
       window.localStorage.setItem(RESUME_PROJECT_LAYOUT_STORAGE_KEY, resumeProjectLayout);
       window.localStorage.setItem(RESUME_PROJECT_DENSITY_STORAGE_KEY, resumeProjectDensity);
+      window.localStorage.setItem(RESUME_LAYOUT_MODE_STORAGE_KEY, resumeLayoutMode);
+      window.localStorage.setItem(RESUME_SURFACE_STORAGE_KEY, resumeSurface);
     } catch (error) {
       console.warn("Unable to save resume presentation preferences.", error);
     }
-  }, [resumeProjectDensity, resumeProjectLayout]);
+  }, [resumeLayoutMode, resumeProjectDensity, resumeProjectLayout, resumeSurface]);
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -2289,6 +2375,10 @@ function App() {
     onResumeProjectLayoutChange: setResumeProjectLayout,
     resumeProjectDensity,
     onResumeProjectDensityChange: setResumeProjectDensity,
+    resumeLayoutMode,
+    onResumeLayoutModeChange: setResumeLayoutMode,
+    resumeSurface,
+    onResumeSurfaceChange: setResumeSurface,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
   const viewError = error ? (
@@ -2322,6 +2412,10 @@ function App() {
         onResumeProjectLayoutChange={setResumeProjectLayout}
         resumeProjectDensity={resumeProjectDensity}
         onResumeProjectDensityChange={setResumeProjectDensity}
+        resumeLayoutMode={resumeLayoutMode}
+        onResumeLayoutModeChange={setResumeLayoutMode}
+        resumeSurface={resumeSurface}
+        onResumeSurfaceChange={setResumeSurface}
       />
     );
   } else if (isCatalog) {
@@ -2361,6 +2455,8 @@ function App() {
             onProjectLayoutChange={setResumeProjectLayout}
             projectDensity={resumeProjectDensity}
             onProjectDensityChange={setResumeProjectDensity}
+            sectionLayout={resumeLayoutMode}
+            surface={resumeSurface}
             onNavigate={navigate}
           />
         </Suspense>
