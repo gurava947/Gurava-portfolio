@@ -149,7 +149,15 @@ function EffectsPreviewDialog({ open, effects, cardUI, project, certificate, dir
   );
 }
 
-function CardEffectsStudio({ settings, onApply, cardUI = {}, previewProject, previewProjects = [], previewCertificates = [] }) {
+function CardEffectsStudio({
+  settings,
+  onApply,
+  onPreviewChange,
+  cardUI = {},
+  previewProject,
+  previewProjects = [],
+  previewCertificates = [],
+}) {
   const applied = normalizeCardEffects(settings);
   const [draft, setDraft] = useState(applied);
   const [area, setArea] = useState("projects");
@@ -170,6 +178,26 @@ function CardEffectsStudio({ settings, onApply, cardUI = {}, previewProject, pre
     setDraft((current) => (sameEffectsSettings(current, appliedRef.current) ? applied : current));
     appliedRef.current = applied;
   }, [appliedKey]);
+
+  useEffect(() => {
+    onPreviewChange?.("effects", {
+      content: (
+        <div className="fx-studio-context-preview" style={getCardStyleVariables(cardUI)}>
+          <span className="fx-studio-sample-label">
+            {area === "projects" ? "Project card" : "Certificate card"}
+          </span>
+          {area === "projects"
+            ? project
+              ? <ProjectCard project={project} cardUI={cardUI} fx={draft} preview />
+              : <p className="fx-studio-empty">Project samples appear once the catalog is ready.</p>
+            : certificate
+              ? <CertificateCard certificate={certificate} copy={PREVIEW_CERT_COPY} fx={draft} preview />
+              : <p className="fx-studio-empty">Certificate samples appear once the records are ready.</p>}
+        </div>
+      ),
+      dirty,
+    });
+  }, [area, cardUI, dirty, draft, onPreviewChange, project, certificate]);
 
   const updateDraft = (patch) => {
     setDraft((current) => normalizeCardEffects({ ...current, ...patch }));

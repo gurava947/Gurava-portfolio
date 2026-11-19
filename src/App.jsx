@@ -102,6 +102,9 @@ function NavIcon({ name, className = "nav-control-icon" }) {
   if (name === "resume") {
     return <svg {...iconProps}><path d="M7 3.5h7l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V5a1.5 1.5 0 0 1 1-1.5Z" /><path d="M14 3.8v4h4M9 12h6m-6 3.5h6" /></svg>;
   }
+  if (name === "settings") {
+    return <svg {...iconProps}><path d="M4 6h10m4 0h2M4 12h3m4 0h9M4 18h8m4 0h4" /><circle cx="16" cy="6" r="2" /><circle cx="9" cy="12" r="2" /><circle cx="14" cy="18" r="2" /></svg>;
+  }
   if (name === "mail") {
     return <svg {...iconProps}><rect x="3" y="5.2" width="18" height="13.6" rx="2.6" /><path d="m3.6 7.2 7.3 5.3a2 2 0 0 0 2.2 0l7.3-5.3" /></svg>;
   }
@@ -492,7 +495,7 @@ const CardUISettings = memo(function CardUISettings({ settings, onChange, themeM
   );
 });
 
-/* The sections the studio scroll is divided into, in the order they are mounted. `headingId` is the
+/* The studio sections, in the order they are mounted. `headingId` is the
  * `aria-labelledby` target already on each panel, so the jump list does not have to own those ids;
  * `selector` covers the one block (fine-tune) that has no heading of its own. */
 const STUDIO_SECTIONS = [
@@ -506,11 +509,12 @@ const STUDIO_SECTIONS = [
   { id: "shelf3d", label: "Shelf 3D", headingId: "card-studio-shelf-3d" },
   { id: "rail", label: "Card rail", headingId: "card-studio-rail" },
   { id: "stage3d", label: "Stage 3D", headingId: "card-studio-three-3d" },
+  { id: "resume", label: "Resume", headingId: "resume-project-presentation-heading" },
   { id: "fine", label: "Fine-tune", selector: ".card-ui-settings" },
 ];
 
 const STUDIO_SECTION_GROUPS = [
-  { id: "design", label: "Design", sectionIds: ["presets", "quick", "look", "layout", "fine"] },
+  { id: "design", label: "Design", sectionIds: ["presets", "quick", "look", "layout", "resume", "fine"] },
   { id: "motion-depth", label: "Motion & depth", sectionIds: ["effects", "motion", "shelf3d", "rail", "stage3d"] },
   { id: "loading", label: "Loading", sectionIds: ["loader"] },
 ].map((group) => ({
@@ -521,6 +525,7 @@ const STUDIO_SECTION_GROUPS = [
 }));
 
 const STUDIO_NAV_FALLBACK_OFFSET = 48;
+const STUDIO_PAGE_HEADER_OFFSET = 96;
 
 function studioSectionElement(section, pane) {
   if (!pane) return null;
@@ -531,20 +536,8 @@ function studioSectionElement(section, pane) {
 
 function studioNavOffset(pane) {
   const nav = pane?.querySelector(".card-studio-nav");
-  return nav ? nav.getBoundingClientRect().height + 8 : STUDIO_NAV_FALLBACK_OFFSET;
-}
-
-/* Whichever element actually scrolls the studio: the tools column in the two-pane shell, the dialog
- * body once the panes stack on a narrow screen. Jumping and observing both have to follow it,
- * because asking a column that no longer scrolls to scroll silently does nothing. */
-function studioScrollHost(from) {
-  let node = from || null;
-  while (node && node !== document.body) {
-    const overflowY = getComputedStyle(node).overflowY;
-    if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight + 1) return node;
-    node = node.parentElement;
-  }
-  return null;
+  const pageOffset = pane?.closest(".settings-workbench") ? STUDIO_PAGE_HEADER_OFFSET : 8;
+  return nav ? nav.getBoundingClientRect().height + pageOffset : STUDIO_NAV_FALLBACK_OFFSET;
 }
 
 function CardStudio({
@@ -591,8 +584,8 @@ function CardStudio({
   const appliedCardRef = useRef(settings);
   const appliedLoaderRef = useRef(appliedLoader);
   const controlsRef = useRef(null);
-  const scrollHostRef = useRef(null);
   const [activeSection, setActiveSection] = useState(STUDIO_SECTIONS[0].id);
+  const [studioPreviews, setStudioPreviews] = useState({});
   const cardDirty = !sameCardSettings(draftCardUI, settings);
   const loaderDirty = !sameCardSettings(draftLoader, appliedLoader);
   const dirty = cardDirty || loaderDirty;
@@ -603,6 +596,9 @@ function CardStudio({
      are not the thing being dragged. They follow the dial one frame behind instead, so the row under
      the pointer and the live sample stay instant. */
   const previewCardUI = useDeferredValue(draftCardUI);
+  const updateStudioPreview = useCallback((sectionId, preview) => {
+    setStudioPreviews((current) => ({ ...current, [sectionId]: preview }));
+  }, []);
   const appliedCopy = copy.applied || "{name} style applied";
   const loader = draftLoader;
   const dialogProjects = previewProjects.length
@@ -621,20 +617,17 @@ function CardStudio({
     appliedLoaderRef.current = appliedLoader;
   }, [settings, appliedLoader, draftCardUI, draftLoader]);
 
-  /* Which section the scroll column is currently showing. Observed rather than measured on scroll:
+  /* Which section the viewport is currently showing. Observed rather than measured on scroll:
      the column is tall enough that a scroll handler would run layout on every frame of a flick.
      Of the panels crossing the band, the one whose top edge sits nearest the line under the chip
      row wins; sorting by the band instead highlighted the tall panel before the one asked for.
-     Re-attached when the pane resizes, because crossing the stacking measure moves the scrolling
-     from the tools column to the whole studio and the observer has to follow it. */
+     Re-attached when the pane resizes so its active-section measure follows the responsive layout. */
   useEffect(() => {
     const pane = controlsRef.current;
     if (!pane || typeof IntersectionObserver === "undefined") return undefined;
     let observer = null;
     const crossing = new Set();
     const attach = () => {
-      const host = studioScrollHost(pane);
-      scrollHostRef.current = host;
       const sections = STUDIO_SECTIONS
         .map((section) => studioSectionElement(section, pane))
         .filter(Boolean);
@@ -660,7 +653,7 @@ function CardStudio({
         if (!nearest) return;
         const match = STUDIO_SECTIONS.find((section) => studioSectionElement(section, pane) === nearest);
         if (match) setActiveSection(match.id);
-      }, { root: host, rootMargin: "-24% 0px -60% 0px", threshold: 0 });
+      }, { rootMargin: "-24% 0px -60% 0px", threshold: 0 });
       sections.forEach((el) => observer.observe(el));
     };
     attach();
@@ -680,10 +673,9 @@ function CardStudio({
     const target = studioSectionElement(section, pane);
     if (!pane || !target) return;
     setActiveSection(section.id);
-    const host = scrollHostRef.current || pane;
-    host.scrollTo({
-      top: host.scrollTop + target.getBoundingClientRect().top - host.getBoundingClientRect().top - studioNavOffset(pane),
-      behavior: reducedMotion ? "auto" : "smooth",
+    window.scrollTo({
+      top: window.scrollY + target.getBoundingClientRect().top - studioNavOffset(pane),
+      behavior: "instant",
     });
   };
 
@@ -738,6 +730,76 @@ function CardStudio({
     setPreviewOpen(false);
   };
 
+  const activeSectionDetails = STUDIO_SECTIONS.find((section) => section.id === activeSection);
+  const activeSectionPreview = studioPreviews[activeSection];
+  const usesCardPreview = ["presets", "quick", "fine"].includes(activeSection);
+  const previewIsDirty = activeSectionPreview?.dirty ?? (
+    usesCardPreview ? cardDirty : activeSection === "loader" ? loaderDirty : false
+  );
+  const previewStatus = previewIsDirty
+    ? (copy.previewDirty || "Unsaved draft")
+    : activeSection === "rail"
+      ? "Updates as you edit"
+      : (copy.previewClean || "Applied design");
+  const previewNote = activeSection === "rail"
+    ? "Rail settings apply immediately."
+    : previewIsDirty
+      ? "This draft is isolated. Apply the section settings to keep it."
+      : "This preview follows the selected section and its current settings.";
+  const previewContent = usesCardPreview ? (
+    <div
+      className={`card-studio-preview-stage${draftCardUI.cardLayout === "depth" ? " is-depth" : ""}`}
+      style={getCardStyleVariables(draftCardUI)}
+      data-card-layout={draftCardUI.cardLayout}
+    >
+      {previewProject
+        ? <ProjectCard project={previewProject} cardUI={draftCardUI} preview />
+        : <p className="card-studio-preview-empty">Cards appear here once the catalog is ready.</p>}
+    </div>
+  ) : activeSection === "loader" ? (
+    <div className="settings-live-loader" aria-hidden="true">
+      <span className="loader-studio-sample-label">{copy.loaderSample || "Live sample"}</span>
+      <LoadSpinner settings={draftLoader} label={copy.loaderSampleLabel || "Loading your content"} size="lg" />
+      {!draftLoader.enabled && !draftLoader.labels && (
+        <span className="loader-studio-off">{copy.loaderOff || "Indicators are off"}</span>
+      )}
+    </div>
+  ) : activeSection === "resume" ? (
+    <div
+      className="settings-resume-preview"
+      data-section-layout={resumeLayoutMode}
+      data-project-layout={resumeProjectLayout}
+      data-density={resumeProjectDensity}
+      data-surface={resumeSurface}
+    >
+      <header>
+        <span>Resume preview</span>
+        <strong>{resumeLayoutMode} sections · {resumeProjectLayout} projects</strong>
+      </header>
+      <div className="settings-resume-preview-sections">
+        <article><span>01</span><strong>Experience</strong><small>Product and frontend engineering</small></article>
+        <article><span>02</span><strong>Education</strong><small>Computer science · 2022–2026</small></article>
+        <article><span>03</span><strong>Selected projects</strong><small>{resumeProjectDensity} · {resumeSurface} surface</small></article>
+      </div>
+      <div className="settings-resume-preview-projects">
+        <article><span>Build 01</span><strong>Responsive portfolio</strong><small>React · CSS · accessibility</small></article>
+        <article><span>Build 02</span><strong>Python practice</strong><small>Python · Pyodide · browser</small></article>
+      </div>
+    </div>
+  ) : (
+    activeSectionPreview?.content || (
+      <div
+        className={`card-studio-preview-stage${draftCardUI.cardLayout === "depth" ? " is-depth" : ""}`}
+        style={getCardStyleVariables(draftCardUI)}
+        data-card-layout={draftCardUI.cardLayout}
+      >
+        {previewProject
+          ? <ProjectCard project={previewProject} cardUI={draftCardUI} preview />
+          : <p className="card-studio-preview-empty">Preview updates when this section is ready.</p>}
+      </div>
+    )
+  );
+
   return (
     <div className="card-studio">
       <div className="card-studio-intro">
@@ -745,9 +807,8 @@ function CardStudio({
         <span className="card-studio-scope"><ProfileIcon name="sliders" /> {copy.scope || "Global card style"}</span>
       </div>
 
-      {/* Two panes, one scroll: the controls column scrolls on its own and the sample rail keeps its
-          place beside it. Letting the dialog scroll instead pinned the sample only for as long as it
-          spanned its own grid rows, so the last two panels lost it mid-scroll. */}
+      {/* Keep the full controls in the document flow. The preview rail sticks beside them on wide
+          screens and moves above them when the workbench narrows. */}
       <div className="card-studio-panes">
         <div className="card-studio-controls" ref={controlsRef}>
           <nav className="card-studio-nav" aria-label="Studio sections">
@@ -912,6 +973,7 @@ function CardStudio({
           <SiteLookStudio
             settings={lookSettings}
             onApply={onLookApply}
+            onPreviewChange={updateStudioPreview}
           />
 
           <LayoutStudio
@@ -922,6 +984,7 @@ function CardStudio({
             previewCertificates={previewCertificates}
             cardUI={previewCardUI}
             collections={shelfCollections}
+            onPreviewChange={updateStudioPreview}
           />
 
           <section className="card-studio-block" aria-labelledby="resume-project-presentation-heading">
@@ -1020,6 +1083,7 @@ function CardStudio({
             previewProject={previewProject}
             previewProjects={previewProjects}
             previewCertificates={previewCertificates}
+            onPreviewChange={updateStudioPreview}
           />
 
           <CardMotionStudio
@@ -1028,6 +1092,7 @@ function CardStudio({
             collections={shelfCollections}
             projects={shelfProjects}
             shelf3d={shelf3dSettings}
+            onPreviewChange={updateStudioPreview}
           />
 
           <Shelf3DStudio
@@ -1036,11 +1101,13 @@ function CardStudio({
             collections={shelfCollections}
             projects={shelfProjects}
             motion={motionSettings}
+            onPreviewChange={updateStudioPreview}
           />
 
           <FeatureRailStudio
             settings={featureRailSettings}
             onChange={onFeatureRailChange}
+            onPreviewChange={updateStudioPreview}
             projects={previewProjects}
             cardUI={previewCardUI}
             fx={effectsSettings}
@@ -1049,6 +1116,8 @@ function CardStudio({
           <Three3DStudio
             settings={three3dSettings}
             onApply={onThree3dApply}
+            onPreviewChange={updateStudioPreview}
+            previewInRail={activeSection === "stage3d"}
             projects={shelfProjects}
             palette={three3dPalette}
             reducedMotion={reducedMotion}
@@ -1062,21 +1131,22 @@ function CardStudio({
             <div className="card-studio-block-head">
               <h3 id="card-studio-preview">{copy.previewLabel || "Live preview"}</h3>
               <span className={`card-studio-preview-hint${dirty ? " is-dirty" : ""}`}>
-                <i aria-hidden="true" /> {dirty ? (copy.previewDirty || "Unsaved preview") : (copy.previewClean || "Applied design")}
+                <i aria-hidden="true" /> {activeSectionDetails?.label || "Style"} · {previewStatus}
               </span>
             </div>
             <div className="card-studio-preview">
               <div
-                className={`card-studio-preview-stage${draftCardUI.cardLayout === "depth" ? " is-depth" : ""}`}
+                className={`card-studio-context-stage is-${activeSection}`}
                 style={getCardStyleVariables(draftCardUI)}
-                data-card-layout={draftCardUI.cardLayout}
-                aria-hidden="true"
+                key={activeSection}
               >
-                {previewProject
-                  ? <ProjectCard project={previewProject} cardUI={draftCardUI} preview />
-                  : <p className="card-studio-preview-empty">Cards appear here once the catalog is ready.</p>}
+                {previewContent}
               </div>
-              <p className="card-studio-preview-note">{copy.previewHint || "Hover the sample to test motion. Open Preview to see the layout across real projects. Only Apply changes the live portfolio."}</p>
+              <p className="card-studio-preview-note">
+                {usesCardPreview
+                  ? (copy.previewHint || "Hover the sample to test motion. Open Preview to see the layout across real projects. Only Apply changes the live portfolio.")
+                  : previewNote}
+              </p>
             </div>
           </section>
         </aside>
@@ -1127,74 +1197,20 @@ function GuravvaProfilePopover({
   onClose,
   copy,
   defaultProfile,
-  cardUISettings,
-  onCardUIChange,
-  themeMode,
-  previewProject,
-  previewProjects,
-  previewCertificates,
-  loaderSettings,
-  onLoaderChange,
-  layoutSettings,
-  onLayoutChange,
-  effectsSettings,
-  onEffectsChange,
-  motionSettings,
-  onMotionChange,
-  shelf3dSettings,
-  onShelf3dChange,
-  featureRailSettings,
-  onFeatureRailChange,
-  three3dSettings,
-  onThree3dChange,
-  three3dPalette,
-  reducedMotion = false,
-  lookSettings,
-  onLookChange,
-  shelfCollections = [],
-  shelfProjects,
-  resumeProjectLayout,
-  onResumeProjectLayoutChange,
-  resumeProjectDensity,
-  onResumeProjectDensityChange,
-  resumeLayoutMode,
-  onResumeLayoutModeChange,
-  resumeSurface,
-  onResumeSurfaceChange,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
   const [editing, setEditing] = useState(false);
-  const [tab, setTab] = useState("profile");
   const [errors, setErrors] = useState({});
   const [feedback, setFeedback] = useState("");
   const firstInputRef = useRef(null);
   const editButtonRef = useRef(null);
-  const studioCopy = copy.cardStudio || {};
-  const tabCopy = copy.tabs || {};
   const profileInitial = (profile.name || copy.eyebrow || "G").trim().charAt(0).toUpperCase();
 
   useEffect(() => {
     if (editing) firstInputRef.current?.focus();
     else if (feedback === copy.saved) editButtonRef.current?.focus();
   }, [editing, feedback, copy.saved]);
-
-  const selectTab = (nextTab) => {
-    setTab(nextTab);
-    window.requestAnimationFrame(() => {
-      document.getElementById(nextTab === "profile" ? "guravva-profile-tab" : "guravva-cards-tab")?.focus();
-    });
-  };
-  const handleTabKeyDown = (event) => {
-    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    const nextTab = event.key === "Home"
-      ? "profile"
-      : event.key === "End"
-        ? "cards"
-        : tab === "profile" ? "cards" : "profile";
-    if (nextTab !== tab) selectTab(nextTab);
-  };
 
   const updateField = (field, value) => {
     if (field === "email") return;
@@ -1284,24 +1300,18 @@ function GuravvaProfilePopover({
   ];
 
   return (
-    <section
-      className={`profile-popover${tab === "cards" ? " is-studio" : ""}`}
-      id="guravva-profile"
-      role="dialog"
-      aria-labelledby="guravva-profile-title"
-      aria-describedby="profile-status"
-    >
+    <section className="profile-popover" id="guravva-profile" role="dialog" aria-labelledby="guravva-profile-title" aria-describedby="profile-status">
       <div className="profile-popover-top">
         <div className="profile-popover-heading">
           <div className="profile-identity">
             <span className="profile-avatar" aria-hidden="true">{profileInitial}</span>
             <div className="profile-identity-copy">
-              <p className="profile-popover-eyebrow">{tab === "cards" ? (studioCopy.eyebrow || "Card studio") : copy.eyebrow}</p>
-              <h2 id="guravva-profile-title">{tab === "cards" ? (studioCopy.title || "Design your cards") : editing ? copy.editTitle : profile.name}</h2>
+              <p className="profile-popover-eyebrow">{copy.eyebrow}</p>
+              <h2 id="guravva-profile-title">{editing ? copy.editTitle : profile.name}</h2>
             </div>
           </div>
           <div className="profile-view-actions">
-            {tab === "profile" && !editing && (
+            {!editing && (
               <button ref={editButtonRef} className="profile-edit-button" type="button" onClick={startEditing}>
                 <ProfileIcon name="edit" /> {copy.edit}
               </button>
@@ -1310,37 +1320,9 @@ function GuravvaProfilePopover({
           </div>
         </div>
 
-        <div className="profile-tabs" role="tablist" aria-label="Guravva profile and design settings">
-          <button
-            className="profile-tab"
-            id="guravva-profile-tab"
-            type="button"
-            role="tab"
-            aria-selected={tab === "profile"}
-            aria-controls="guravva-profile-panel"
-            tabIndex={tab === "profile" ? 0 : -1}
-            onClick={() => selectTab("profile")}
-            onKeyDown={handleTabKeyDown}
-          >
-            <ProfileIcon name="user" /> {tabCopy.profile || "Profile"}
-          </button>
-          <button
-            className="profile-tab"
-            id="guravva-cards-tab"
-            type="button"
-            role="tab"
-            aria-selected={tab === "cards"}
-            aria-controls="guravva-card-studio"
-            tabIndex={tab === "cards" ? 0 : -1}
-            onClick={() => selectTab("cards")}
-            onKeyDown={handleTabKeyDown}
-          >
-            <ProfileIcon name="sliders" /> {tabCopy.cards || "Card studio"}
-          </button>
-        </div>
       </div>
 
-      <div className="profile-panel" id="guravva-profile-panel" role="tabpanel" aria-labelledby="guravva-profile-tab" hidden={tab !== "profile"}>
+      <div className="profile-panel">
         {!editing ? (
           <>
             <dl className="profile-details">
@@ -1423,48 +1405,6 @@ function GuravvaProfilePopover({
             </div>
           </form>
         )}
-      </div>
-
-      <div className="profile-panel profile-panel-studio" id="guravva-card-studio" role="tabpanel" aria-labelledby="guravva-cards-tab" hidden={tab !== "cards"}>
-        <CardStudio
-          settings={cardUISettings}
-          onApply={(cardUI, loader) => {
-            onCardUIChange(cardUI);
-            onLoaderChange(loader);
-          }}
-          themeMode={themeMode}
-          previewProject={previewProject}
-          previewProjects={previewProjects}
-          previewCertificates={previewCertificates}
-          copy={studioCopy}
-          loaderSettings={loaderSettings}
-          layoutSettings={layoutSettings}
-          onLayoutApply={onLayoutChange}
-          effectsSettings={effectsSettings}
-          onEffectsApply={onEffectsChange}
-          motionSettings={motionSettings}
-          onMotionApply={onMotionChange}
-          shelf3dSettings={shelf3dSettings}
-          onShelf3dApply={onShelf3dChange}
-          featureRailSettings={featureRailSettings}
-          onFeatureRailChange={onFeatureRailChange}
-          three3dSettings={three3dSettings}
-          onThree3dApply={onThree3dChange}
-          three3dPalette={three3dPalette}
-          reducedMotion={reducedMotion}
-          lookSettings={lookSettings}
-          onLookApply={onLookChange}
-          shelfCollections={shelfCollections}
-          shelfProjects={shelfProjects}
-          resumeProjectLayout={resumeProjectLayout}
-          onResumeProjectLayoutChange={onResumeProjectLayoutChange}
-          resumeProjectDensity={resumeProjectDensity}
-          onResumeProjectDensityChange={onResumeProjectDensityChange}
-          resumeLayoutMode={resumeLayoutMode}
-          onResumeLayoutModeChange={onResumeLayoutModeChange}
-          resumeSurface={resumeSurface}
-          onResumeSurfaceChange={onResumeSurfaceChange}
-        />
       </div>
 
       <p className="profile-status" id="profile-status" aria-live="polite">{feedback}</p>
@@ -1650,39 +1590,6 @@ function SiteNav({
   onCycleTheme,
   site,
   profile,
-  cardUISettings,
-  onCardUIChange,
-  previewProject,
-  previewProjects,
-  previewCertificates,
-  loaderSettings,
-  onLoaderChange,
-  layoutSettings,
-  onLayoutChange,
-  effectsSettings,
-  onEffectsChange,
-  motionSettings,
-  onMotionChange,
-  shelf3dSettings,
-  onShelf3dChange,
-  featureRailSettings,
-  onFeatureRailChange,
-  three3dSettings,
-  onThree3dChange,
-  three3dPalette,
-  reducedMotion = false,
-  lookSettings,
-  onLookChange,
-  shelfCollections,
-  shelfProjects,
-  resumeProjectLayout,
-  onResumeProjectLayoutChange,
-  resumeProjectDensity,
-  onResumeProjectDensityChange,
-  resumeLayoutMode,
-  onResumeLayoutModeChange,
-  resumeSurface,
-  onResumeSurfaceChange,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1695,6 +1602,7 @@ function SiteNav({
   const certificatesHref = "/certificates";
   const projectsHref = "/projects";
   const resumeHref = "/resume";
+  const settingsHref = "/settings";
   const closeProfile = () => {
     setProfileOpen(false);
     profileTriggerRef.current?.focus();
@@ -1736,10 +1644,10 @@ function SiteNav({
             className="brand-mark"
             ref={profileTriggerRef}
             type="button"
-            aria-label={copy.profileAria}
+            aria-label="Open profile"
             aria-expanded={profileOpen}
             aria-controls={profileOpen ? "guravva-profile" : undefined}
-            title={copy.profileAria}
+            title="Open profile"
             onClick={() => setProfileOpen((open) => !open)}
           >
             <span aria-hidden="true">{copy.profileInitial}</span>
@@ -1750,40 +1658,6 @@ function SiteNav({
               onClose={closeProfile}
               copy={profileCopy}
               defaultProfile={profile}
-              cardUISettings={cardUISettings}
-              onCardUIChange={onCardUIChange}
-              themeMode={themeMode}
-              previewProject={previewProject}
-              previewProjects={previewProjects}
-              previewCertificates={previewCertificates}
-              loaderSettings={loaderSettings}
-              onLoaderChange={onLoaderChange}
-              layoutSettings={layoutSettings}
-              onLayoutChange={onLayoutChange}
-              effectsSettings={effectsSettings}
-              onEffectsChange={onEffectsChange}
-              motionSettings={motionSettings}
-              onMotionChange={onMotionChange}
-              shelf3dSettings={shelf3dSettings}
-              onShelf3dChange={onShelf3dChange}
-              featureRailSettings={featureRailSettings}
-              onFeatureRailChange={onFeatureRailChange}
-              three3dSettings={three3dSettings}
-              onThree3dChange={onThree3dChange}
-              three3dPalette={three3dPalette}
-              reducedMotion={reducedMotion}
-              lookSettings={lookSettings}
-              onLookChange={onLookChange}
-              shelfCollections={shelfCollections}
-              shelfProjects={shelfProjects}
-              resumeProjectLayout={resumeProjectLayout}
-              onResumeProjectLayoutChange={onResumeProjectLayoutChange}
-              resumeProjectDensity={resumeProjectDensity}
-              onResumeProjectDensityChange={onResumeProjectDensityChange}
-              resumeLayoutMode={resumeLayoutMode}
-              onResumeLayoutModeChange={onResumeLayoutModeChange}
-              resumeSurface={resumeSurface}
-              onResumeSurfaceChange={onResumeSurfaceChange}
             />
           )}
         </div>
@@ -1821,6 +1695,17 @@ function SiteNav({
             >
               <span className="portfolio-nav-link-icon" aria-hidden="true"><NavIcon name="resume" /></span>
               <span className="portfolio-nav-link-label">Resume</span>
+            </a>
+            <a
+              className={`nav-link portfolio-nav-link navbar-text-control${activeNav === "settings" ? " is-active" : ""}`}
+              href={settingsHref}
+              onClick={(event) => onNavigate(event, settingsHref)}
+              aria-label="Settings"
+              title="Settings"
+              aria-current={activeNav === "settings" ? "page" : undefined}
+            >
+              <span className="portfolio-nav-link-icon" aria-hidden="true"><NavIcon name="settings" /></span>
+              <span className="portfolio-nav-link-label">Settings</span>
             </a>
           </div>
           {!isDetail && profile.email && (
@@ -2239,6 +2124,7 @@ function App() {
   const isCatalog = normalizedPath === "/projects";
   const isCertificates = normalizedPath === "/certificates";
   const isResume = normalizedPath === "/resume";
+  const isSettings = normalizedPath === "/settings";
   const isProjectRoute = Boolean(projectMatch);
   const isCertificateRoute = Boolean(certificateMatch);
   const site = catalog?.site;
@@ -2339,12 +2225,13 @@ function App() {
     else if (isCatalog) document.title = "Projects · Practice.folio";
     else if (isCertificates) document.title = "Certificates · Practice.folio";
     else if (isResume) document.title = "Resume · Practice.folio";
+    else if (isSettings) document.title = "Settings · Practice.folio";
     else if (certificate) document.title = `${certificate.courseTitle} · Certificate · Practice.folio`;
     else if (projectSummary) document.title = `${projectSummary.title} · Practice.folio`;
     else if (isCertificateRoute) document.title = "Certificate not found · Practice.folio";
     else if (isProjectRoute) document.title = "Project not found · Practice.folio";
     else document.title = "Page not found · Practice.folio";
-  }, [isHome, isCatalog, isCertificates, isResume, isCertificateRoute, isProjectRoute, certificate, projectSummary]);
+  }, [isHome, isCatalog, isCertificates, isResume, isSettings, isCertificateRoute, isProjectRoute, certificate, projectSummary]);
 
   const goBackTo = (event, fallback) => {
     if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return;
@@ -2410,39 +2297,6 @@ function App() {
     onNavigate: navigate,
     themeMode: settings.mode,
     onCycleTheme: () => updateSettings({ mode: nextTheme }),
-    cardUISettings: settings.cardUI,
-    onCardUIChange: updateCardUISettings,
-    previewProject: cardPreviewProject,
-    previewProjects: cardPreviewProjects,
-    loaderSettings: settings.loader,
-    onLoaderChange: updateLoaderSettings,
-    layoutSettings: settings.layout,
-    onLayoutChange: updateLayoutSettings,
-    effectsSettings: settings.effects,
-    onEffectsChange: updateCardEffectsSettings,
-    motionSettings: settings.motion,
-    onMotionChange: updateShelfMotionSettings,
-    shelf3dSettings: settings.shelf3d,
-    onShelf3dChange: updateShelf3dSettings,
-    featureRailSettings: settings.featureRail,
-    onFeatureRailChange: updateFeatureRailSettings,
-    three3dSettings: settings.three3d,
-    onThree3dChange: updateThree3dSettings,
-    three3dPalette,
-    reducedMotion: settings.reducedMotion,
-    lookSettings: settings.look,
-    onLookChange: updateSiteLookSettings,
-    shelfCollections: catalog.collections,
-    shelfProjects: catalog.projects,
-    previewCertificates: catalog.certificates,
-    resumeProjectLayout,
-    onResumeProjectLayoutChange: setResumeProjectLayout,
-    resumeProjectDensity,
-    onResumeProjectDensityChange: setResumeProjectDensity,
-    resumeLayoutMode,
-    onResumeLayoutModeChange: setResumeLayoutMode,
-    resumeSurface,
-    onResumeSurfaceChange: setResumeSurface,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
   const viewError = error ? (
@@ -2524,6 +2378,61 @@ function App() {
             onNavigate={navigate}
           />
         </Suspense>
+        <SiteFooter site={site} onNavigate={navigate} />
+      </div>
+    );
+  } else if (isSettings) {
+    page = (
+      <div className={pageClass} id="top">
+        <SiteNav {...navProps} activeNav="settings" />
+        <main className="settings-page">
+          <header className="settings-page-heading">
+            <p className="settings-page-eyebrow">Portfolio preferences</p>
+            <h1>{site.profile.cardStudio?.title || "Design settings"}</h1>
+            <p>Preview and tune the portfolio’s cards, layouts, motion, and visual effects.</p>
+          </header>
+          <div className="settings-workbench">
+            <CardStudio
+              settings={settings.cardUI}
+              onApply={(cardUI, loader) => {
+                updateCardUISettings(cardUI);
+                updateLoaderSettings(loader);
+              }}
+              themeMode={settings.mode}
+              previewProject={cardPreviewProject}
+              previewProjects={cardPreviewProjects}
+              previewCertificates={catalog.certificates}
+              copy={site.profile.cardStudio}
+              loaderSettings={settings.loader}
+              layoutSettings={settings.layout}
+              onLayoutApply={updateLayoutSettings}
+              effectsSettings={settings.effects}
+              onEffectsApply={updateCardEffectsSettings}
+              motionSettings={settings.motion}
+              onMotionApply={updateShelfMotionSettings}
+              shelf3dSettings={settings.shelf3d}
+              onShelf3dApply={updateShelf3dSettings}
+              featureRailSettings={settings.featureRail}
+              onFeatureRailChange={updateFeatureRailSettings}
+              three3dSettings={settings.three3d}
+              onThree3dApply={updateThree3dSettings}
+              three3dPalette={three3dPalette}
+              reducedMotion={settings.reducedMotion}
+              lookSettings={settings.look}
+              onLookApply={updateSiteLookSettings}
+              shelfCollections={catalog.collections}
+              shelfProjects={sortedProjects}
+              resumeProjectLayout={resumeProjectLayout}
+              onResumeProjectLayoutChange={setResumeProjectLayout}
+              resumeProjectDensity={resumeProjectDensity}
+              onResumeProjectDensityChange={setResumeProjectDensity}
+              resumeLayoutMode={resumeLayoutMode}
+              onResumeLayoutModeChange={setResumeLayoutMode}
+              resumeSurface={resumeSurface}
+              onResumeSurfaceChange={setResumeSurface}
+            />
+          </div>
+        </main>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
     );

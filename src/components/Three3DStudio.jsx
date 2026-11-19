@@ -97,7 +97,15 @@ function StageColorRow({ channel, label, picked, effective, onPick, onFollowThem
   );
 }
 
-function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotion = false }) {
+function Three3DStudio({
+  settings,
+  onApply,
+  onPreviewChange,
+  previewInRail = false,
+  projects = [],
+  palette,
+  reducedMotion = false,
+}) {
   const applied = normalizeThree3d(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -111,6 +119,7 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
      will actually draw, including any colour the readability guard had to pull back. */
   const previewPalette = useMemo(() => resolveThree3dPalette(draft, palette), [draft, palette]);
   const legibility = useMemo(() => describeThree3dLegibility(draft, palette), [draft, palette]);
+  const displayStats = draft.style === "off" ? null : stats;
 
   useEffect(() => {
     if (sameThree3d(appliedRef.current, applied)) return;
@@ -167,6 +176,39 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
       ? current
       : next
   ));
+
+  useEffect(() => {
+    onPreviewChange?.("stage3d", {
+      content: (
+        <div className={`three-3d-preview${draft.style === "off" ? " is-off" : ""}`}>
+          <div className="three-3d-preview-head">
+            <span>3D stage</span>
+            <strong>{describeThree3d(draft, window.devicePixelRatio || 1)}</strong>
+          </div>
+          <Three3DStage
+            settings={draft}
+            projects={projects}
+            palette={previewPalette}
+            surface="hero"
+            reducedMotion={reducedMotion || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches}
+            onStats={readStats}
+            className="is-preview"
+            fallback={(
+              <p className="three-3d-unsupported">
+                This browser has no WebGL context, so the stage stays on the flat design.
+              </p>
+            )}
+          />
+          <p className="three-3d-preview-note">
+            {activeStyle.id === "off"
+              ? "The stage is off, so the portfolio keeps its flat design."
+              : `The preview uses ${draft.surfaces.hero}% presence on the landing surface.`}
+          </p>
+        </div>
+      ),
+      dirty,
+    });
+  }, [activeStyle.id, dirty, draft, onPreviewChange, palette, previewPalette, projects, reducedMotion]);
 
   return (
     <section className="card-studio-block three-3d-studio" aria-labelledby="card-studio-three-3d">
@@ -303,31 +345,39 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
           <span>Live preview</span>
           <strong>{describeThree3d(draft, window.devicePixelRatio || 1)}</strong>
         </div>
-        <Three3DStage
-          settings={draft}
-          projects={projects}
-          palette={previewPalette}
-          surface="hero"
-          reducedMotion={reducedMotion || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches}
-          onStats={readStats}
-          className="is-preview"
-          fallback={(
-            <p className="three-3d-unsupported">
-              This browser has no WebGL context, so the stage stays on the flat design.
+        {previewInRail ? (
+          <p className="three-3d-governor">The live scene is shown in the preview rail.</p>
+        ) : (
+          <>
+            <Three3DStage
+              settings={draft}
+              projects={projects}
+              palette={previewPalette}
+              surface="hero"
+              reducedMotion={reducedMotion || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches}
+              onStats={readStats}
+              className="is-preview"
+              fallback={(
+                <p className="three-3d-unsupported">
+                  This browser has no WebGL context, so the stage stays on the flat design.
+                </p>
+              )}
+            />
+            <p className="three-3d-governor">
+              {draft.style === "off"
+                ? "Stage off · no frames drawn"
+                : displayStats
+                  ? `${displayStats.drawn} of ${displayStats.instances} instances drawn · ${draft.surfaces.hero}% presence on this surface`
+                    + `${displayStats.governorScale < 1 ? `, ${Math.round(displayStats.governorScale * 100)}% left by the governor` : ""}`
+                    + `${displayStats.pixelRatioScale < 1 ? ` · device ratio held to ${Math.round(displayStats.pixelRatioScale * 100)}%` : ""}`
+                  : "Counting the first frames…"}
             </p>
-          )}
-        />
-        <p className="three-3d-governor">
-          {stats
-            ? `${stats.drawn} of ${stats.instances} instances drawn · ${draft.surfaces.hero}% presence on this surface`
-              + `${stats.governorScale < 1 ? `, ${Math.round(stats.governorScale * 100)}% left by the governor` : ""}`
-              + `${stats.pixelRatioScale < 1 ? ` · device ratio held to ${Math.round(stats.pixelRatioScale * 100)}%` : ""}`
-            : "Counting the first frames…"}
-        </p>
+          </>
+        )}
         <p className="three-3d-preview-note">
           {activeStyle.id === "off"
             ? "The preview is empty because 3D is off — that is the shipped design."
-            : `One InstancedMesh draws this scene${stats ? ` in ${stats.drawCalls} draw call${stats.drawCalls === 1 ? "" : "s"}` : ""}, at a device ratio capped to ${resolvePixelRatio(window.devicePixelRatio || 1, draft.pixelRatioCap)}x (the ceiling is ${MAX_PIXEL_RATIO}x). Motion is driven by a Three.js clock, so it is identical at any frame rate.`}
+            : `One InstancedMesh draws this scene${displayStats ? ` in ${displayStats.drawCalls} draw call${displayStats.drawCalls === 1 ? "" : "s"}` : ""}, at a device ratio capped to ${resolvePixelRatio(window.devicePixelRatio || 1, draft.pixelRatioCap)}x (the ceiling is ${MAX_PIXEL_RATIO}x). Motion is driven by a Three.js clock, so it is identical at any frame rate.`}
         </p>
       </div>
 

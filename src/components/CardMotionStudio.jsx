@@ -27,7 +27,14 @@ function MotionSwatch({ preset }) {
   );
 }
 
-function CardMotionStudio({ settings, onApply, collections = [], projects = [], shelf3d = DEFAULT_SHELF_3D }) {
+function CardMotionStudio({
+  settings,
+  onApply,
+  onPreviewChange,
+  collections = [],
+  projects = [],
+  shelf3d = DEFAULT_SHELF_3D,
+}) {
   const applied = normalizeShelfMotion(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -43,6 +50,24 @@ function CardMotionStudio({ settings, onApply, collections = [], projects = [], 
     setDraft((current) => (sameShelfMotion(current, appliedRef.current) ? applied : current));
     appliedRef.current = applied;
   }, [appliedKey]);
+
+  useEffect(() => {
+    onPreviewChange?.("motion", {
+      content: (
+        <div className="motion-studio-preview">
+          <CollectionShelf
+            key={previewKey}
+            preview
+            collections={collections}
+            projects={projects}
+            motion={draft}
+            shelf3d={shelf3d}
+          />
+        </div>
+      ),
+      dirty,
+    });
+  }, [collections, dirty, draft, onPreviewChange, previewKey, projects, shelf3d]);
 
   /* Replay is the button's job. Re-keying the sample here would remount the whole shelf on every
      frame of a drag, and the shelf derives its previews from the full catalogue. */

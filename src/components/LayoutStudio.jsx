@@ -157,7 +157,7 @@ function HomeCollectionsPreview({ collections, pattern }) {
   );
 }
 
-function LayoutPreview({ area, pattern, projects, certificates, cardUI, collections }) {
+export function LayoutPreview({ area, pattern, projects, certificates, cardUI, collections }) {
   if (area === "homeHero") {
     return (
       <div className="layout-preview" data-layout-pattern={pattern}>
@@ -214,6 +214,7 @@ function LayoutStudio({
   previewCertificates = [],
   cardUI = {},
   collections = [],
+  onPreviewChange,
 }) {
   const applied = normalizeLayoutSettings(settings);
   const [area, setArea] = useState("homeCollections");
@@ -239,6 +240,24 @@ function LayoutStudio({
     setDraft((current) => (sameLayoutSettings(current, appliedRef.current) ? applied : current));
     appliedRef.current = applied;
   }, [applied]);
+
+  useEffect(() => {
+    onPreviewChange?.("layout", {
+      content: (
+        <div className="layout-studio-preview-stage" aria-hidden="true" inert>
+          <LayoutPreview
+            area={area}
+            pattern={draft[area]}
+            projects={projectPool}
+            certificates={previewCertificates}
+            cardUI={cardUI}
+            collections={collectionPool}
+          />
+        </div>
+      ),
+      dirty,
+    });
+  }, [area, cardUI, collectionPool, dirty, draft, onPreviewChange, previewCertificates, projectPool]);
 
   const choosePattern = (patternId) => {
     setDraft((current) => {

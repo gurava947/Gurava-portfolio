@@ -31,7 +31,7 @@ const projects = [
   },
 ];
 
-function Harness({ onApply, initialSettings = DEFAULT_LAYOUT_SETTINGS, cardUI = {} }) {
+function Harness({ onApply, onPreviewChange, initialSettings = DEFAULT_LAYOUT_SETTINGS, cardUI = {} }) {
   const [settings, setSettings] = useState(normalizeLayoutSettings(initialSettings));
   return (
     <LayoutStudio
@@ -43,6 +43,7 @@ function Harness({ onApply, initialSettings = DEFAULT_LAYOUT_SETTINGS, cardUI = 
       previewProject={projects[0]}
       previewProjects={projects}
       cardUI={cardUI}
+      onPreviewChange={onPreviewChange}
     />
   );
 }
@@ -66,6 +67,22 @@ describe("LayoutStudio", () => {
     expect(onApply).not.toHaveBeenCalled();
     expect(container.querySelector('.layout-preview[data-layout-pattern="two-column"]')).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Apply layout/i })).toBeEnabled();
+  });
+
+  it("publishes the selected area and unsaved pattern to the shared preview", () => {
+    const onPreviewChange = vi.fn();
+    renderStudio({ onPreviewChange });
+
+    fireEvent.click(screen.getByRole("button", { name: /Certificate cards/i }));
+    let preview = onPreviewChange.mock.lastCall[1];
+    expect(onPreviewChange.mock.lastCall[0]).toBe("layout");
+    expect(preview.content.props.children.props.area).toBe("certificateCards");
+    expect(preview.dirty).toBe(false);
+
+    fireEvent.click(screen.getByRole("button", { name: /Single column/i }));
+    preview = onPreviewChange.mock.lastCall[1];
+    expect(preview.content.props.children.props.pattern).toBe("single-column");
+    expect(preview.dirty).toBe(true);
   });
 
   it("applies only after Apply and resets to defaults", () => {

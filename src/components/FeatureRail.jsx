@@ -22,6 +22,7 @@ export default function FeatureRail({
   fx = {},
   eyebrow = "Suggested builds",
   art = "contain",
+  preview = false,
 }) {
   const settings = useMemo(() => normalizeFeatureRail(rail), [rail]);
   const scrollerRef = useRef(null);
@@ -166,7 +167,7 @@ export default function FeatureRail({
         >
           {projects.map((project) => (
             <div className="feature-rail-item" key={project.id || project.route || project.slug}>
-              <ProjectCard project={project} onNavigate={onNavigate} cardUI={cardUI} fx={fx} />
+              <ProjectCard project={project} onNavigate={onNavigate} cardUI={cardUI} fx={fx} preview={preview} />
             </div>
           ))}
         </div>

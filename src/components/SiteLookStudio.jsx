@@ -42,7 +42,44 @@ function LookOptionCard({ active, label, note, onClick, children, ariaLabel }) {
   );
 }
 
-function SiteLookStudio({ settings, onApply }) {
+function SiteLookPreview({ draft, previewKey }) {
+  return (
+    <div
+      key={previewKey}
+      className={`look-studio-stage is-${draft.preset}`}
+      data-hero-text={draft.heroText}
+      data-bg-pattern={draft.background}
+      data-look-gradient={draft.gradient}
+      data-look-heading={draft.heading}
+      data-look-text-fx={String(draft.textFx)}
+      data-logo-3d={String(draft.logo3d)}
+      style={getSiteLookVariables(draft)}
+    >
+      <span className="look-studio-stage-bg" aria-hidden="true" />
+      <span className={`look-studio-mark${draft.logo3d ? " is-3d" : ""}`} aria-hidden="true">G</span>
+      <p className="look-studio-stage-title">
+        {DEMO_WORDS.map((word, index) => (
+          <span className="hero-word" style={{ "--word-index": index }} key={word}>{`${word} `}</span>
+        ))}{" "}
+        <span className="hero-word hero-word-accent" style={{ "--word-index": DEMO_WORDS.length }}>{DEMO_ACCENT}</span>
+      </p>
+      <span className="look-studio-demo-title" data-look-heading={draft.heading}>Three shelves, one catalog</span>
+      <span className="look-studio-demo-note">Hover this line — the highlight sweeps in without moving the text.</span>
+      <div className={`look-studio-strip is-${draft.featured}`} aria-hidden="true">
+        <div className="look-studio-strip-track">
+          {(draft.featured === "grid"
+            ? STRIP_TILES.slice(0, 4)
+            : [...STRIP_TILES, ...STRIP_TILES]
+          ).map((tile, position) => (
+            <span className="look-studio-strip-card" key={`${draft.featured}-${position}`}><i /></span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SiteLookStudio({ settings, onApply, onPreviewChange }) {
   const applied = normalizeSiteLook(settings);
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -63,6 +100,13 @@ function SiteLookStudio({ settings, onApply }) {
     setDraft((current) => (sameSiteLook(current, appliedRef.current) ? applied : current));
     appliedRef.current = applied;
   }, [appliedKey]);
+
+  useEffect(() => {
+    onPreviewChange?.("look", {
+      content: <SiteLookPreview draft={draft} previewKey={previewKey} />,
+      dirty,
+    });
+  }, [draft, dirty, onPreviewChange, previewKey]);
 
   const updateDraft = (patch, message) => {
     setDraft((current) => normalizeSiteLook({ ...current, ...patch }));
@@ -276,41 +320,7 @@ function SiteLookStudio({ settings, onApply }) {
             Replay
           </button>
         </div>
-        <div
-          key={previewKey}
-          className={`look-studio-stage is-${draft.preset}`}
-          data-hero-text={draft.heroText}
-          data-bg-pattern={draft.background}
-          data-look-gradient={draft.gradient}
-          data-look-heading={draft.heading}
-          data-look-text-fx={String(draft.textFx)}
-          data-logo-3d={String(draft.logo3d)}
-          style={getSiteLookVariables(draft)}
-        >
-          <span className="look-studio-stage-bg" aria-hidden="true" />
-          <span className={`look-studio-mark${draft.logo3d ? " is-3d" : ""}`} aria-hidden="true">G</span>
-          <p className="look-studio-stage-title">
-            {DEMO_WORDS.map((word, index) => (
-              <span className="hero-word" style={{ "--word-index": index }} key={word}>{`${word} `}</span>
-            ))}{" "}
-            <span className="hero-word hero-word-accent" style={{ "--word-index": DEMO_WORDS.length }}>{DEMO_ACCENT}</span>
-          </p>
-          {/* A section-scale heading and a passage of running text, so the two text layers can be
-              judged here the way they read on the page. */}
-          <span className="look-studio-demo-title" data-look-heading={draft.heading}>Three shelves, one catalog</span>
-          <span className="look-studio-demo-note">Hover this line — the highlight sweeps in without moving the text.</span>
-          {/* Rail variants need a doubled track so the -50% scroll loop is seamless. */}
-          <div className={`look-studio-strip is-${draft.featured}`} aria-hidden="true">
-            <div className="look-studio-strip-track">
-              {(draft.featured === "grid"
-                ? STRIP_TILES.slice(0, 4)
-                : [...STRIP_TILES, ...STRIP_TILES]
-              ).map((tile, position) => (
-                <span className="look-studio-strip-card" key={`${draft.featured}-${position}`}><i /></span>
-              ))}
-            </div>
-          </div>
-        </div>
+        <SiteLookPreview draft={draft} previewKey={previewKey} />
         <p className="look-studio-preview-note">
           The draft is isolated to this stage. Only Apply look changes the live portfolio, and it stays on this browser.
         </p>

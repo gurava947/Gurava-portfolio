@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import FeatureRail from "./FeatureRail";
 import { DEFAULT_FEATURE_RAIL, RAIL_LIMITS, RAIL_LAYOUTS, RAIL_ORIENTATIONS, sameFeatureRail } from "../config/featureRail";
 
@@ -21,15 +21,34 @@ const SWITCHES = [
 
 /* The rail takes the fewest drafts of anything in this panel: each control writes straight through
    to the live rail behind the panel, so there is no Apply step to forget. */
-function FeatureRailStudio({ settings, onChange, projects = [], cardUI = {}, fx = {} }) {
+function FeatureRailStudio({ settings, onChange, onPreviewChange, projects = [], cardUI = {}, fx = {} }) {
   const [announcement, setAnnouncement] = useState("");
-  const sample = projects.slice(0, SAMPLE_COUNT);
+  const sample = useMemo(() => projects.slice(0, SAMPLE_COUNT), [projects]);
 
   const update = (patch, message) => {
     if (!onChange) return;
     onChange(patch);
     if (message) setAnnouncement(`${message} applied.`);
   };
+
+  useEffect(() => {
+    if (!sample.length) return;
+    onPreviewChange?.("rail", {
+      content: (
+        <div className="rail-studio-preview">
+          <FeatureRail
+            projects={sample}
+            rail={settings}
+            cardUI={cardUI}
+            fx={fx}
+            eyebrow="Card layout sample"
+            preview
+          />
+        </div>
+      ),
+      dirty: false,
+    });
+  }, [cardUI, fx, onPreviewChange, sample, settings]);
 
   const resetToDefault = () => {
     if (!onChange) return;
@@ -140,6 +159,7 @@ function FeatureRailStudio({ settings, onChange, projects = [], cardUI = {}, fx 
             cardUI={cardUI}
             fx={fx}
             eyebrow="Card layout sample"
+            preview
           />
         </div>
       ) : null}
