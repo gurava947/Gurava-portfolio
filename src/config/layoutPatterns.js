@@ -1,5 +1,17 @@
 export const LAYOUT_AREAS = [
   {
+    id: "homeHero",
+    attribute: "layoutHomeHero",
+    label: "Homepage hero",
+    note: "Headline, stats, and collection preview",
+  },
+  {
+    id: "homeCollections",
+    attribute: "layoutHomeCollections",
+    label: "Homepage collection cards",
+    note: "Python, Responsive, and Static cards",
+  },
+  {
     id: "projectCards",
     attribute: "layoutProjectCards",
     label: "Project cards",
@@ -50,13 +62,13 @@ export const LAYOUT_PATTERNS = [
     id: "grid",
     label: "Grid",
     note: "Even, scannable card tracks.",
-    areas: ["projectCards", "certificateCards"],
+    areas: ["projectCards", "certificateCards", "homeCollections"],
   },
   {
     id: "f-pattern",
     label: "F-pattern",
     note: "Wide lead row, then a strong left edge.",
-    areas: ["projectCards", "projectPages"],
+    areas: ["projectCards", "projectPages", "homeCollections"],
   },
   {
     id: "z-pattern",
@@ -68,19 +80,19 @@ export const LAYOUT_PATTERNS = [
     id: "split-screen",
     label: "Split screen",
     note: "Two equal regions side by side.",
-    areas: ["projectPages", "internalPages"],
+    areas: ["projectPages", "internalPages", "homeHero"],
   },
   {
     id: "magazine",
     label: "Magazine",
     note: "Feature lead plus supporting columns.",
-    areas: ["projectCards", "certificateCards", "projectPages", "internalPages"],
+    areas: ["projectCards", "certificateCards", "projectPages", "internalPages", "homeCollections"],
   },
   {
     id: "asymmetrical",
     label: "Asymmetrical",
     note: "Uneven spans with a deliberate rhythm.",
-    areas: ["projectCards", "certificateCards"],
+    areas: ["projectCards", "certificateCards", "homeCollections"],
   },
   {
     id: "holy-grail",
@@ -92,19 +104,19 @@ export const LAYOUT_PATTERNS = [
     id: "masonry",
     label: "Masonry",
     note: "Staggered columns that follow content height.",
-    areas: ["projectCards", "certificateCards"],
+    areas: ["projectCards", "certificateCards", "homeCollections"],
   },
   {
     id: "hero-landing",
     label: "Hero landing",
     note: "Full-width lead with supporting content.",
-    areas: ["projectCards", "projectPages", "internalPages"],
+    areas: ["projectCards", "projectPages", "internalPages", "homeHero"],
   },
   {
     id: "full-screen",
     label: "Full-screen",
     note: "Viewport-height hero on large screens.",
-    areas: ["projectPages", "internalPages"],
+    areas: ["projectPages", "internalPages", "homeHero"],
   },
 ];
 

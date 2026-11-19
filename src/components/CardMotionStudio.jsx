@@ -89,8 +89,8 @@ function CardMotionStudio({ settings, onApply, collections = [], projects = [], 
         <span>Previewed before Apply</span>
       </div>
       <p className="motion-studio-note">
-        Controls the stacked glass collection shelf at the top of the Projects catalog. The live shelf keeps its current
-        motion until you choose Apply motion.
+        Controls the homepage collection cards and the stacked glass shelf in Projects. Preview both before applying
+        motion to keep them in sync.
       </p>
 
       <div className="motion-studio-presets" role="group" aria-label="Card motion presets">

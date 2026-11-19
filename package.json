@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@fontsource/material-symbols-rounded": "^5.3.9",
     "bootstrap": "^5.3.8",
     "express": "^5.2.1",
     "gsap": "^3.15.0",
+    "jspdf": "^4.2.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "three": "^0.180.0"

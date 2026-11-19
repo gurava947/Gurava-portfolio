@@ -1,4 +1,5 @@
 import "./GlassFolderCard.css";
+import { getShelfMotionStyles, normalizeShelfMotion } from "../../config/cardMotion";
 
 function initials(value) {
   return String(value || "")
@@ -17,8 +18,9 @@ function fill(template, values) {
   );
 }
 
-export default function GlassFolderCard({ collection, projects = [], index = 0, copy = {}, onNavigate }) {
+export default function GlassFolderCard({ collection, projects = [], index = 0, copy = {}, onNavigate, motion = {} }) {
   const destination = `/projects?collection=${collection.id}`;
+  const motionSettings = normalizeShelfMotion(motion);
   const previews = projects.filter((project) => project.thumbnail || project.image).slice(0, 3);
   const sheets = [
     ...Array.from({ length: Math.max(0, 3 - previews.length) }, () => null),
@@ -35,6 +37,8 @@ export default function GlassFolderCard({ collection, projects = [], index = 0, 
   return (
     <a
       className={`collection-folder-card is-${collection.id}`}
+      data-shelf-motion={motionSettings.preset}
+      style={getShelfMotionStyles(motionSettings)}
       href={destination}
       onClick={navigate}
     >

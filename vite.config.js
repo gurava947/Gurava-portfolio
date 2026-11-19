@@ -7,8 +7,32 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        preview: resolve(__dirname, 'preview.html'),
+        main: resolve(import.meta.dirname, 'index.html'),
+        preview: resolve(import.meta.dirname, 'preview.html'),
+      },
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: "three-vendor",
+              test: /node_modules[\\/]three[\\/]/,
+              priority: 30,
+              maxSize: 480 * 1024,
+            },
+            {
+              name: "gsap-vendor",
+              test: /node_modules[\\/]gsap[\\/]/,
+              priority: 20,
+              maxSize: 320 * 1024,
+            },
+            {
+              name: "jspdf-vendor",
+              test: /node_modules[\\/]jspdf[\\/]/,
+              priority: 20,
+              maxSize: 420 * 1024,
+            },
+          ],
+        },
       },
     },
   },

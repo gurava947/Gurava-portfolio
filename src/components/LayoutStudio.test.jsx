@@ -74,7 +74,7 @@ describe("LayoutStudio", () => {
     fireEvent.click(screen.getByRole("button", { name: /Apply layout/i }));
 
     expect(onApply).toHaveBeenCalledTimes(1);
-    expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_LAYOUT_SETTINGS, projectCards: "two-column" });
+    expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_LAYOUT_SETTINGS, homeCollections: "two-column" });
     expect(screen.getByRole("button", { name: /Apply layout/i })).toBeDisabled();
 
     fireEvent.click(screen.getByRole("button", { name: /Reset to current default/i }));
@@ -100,6 +100,8 @@ describe("LayoutStudio", () => {
     fireEvent.click(screen.getByRole("button", { name: /Apply layout/i }));
 
     expect(onApply).toHaveBeenCalledWith({
+      homeHero: "two-column",
+      homeCollections: "two-column",
       projectCards: "two-column",
       certificateCards: "two-column",
       projectPages: "two-column",
@@ -124,9 +126,25 @@ describe("LayoutStudio", () => {
 
   it("explains that the side-scroll card style skips card layout patterns", () => {
     renderStudio({ cardUI: { cardLayout: "depth" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Project cards/i }));
     expect(screen.getByRole("note")).toHaveTextContent(/side-scroll card style keeps its rail/i);
 
     fireEvent.click(screen.getByRole("button", { name: /Certificate cards/i }));
     expect(screen.queryByRole("note")).not.toBeInTheDocument();
+  });
+
+  it("previews homepage hero and collection-card layouts", () => {
+    const { container, onApply } = renderStudio();
+    expect(container.querySelector(".layout-preview-home-collections")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Homepage hero/i }));
+    expect(container.querySelector(".layout-preview-home-hero")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Homepage hero/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Split screen/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Apply layout/i }));
+
+    expect(onApply).toHaveBeenCalledWith({ ...DEFAULT_LAYOUT_SETTINGS, homeHero: "split-screen" });
   });
 });

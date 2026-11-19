@@ -4,6 +4,7 @@ import CodePlate from "./ui/CodePlate";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import HeroWords from "./HeroWords";
 import FeatureRail from "./FeatureRail";
+import MaterialSymbol from "./MaterialSymbol";
 import { PLAYGROUND_THEME_OPTIONS } from "../config/themeSync";
 import "../styles/project-detail-look.css";
 
@@ -401,7 +402,31 @@ function ReactAbout({ project, copy }) {
   );
 }
 
-export default function ProjectDetail({ project, detail, devices, isLoading, error, onRetry, onNavigate, onBack, previousProject, nextProject, copy, loader, relatedProjects = [], featureRail, featuredVariant = "poster", cardUI = {}, fx = {}, siteMode = "light", playgroundTheme = "follow", onPlaygroundThemeChange, onPlaygroundThemeSwitched }) {
+export default function ProjectDetail({
+  project,
+  detail,
+  devices,
+  isLoading,
+  error,
+  onRetry,
+  onNavigate,
+  onBack,
+  backHref = "/projects",
+  backLabel,
+  previousProject,
+  nextProject,
+  copy,
+  loader,
+  relatedProjects = [],
+  featureRail,
+  featuredVariant = "poster",
+  cardUI = {},
+  fx = {},
+  siteMode = "light",
+  playgroundTheme = "follow",
+  onPlaygroundThemeChange,
+  onPlaygroundThemeSwitched,
+}) {
   const fullProject = detail || project;
   const data = fullProject.data || {};
   const eyebrow = [...new Set([fullProject.collectionLabel, fullProject.category].filter(Boolean))].join(" · ");
@@ -426,8 +451,8 @@ export default function ProjectDetail({ project, detail, devices, isLoading, err
       <section className="lab-hero lab-detail-hero">
         <span className="lab-hero-glow" aria-hidden="true" />
         <div className="lab-workspace-wide">
-          <a className="lab-back-link" href="/projects" onClick={(event) => (onBack ? onBack(event) : navigate(event, "/projects"))}>
-            <span aria-hidden="true">←</span> {copy.backToCatalog}
+          <a className="lab-back-link" href={backHref} onClick={(event) => (onBack ? onBack(event) : navigate(event, backHref))}>
+            <MaterialSymbol name="arrow_back" /> {backLabel || copy.backToCatalog}
           </a>
           <div className="lab-hero-grid">
             <div className="lab-hero-copy">

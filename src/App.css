@@ -780,21 +780,42 @@ select:focus-visible {
   top: 0;
   z-index: 4;
   flex: 0 0 auto;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   padding: 8px 0 9px;
   background: linear-gradient(180deg, var(--theme-card-bg) 74%, transparent);
 }
 
+.card-studio-nav-group {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 4px;
+}
+
+.card-studio-nav-group-label {
+  color: var(--theme-muted-text);
+  font-size: 0.48rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card-studio-nav-group-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
 .card-studio-nav-chip {
-  padding: 5px 10px;
+  padding: 4px 7px;
   border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--theme-text) 3%, transparent);
   color: var(--theme-muted-text);
   font: inherit;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 750;
   white-space: nowrap;
   cursor: pointer;
@@ -1403,6 +1424,14 @@ select:focus-visible {
 }
 
 @media (max-width: 679.98px) {
+  .card-studio-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card-studio-nav-group:last-child {
+    grid-column: 1 / -1;
+  }
+
   .card-studio-actions {
     align-items: flex-start;
     flex-direction: column;

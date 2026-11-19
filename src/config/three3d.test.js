@@ -199,7 +199,7 @@ describe("describeThree3d", () => {
 
 describe("the surfaces of one canvas", () => {
   it("names a surface for every part of the site and a fallback for the rest", () => {
-    expect(THREE_3D_SURFACES.map(({ id }) => id)).toEqual(["hero", "projects", "certificates", "page"]);
+    expect(THREE_3D_SURFACES.map(({ id }) => id)).toEqual(["hero", "projects", "resume", "certificates", "page"]);
     expect(THREE_3D_SURFACES.at(-1).id).toBe("page");
   });
 
@@ -207,6 +207,7 @@ describe("the surfaces of one canvas", () => {
     expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.hero).toBe(100);
     expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.projects).toBeLessThan(DEFAULT_THREE_3D_SURFACE_PRESENCE.hero);
     expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.page).toBeLessThan(DEFAULT_THREE_3D_SURFACE_PRESENCE.projects);
+    expect(DEFAULT_THREE_3D_SURFACE_PRESENCE.resume).toBeLessThan(DEFAULT_THREE_3D_SURFACE_PRESENCE.projects);
   });
 
   it("turns presence into the fraction of the field the engine draws", () => {

@@ -12,6 +12,11 @@ import {
 } from "../config/layoutPatterns";
 
 const PREVIEW_CERT_COPY = { openLabel: "Open certificate" };
+const PREVIEW_COLLECTIONS = [
+  { id: "python", label: "Python", count: 389, description: "Python practice and browser-run exercises." },
+  { id: "responsive", label: "Responsive Web", count: 35, description: "Layouts measured across device widths." },
+  { id: "static", label: "Static Web", count: 39, description: "HTML, CSS, Bootstrap, and page composition." },
+];
 
 function PatternSwatch({ pattern }) {
   return (
@@ -108,7 +113,65 @@ function InternalPagePreview({ projects, cardUI, pattern }) {
   );
 }
 
-function LayoutPreview({ area, pattern, projects, certificates, cardUI }) {
+function HomeHeroPreview({ pattern, collections }) {
+  return (
+    <div className="layout-preview-home-hero" data-layout-pattern={pattern}>
+      <div className="layout-preview-home-hero-copy">
+        <span>Three shelves, one practice</span>
+        <strong>Built, refined,<br />kept in practice.</strong>
+        <p>A unified catalog, one click from a live preview.</p>
+        <div className="layout-preview-home-stats">
+          <span><b>463</b> builds</span>
+          <span><b>03</b> collections</span>
+          <span><b>08</b> certificates</span>
+        </div>
+      </div>
+      <div className="layout-preview-home-hero-shelves">
+        {collections.slice(0, 3).map((collection, index) => (
+          <div className={`layout-preview-home-shelf is-${collection.id}`} key={collection.id}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{collection.label}</strong>
+            <small>{collection.count} builds</small>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HomeCollectionsPreview({ collections, pattern }) {
+  return (
+    <div className="layout-preview-home-collections" data-layout-pattern={pattern}>
+      {collections.map((collection, index) => (
+        <div className={`layout-preview-home-card is-${collection.id}`} key={collection.id}>
+          <span className="layout-preview-home-card-index">{String(index + 1).padStart(2, "0")}</span>
+          <span className="layout-preview-home-card-art" aria-hidden="true">{collection.label.slice(0, 1)}</span>
+          <div>
+            <small>{collection.count} builds</small>
+            <strong>{collection.label}</strong>
+            <p>{collection.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LayoutPreview({ area, pattern, projects, certificates, cardUI, collections }) {
+  if (area === "homeHero") {
+    return (
+      <div className="layout-preview" data-layout-pattern={pattern}>
+        <HomeHeroPreview pattern={pattern} collections={collections} />
+      </div>
+    );
+  }
+  if (area === "homeCollections") {
+    return (
+      <div className="layout-preview" data-layout-pattern={pattern}>
+        <HomeCollectionsPreview collections={collections} pattern={pattern} />
+      </div>
+    );
+  }
   if (area === "certificateCards") {
     return (
       <div className="layout-preview is-cards is-certificates" data-layout-pattern={pattern}>
@@ -150,9 +213,10 @@ function LayoutStudio({
   previewProjects = [],
   previewCertificates = [],
   cardUI = {},
+  collections = [],
 }) {
   const applied = normalizeLayoutSettings(settings);
-  const [area, setArea] = useState("projectCards");
+  const [area, setArea] = useState("homeCollections");
   const [scope, setScope] = useState("area");
   const [draft, setDraft] = useState(applied);
   const [announcement, setAnnouncement] = useState("");
@@ -166,6 +230,7 @@ function LayoutStudio({
     : previewProject
       ? [previewProject]
       : [];
+  const collectionPool = collections.length ? collections : PREVIEW_COLLECTIONS;
   const siteAreas = getPatternAreas(draft[area]);
   const shelfStyle = area === "projectCards" && (cardUI?.cardLayout === "rail" || cardUI?.cardLayout === "depth");
 
@@ -218,11 +283,11 @@ function LayoutStudio({
   return (
     <section className="card-studio-block layout-studio" aria-labelledby="card-studio-layout">
       <div className="card-studio-block-head">
-        <h3 id="card-studio-layout">Layout customization</h3>
+        <h3 id="card-studio-layout">Page &amp; card layout</h3>
         <span>Previewed before Apply</span>
       </div>
       <p className="layout-studio-note">
-        The site keeps its current layout until you choose Apply. Pick an area, preview a suitable pattern, then keep it.
+        Choose a homepage area or another page, preview its layout, then Apply. Motion and 3D controls are grouped separately.
       </p>
 
       <div className="layout-studio-scope" role="group" aria-label="Layout scope">
@@ -305,6 +370,7 @@ function LayoutStudio({
             projects={projectPool}
             certificates={previewCertificates}
             cardUI={cardUI}
+            collections={collectionPool}
           />
         </div>
         <p className="layout-studio-preview-note">

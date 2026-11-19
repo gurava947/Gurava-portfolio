@@ -178,7 +178,8 @@ function Three3DStudio({ settings, onApply, projects = [], palette, reducedMotio
         Nothing here is live until you choose a style: while it reads <strong>Off</strong> the site is the same
         flat design it shipped as, and the Three.js engine is not even downloaded. Picking a style fetches the
         engine and paints one WebGL canvas behind the page — the interactive swarm is the particle system, the
-        project shelf lays the catalogue out on a fixed 3D deck.
+        project shelf lays the catalogue out on a fixed 3D deck. Landing and Projects surface controls tune the
+        homepage hero and collection cards independently.
       </p>
 
       <div className="three-3d-styles" role="group" aria-label="3D styles">

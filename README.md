@@ -16,6 +16,7 @@ The catalog also carries the supplied certificates (8 normalized certificate rec
 - **Catalog data** — `scripts/build-catalog.mjs` reads `catalog/source/` (site copy, projects, certificates, components, assets), `backend/db/projects/python-playground.json`, and each preserved solution in `python-projects/<slug>/solution.py`, then generates:
   - `public/data/catalog.json` — compact per-project summaries, filter options, and counts.
   - `public/data/projects/<id>.json` — full detail for one project, loaded on demand.
+- **Resume** — `/resume` reads the generated catalog for its searchable, paginated project archive. Cards, tree, list, and density are configurable from the resume page or the G settings panel; archive filters and page are kept in the URL so project-detail back navigation restores the same view. The 3D studio has a separate, subtle Resume surface control, while the ATS PDF stays concise and uses only curated resume highlights.
 - **Previews** — React projects render one component at a time in `/preview.html?id=…`; Python questions load their preserved solution into the same playground and run real Pyodide in `/playground/index.html`.
 - **Backend** — Express 5 + `node:sqlite` is retained for the local API and data checks; the website itself reads the static generated catalog and needs no remote data service or database credentials.
 

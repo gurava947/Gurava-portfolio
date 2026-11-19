@@ -191,14 +191,17 @@ describe("Three3DStudio", () => {
     // The shipped defaults, read off the panel rather than the config: a wall of cards wants a quieter
     // stage than the landing page, and this is the only place that difference is expressed.
     expect(screen.getByLabelText("Projects")).toHaveValue("70");
+    expect(screen.getByLabelText("Resume")).toHaveValue("45");
     expect(screen.getByLabelText("Certificates")).toHaveValue("85");
 
     fireEvent.change(screen.getByLabelText("Projects"), { target: { value: "45" } });
+    fireEvent.change(screen.getByLabelText("Resume"), { target: { value: "60" } });
 
     // A dial previews: the canvas in this panel is already thinning itself while nothing is saved.
     expect(onApply).not.toHaveBeenCalled();
     await waitFor(() => expect(updateStage.mock.calls.at(-1)?.[0]?.surfaces.projects).toBe(45));
     expect(updateStage.mock.calls.at(-1)[0].surfaces.hero).toBe(100);
+    expect(updateStage.mock.calls.at(-1)[0].surfaces.resume).toBe(60);
 
     fireEvent.click(screen.getByRole("button", { name: /Apply stage settings/i }));
     expect(onApply).toHaveBeenCalled();

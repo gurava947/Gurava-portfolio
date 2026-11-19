@@ -133,6 +133,12 @@ export const THREE_3D_SURFACES = Object.freeze([
     defaultPresence: 70,
   }),
   Object.freeze({
+    id: "resume",
+    label: "Resume",
+    note: "A quieter field behind the resume and its project archive, keeping text easy to read.",
+    defaultPresence: 45,
+  }),
+  Object.freeze({
     id: "certificates",
     label: "Certificates",
     note: "A little more depth for the artwork tiles, at a density that leaves the credentials readable.",

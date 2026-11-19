@@ -2,6 +2,7 @@ import { memo, Suspense, lazy, useCallback, useDeferredValue, useEffect, useMemo
 import { flushSync } from "react-dom";
 import "./styles/theme.css";
 import "./App.css";
+import "./styles/material-symbols.css";
 import "./styles/portfolio-effects.css";
 import "./styles/project-lab.css";
 import "./styles/unified.css";
@@ -38,12 +39,27 @@ import { resolveThree3dPalette } from "./config/three3d";
 import { CARD_LAYOUTS, getCardStyleVariables, sameCardSettings } from "./utils/cardStyle";
 
 const PROFILE_STORAGE_KEY = "myapp.guravva.profile.v1";
+const RESUME_PROJECT_LAYOUT_STORAGE_KEY = "practicefolio.resume-project-layout.v1";
+const RESUME_PROJECT_DENSITY_STORAGE_KEY = "practicefolio.resume-project-density.v1";
+const RESUME_PROJECT_LAYOUTS = ["cards", "tree", "list"];
+const RESUME_PROJECT_DENSITIES = ["comfortable", "compact"];
+
+function readResumePreference(key, allowedValues, fallback) {
+  try {
+    const saved = window.localStorage.getItem(key);
+    return allowedValues.includes(saved) ? saved : fallback;
+  } catch (error) {
+    console.warn("Unable to read a saved resume presentation preference.", error);
+    return fallback;
+  }
+}
 
 // Route bodies are split so the home page does not ship catalog, detail or certificate code.
 const ProjectDetail = lazy(() => import("./components/ProjectDetail"));
 const ProjectsCatalog = lazy(() => import("./components/ProjectsCatalog"));
 const CertificatesIndex = lazy(() => import("./components/CertificatesIndex"));
 const CertificateShowcase = lazy(() => import("./components/CertificateShowcase"));
+const ResumePage = lazy(() => import("./components/ResumePage"));
 
 function RouteFallback({ loader }) {
   return (
@@ -76,6 +92,9 @@ function NavIcon({ name, className = "nav-control-icon" }) {
   }
   if (name === "projects") {
     return <svg {...iconProps}><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2" /><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2" /><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2" /><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2" /></svg>;
+  }
+  if (name === "resume") {
+    return <svg {...iconProps}><path d="M7 3.5h7l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V5a1.5 1.5 0 0 1 1-1.5Z" /><path d="M14 3.8v4h4M9 12h6m-6 3.5h6" /></svg>;
   }
   if (name === "mail") {
     return <svg {...iconProps}><rect x="3" y="5.2" width="18" height="13.6" rx="2.6" /><path d="m3.6 7.2 7.3 5.3a2 2 0 0 0 2.2 0l7.3-5.3" /></svg>;
@@ -484,14 +503,29 @@ const STUDIO_SECTIONS = [
   { id: "fine", label: "Fine-tune", selector: ".card-ui-settings" },
 ];
 
-// Height of the sticky chip row the section has to clear when it is jumped to.
-const STUDIO_NAV_OFFSET = 46;
+const STUDIO_SECTION_GROUPS = [
+  { id: "design", label: "Design", sectionIds: ["presets", "quick", "look", "layout", "fine"] },
+  { id: "motion-depth", label: "Motion & depth", sectionIds: ["effects", "motion", "shelf3d", "rail", "stage3d"] },
+  { id: "loading", label: "Loading", sectionIds: ["loader"] },
+].map((group) => ({
+  ...group,
+  sections: group.sectionIds
+    .map((id) => STUDIO_SECTIONS.find((section) => section.id === id))
+    .filter(Boolean),
+}));
+
+const STUDIO_NAV_FALLBACK_OFFSET = 48;
 
 function studioSectionElement(section, pane) {
   if (!pane) return null;
   if (section.selector) return pane.querySelector(section.selector);
   const heading = document.getElementById(section.headingId);
   return (heading?.closest("section") || heading) ?? null;
+}
+
+function studioNavOffset(pane) {
+  const nav = pane?.querySelector(".card-studio-nav");
+  return nav ? nav.getBoundingClientRect().height + 8 : STUDIO_NAV_FALLBACK_OFFSET;
 }
 
 /* Whichever element actually scrolls the studio: the tools column in the two-pane shell, the dialog
@@ -534,6 +568,10 @@ function CardStudio({
   onLookApply,
   shelfCollections = [],
   shelfProjects = [],
+  resumeProjectLayout,
+  onResumeProjectLayoutChange,
+  resumeProjectDensity,
+  onResumeProjectDensityChange,
 }) {
   const appliedLoader = loaderSettings || DEFAULT_LOADER_SETTINGS;
   const [draftCardUI, setDraftCardUI] = useState(settings);
@@ -593,11 +631,12 @@ function CardStudio({
       crossing.clear();
       observer?.disconnect();
       observer = new IntersectionObserver((entries) => {
-        let line = 0;
+        const navOffset = studioNavOffset(pane);
+        let line = navOffset;
         entries.forEach((entry) => {
           if (entry.isIntersecting) crossing.add(entry.target);
           else crossing.delete(entry.target);
-          if (entry.rootBounds) line = entry.rootBounds.top + STUDIO_NAV_OFFSET;
+          if (entry.rootBounds) line = entry.rootBounds.top + navOffset;
         });
         let nearest = null;
         let nearestGap = Number.POSITIVE_INFINITY;
@@ -633,7 +672,7 @@ function CardStudio({
     setActiveSection(section.id);
     const host = scrollHostRef.current || pane;
     host.scrollTo({
-      top: host.scrollTop + target.getBoundingClientRect().top - host.getBoundingClientRect().top - STUDIO_NAV_OFFSET,
+      top: host.scrollTop + target.getBoundingClientRect().top - host.getBoundingClientRect().top - studioNavOffset(pane),
       behavior: reducedMotion ? "auto" : "smooth",
     });
   };
@@ -702,16 +741,23 @@ function CardStudio({
       <div className="card-studio-panes">
         <div className="card-studio-controls" ref={controlsRef}>
           <nav className="card-studio-nav" aria-label="Studio sections">
-            {STUDIO_SECTIONS.map((section) => (
-              <button
-                key={section.id}
-                type="button"
-                className="card-studio-nav-chip"
-                aria-current={activeSection === section.id ? "true" : undefined}
-                onClick={() => focusSection(section)}
-              >
-                {section.label}
-              </button>
+            {STUDIO_SECTION_GROUPS.map((group) => (
+              <div className="card-studio-nav-group" key={group.id}>
+                <span className="card-studio-nav-group-label">{group.label}</span>
+                <div className="card-studio-nav-group-chips">
+                  {group.sections.map((section) => (
+                    <button
+                      key={section.id}
+                      type="button"
+                      className="card-studio-nav-chip"
+                      aria-current={activeSection === section.id ? "true" : undefined}
+                      onClick={() => focusSection(section)}
+                    >
+                      {section.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </nav>
 
@@ -865,7 +911,56 @@ function CardStudio({
             previewProjects={previewProjects}
             previewCertificates={previewCertificates}
             cardUI={previewCardUI}
+            collections={shelfCollections}
           />
+
+          <section className="card-studio-block" aria-labelledby="resume-project-presentation-heading">
+            <div className="card-studio-block-head">
+              <h3 id="resume-project-presentation-heading">Resume project catalog</h3>
+              <span>Applies to /resume</span>
+            </div>
+            <div className="card-studio-quick">
+              <div className="card-studio-quick-row">
+                <span className="card-studio-quick-label">Layout</span>
+                <div className="card-studio-segments" role="group" aria-label="Resume project layout">
+                  {[
+                    ["cards", "Cards"],
+                    ["tree", "Tree"],
+                    ["list", "List"],
+                  ].map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className="card-studio-segment"
+                      aria-pressed={resumeProjectLayout === value}
+                      onClick={() => onResumeProjectLayoutChange?.(value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="card-studio-quick-row">
+                <span className="card-studio-quick-label">Density</span>
+                <div className="card-studio-segments" role="group" aria-label="Resume project density">
+                  {[
+                    ["comfortable", "Comfortable"],
+                    ["compact", "Compact"],
+                  ].map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className="card-studio-segment"
+                      aria-pressed={resumeProjectDensity === value}
+                      onClick={() => onResumeProjectDensityChange?.(value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
 
           <CardEffectsStudio
             settings={effectsSettings}
@@ -1007,6 +1102,10 @@ function GuravvaProfilePopover({
   onLookChange,
   shelfCollections = [],
   shelfProjects,
+  resumeProjectLayout,
+  onResumeProjectLayoutChange,
+  resumeProjectDensity,
+  onResumeProjectDensityChange,
 }) {
   const [profile, setProfile] = useState(() => readSavedProfile(defaultProfile));
   const [draft, setDraft] = useState(profile);
@@ -1156,7 +1255,7 @@ function GuravvaProfilePopover({
           </div>
         </div>
 
-        <div className="profile-tabs" role="tablist" aria-label="Guravva profile and card settings">
+        <div className="profile-tabs" role="tablist" aria-label="Guravva profile and design settings">
           <button
             className="profile-tab"
             id="guravva-profile-tab"
@@ -1302,6 +1401,10 @@ function GuravvaProfilePopover({
           onLookApply={onLookChange}
           shelfCollections={shelfCollections}
           shelfProjects={shelfProjects}
+          resumeProjectLayout={resumeProjectLayout}
+          onResumeProjectLayoutChange={onResumeProjectLayoutChange}
+          resumeProjectDensity={resumeProjectDensity}
+          onResumeProjectDensityChange={onResumeProjectDensityChange}
         />
       </div>
 
@@ -1450,6 +1553,10 @@ function SiteNav({
   onLookChange,
   shelfCollections,
   shelfProjects,
+  resumeProjectLayout,
+  onResumeProjectLayoutChange,
+  resumeProjectDensity,
+  onResumeProjectDensityChange,
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1461,6 +1568,7 @@ function SiteNav({
   const home = (event) => onNavigate(event, "/");
   const certificatesHref = "/certificates";
   const projectsHref = "/projects";
+  const resumeHref = "/resume";
   const closeProfile = () => {
     setProfileOpen(false);
     profileTriggerRef.current?.focus();
@@ -1542,6 +1650,10 @@ function SiteNav({
               onLookChange={onLookChange}
               shelfCollections={shelfCollections}
               shelfProjects={shelfProjects}
+              resumeProjectLayout={resumeProjectLayout}
+              onResumeProjectLayoutChange={onResumeProjectLayoutChange}
+              resumeProjectDensity={resumeProjectDensity}
+              onResumeProjectDensityChange={onResumeProjectDensityChange}
             />
           )}
         </div>
@@ -1568,6 +1680,17 @@ function SiteNav({
             >
               <span className="portfolio-nav-link-icon" aria-hidden="true"><NavIcon name="projects" /></span>
               <span className="portfolio-nav-link-label">{copy.projectsLabel}</span>
+            </a>
+            <a
+              className={`nav-link portfolio-nav-link navbar-text-control${activeNav === "resume" ? " is-active" : ""}`}
+              href={resumeHref}
+              onClick={(event) => onNavigate(event, resumeHref)}
+              aria-label="Resume"
+              title="Resume"
+              aria-current={activeNav === "resume" ? "page" : undefined}
+            >
+              <span className="portfolio-nav-link-icon" aria-hidden="true"><NavIcon name="resume" /></span>
+              <span className="portfolio-nav-link-label">Resume</span>
             </a>
           </div>
           {!isDetail && profile.email && (
@@ -1619,6 +1742,10 @@ function PortfolioHome({
   onFeatureRailChange,
   onThree3dChange,
   onLookChange,
+  resumeProjectLayout,
+  onResumeProjectLayoutChange,
+  resumeProjectDensity,
+  onResumeProjectDensityChange,
 }) {
   const copy = site.home;
   const collections = useMemo(
@@ -1699,11 +1826,15 @@ function PortfolioHome({
         onLookChange={onLookChange}
         shelfCollections={catalog.collections}
         shelfProjects={catalog.projects}
+        resumeProjectLayout={resumeProjectLayout}
+        onResumeProjectLayoutChange={onResumeProjectLayoutChange}
+        resumeProjectDensity={resumeProjectDensity}
+        onResumeProjectDensityChange={onResumeProjectDensityChange}
       />
       <main>
         <section className="home-hero" data-three3d-surface="hero">
           <div className="container">
-            <div className="home-hero-grid">
+            <div className="home-hero-grid" data-layout-pattern={settings.layout.homeHero}>
               <div className="home-hero-copy">
                 <p className="eyebrow hero-eyebrow"><span className="availability-dot" /> {copy.hero.eyebrow}</p>
                 <h1 className="hero-title home-hero-title">
@@ -1776,7 +1907,7 @@ function PortfolioHome({
               </div>
               <p className="section-note">{copy.collections.note}</p>
             </header>
-            <div className="home-collection-grid">
+            <div className="home-collection-grid" data-layout-pattern={settings.layout.homeCollections}>
               {collections.map((collection, index) => (
                 <GlassFolderCard
                   key={collection.id}
@@ -1785,6 +1916,7 @@ function PortfolioHome({
                   index={index}
                   copy={copy.collections}
                   onNavigate={navigate}
+                  motion={settings.motion}
                 />
               ))}
             </div>
@@ -1926,10 +2058,27 @@ function App() {
   } = useTheme();
   const [route, setRoute] = useState(() => `${window.location.pathname}${window.location.search}`);
   const pendingScrollRestoreRef = useRef(null);
+  const [resumeProjectLayout, setResumeProjectLayout] = useState(() => readResumePreference(
+    RESUME_PROJECT_LAYOUT_STORAGE_KEY,
+    RESUME_PROJECT_LAYOUTS,
+    "cards",
+  ));
+  const [resumeProjectDensity, setResumeProjectDensity] = useState(() => readResumePreference(
+    RESUME_PROJECT_DENSITY_STORAGE_KEY,
+    RESUME_PROJECT_DENSITIES,
+    "comfortable",
+  ));
 
   const pathname = route.split(/[?#]/, 1)[0];
   const normalizedPath = pathname !== "/" ? pathname.replace(/\/+$/, "") : "/";
   const routeSearch = route.slice(pathname.length);
+  const historyPreviousRoute = window.history.state?.appRoutePreviousPath;
+  const previousAppRoute = typeof historyPreviousRoute === "string"
+    && historyPreviousRoute.startsWith("/")
+    && !historyPreviousRoute.startsWith("//")
+    ? historyPreviousRoute
+    : "";
+  const previousAppPath = previousAppRoute.split(/[?#]/, 1)[0];
   const projectMatch = normalizedPath.match(/^\/projects\/([^/]+)(?:\/(?:playground|preview))?$/);
   const certificateMatch = normalizedPath.match(/^\/certificates\/([^/]+)$/);
   const projectId = projectMatch ? decodeRouteSegment(projectMatch[1]) : "";
@@ -1941,6 +2090,7 @@ function App() {
   const isHome = normalizedPath === "/";
   const isCatalog = normalizedPath === "/projects";
   const isCertificates = normalizedPath === "/certificates";
+  const isResume = normalizedPath === "/resume";
   const isProjectRoute = Boolean(projectMatch);
   const isCertificateRoute = Boolean(certificateMatch);
   const site = catalog?.site;
@@ -1967,6 +2117,15 @@ function App() {
     accent: settings.accent,
     mode: settings.mode,
   }), [settings.primary, settings.secondary, settings.accent, settings.mode]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(RESUME_PROJECT_LAYOUT_STORAGE_KEY, resumeProjectLayout);
+      window.localStorage.setItem(RESUME_PROJECT_DENSITY_STORAGE_KEY, resumeProjectDensity);
+    } catch (error) {
+      console.warn("Unable to save resume presentation preferences.", error);
+    }
+  }, [resumeProjectDensity, resumeProjectLayout]);
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -2009,6 +2168,7 @@ function App() {
         import("./components/ProjectDetail"),
         import("./components/CertificatesIndex"),
         import("./components/CertificateShowcase"),
+        import("./components/ResumePage"),
       ]);
     };
     const schedule = () => {
@@ -2028,17 +2188,19 @@ function App() {
     if (isHome) document.title = HOME_TITLE;
     else if (isCatalog) document.title = "Projects · Practice.folio";
     else if (isCertificates) document.title = "Certificates · Practice.folio";
+    else if (isResume) document.title = "Resume · Practice.folio";
     else if (certificate) document.title = `${certificate.courseTitle} · Certificate · Practice.folio`;
     else if (projectSummary) document.title = `${projectSummary.title} · Practice.folio`;
     else if (isCertificateRoute) document.title = "Certificate not found · Practice.folio";
     else if (isProjectRoute) document.title = "Project not found · Practice.folio";
     else document.title = "Page not found · Practice.folio";
-  }, [isHome, isCatalog, isCertificates, isCertificateRoute, isProjectRoute, certificate, projectSummary]);
+  }, [isHome, isCatalog, isCertificates, isResume, isCertificateRoute, isProjectRoute, certificate, projectSummary]);
 
   const goBackTo = (event, fallback) => {
     if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return;
     const previousRoute = window.history.state?.appRoutePreviousPath;
-    if (event && previousRoute && (previousRoute === fallback || previousRoute.startsWith(`${fallback}?`))) {
+    const currentRoute = `${window.location.pathname}${window.location.search}`;
+    if (event && typeof previousRoute === "string" && previousRoute.startsWith("/") && previousRoute !== currentRoute) {
       event.preventDefault();
       window.history.back();
       return;
@@ -2123,6 +2285,10 @@ function App() {
     shelfCollections: catalog.collections,
     shelfProjects: catalog.projects,
     previewCertificates: catalog.certificates,
+    resumeProjectLayout,
+    onResumeProjectLayoutChange: setResumeProjectLayout,
+    resumeProjectDensity,
+    onResumeProjectDensityChange: setResumeProjectDensity,
   };
   const pageClass = `project-detail-page lab-page theme-${settings.mode === "dark" ? "dark" : "light"}`;
   const viewError = error ? (
@@ -2152,6 +2318,10 @@ function App() {
         onFeatureRailChange={updateFeatureRailSettings}
         onThree3dChange={updateThree3dSettings}
         onLookChange={updateSiteLookSettings}
+        resumeProjectLayout={resumeProjectLayout}
+        onResumeProjectLayoutChange={setResumeProjectLayout}
+        resumeProjectDensity={resumeProjectDensity}
+        onResumeProjectDensityChange={setResumeProjectDensity}
       />
     );
   } else if (isCatalog) {
@@ -2170,6 +2340,29 @@ function App() {
         <SiteNav {...navProps} activeNav="certificates" />
         <Suspense fallback={<RouteFallback loader={settings.loader} />}>
           <CertificatesIndex certificates={catalog.certificates} copy={site.certificatesPage} onNavigate={navigate} cardEffects={settings.effects} />
+        </Suspense>
+        <SiteFooter site={site} onNavigate={navigate} />
+      </div>
+    );
+  } else if (isResume) {
+    page = (
+      <div className={pageClass} id="top" data-three3d-surface="resume">
+        <SiteNav {...navProps} activeNav="resume" />
+        <Suspense fallback={<RouteFallback loader={settings.loader} />}>
+          <ResumePage
+            profile={defaultProfile}
+            certificates={catalog.certificates}
+            projects={catalog.projects}
+            collections={catalog.collections}
+            routeSearch={routeSearch}
+            backHref={previousAppRoute || "/"}
+            onBack={(event) => goBackTo(event, "/")}
+            projectLayout={resumeProjectLayout}
+            onProjectLayoutChange={setResumeProjectLayout}
+            projectDensity={resumeProjectDensity}
+            onProjectDensityChange={setResumeProjectDensity}
+            onNavigate={navigate}
+          />
         </Suspense>
         <SiteFooter site={site} onNavigate={navigate} />
       </div>
@@ -2211,6 +2404,8 @@ function App() {
             onRetry={retryDetail}
             onNavigate={navigate}
             onBack={(event) => goBackTo(event, "/projects")}
+            backHref={previousAppRoute || "/projects"}
+            backLabel={previousAppPath === "/resume" ? "Back to resume projects" : site.detail.backToCatalog}
             previousProject={previousProject}
             nextProject={nextProject}
             relatedProjects={relatedProjects}

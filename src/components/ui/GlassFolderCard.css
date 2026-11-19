@@ -17,7 +17,11 @@
   color: var(--theme-text);
   text-decoration: none;
   box-shadow: 0 14px 38px rgb(15 24 35 / 7%);
-  transition: transform 320ms cubic-bezier(0.2, 0.75, 0.3, 1), box-shadow 320ms ease, border-color 320ms ease;
+  transition:
+    transform var(--shelf-motion-duration, 320ms) cubic-bezier(0.2, 0.75, 0.3, 1),
+    box-shadow var(--shelf-motion-duration, 320ms) ease,
+    border-color var(--shelf-motion-duration, 320ms) ease,
+    opacity var(--shelf-motion-duration, 320ms) ease;
   isolation: isolate;
 }
 
@@ -34,11 +38,72 @@
   pointer-events: none;
 }
 
+.collection-folder-card::after {
+  position: absolute;
+  z-index: 4;
+  inset: -35% auto -35% -65%;
+  width: 42%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 28%), transparent);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: skewX(-18deg);
+  transition: transform var(--shelf-motion-duration, 320ms) ease, opacity 180ms ease;
+}
+
 .collection-folder-card:hover,
 .collection-folder-card:focus-visible {
   border-color: color-mix(in srgb, var(--folder-accent) 36%, transparent);
   box-shadow: 0 26px 60px rgb(15 24 35 / 14%);
   transform: translateY(-4px);
+}
+
+.collection-folder-card[data-shelf-motion="slide"]:hover,
+.collection-folder-card[data-shelf-motion="slide"]:focus-visible {
+  transform: translateX(var(--shelf-motion-shift, 16px));
+}
+
+.collection-folder-card[data-shelf-motion="fade"]:hover,
+.collection-folder-card[data-shelf-motion="fade"]:focus-visible {
+  opacity: 0.84;
+  transform: scale(var(--shelf-motion-fade-scale, 0.985));
+}
+
+.collection-folder-card[data-shelf-motion="depth"]:hover,
+.collection-folder-card[data-shelf-motion="depth"]:focus-visible {
+  transform: perspective(900px) rotateX(-3deg) translateY(-5px);
+}
+
+.collection-folder-card[data-shelf-motion="stack"] .collection-folder-sheet {
+  transition-duration: var(--shelf-motion-duration, 320ms);
+}
+
+.collection-folder-card[data-shelf-motion="stack"]:hover .collection-folder-sheet:nth-child(1),
+.collection-folder-card[data-shelf-motion="stack"]:focus-visible .collection-folder-sheet:nth-child(1) {
+  transform: translateY(calc(0px - var(--shelf-motion-shift, 16px))) rotate(calc(0deg - var(--shelf-motion-tilt, 3.5deg)));
+}
+
+.collection-folder-card[data-shelf-motion="stack"]:hover .collection-folder-sheet:nth-child(2),
+.collection-folder-card[data-shelf-motion="stack"]:focus-visible .collection-folder-sheet:nth-child(2) {
+  transform: translateY(calc(0px - var(--shelf-motion-shift, 16px)));
+}
+
+.collection-folder-card[data-shelf-motion="stack"]:hover .collection-folder-sheet:nth-child(3),
+.collection-folder-card[data-shelf-motion="stack"]:focus-visible .collection-folder-sheet:nth-child(3) {
+  transform: translateY(calc(0px - var(--shelf-motion-shift, 16px))) rotate(var(--shelf-motion-tilt, 3.5deg));
+}
+
+.collection-folder-card[data-shelf-motion="reflect"]:hover::after,
+.collection-folder-card[data-shelf-motion="reflect"]:focus-visible::after,
+.collection-folder-card[data-shelf-motion="glass"]:hover::after,
+.collection-folder-card[data-shelf-motion="glass"]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(360%) skewX(-18deg);
+}
+
+.collection-folder-card[data-shelf-motion="reflect"]:hover,
+.collection-folder-card[data-shelf-motion="reflect"]:focus-visible {
+  box-shadow: 0 30px 70px rgb(15 24 35 / 18%), 0 0 0 1px color-mix(in srgb, var(--folder-accent) 24%, transparent);
 }
 
 .collection-folder-card:focus-visible {
@@ -357,6 +422,12 @@
   transition: transform 220ms cubic-bezier(0.2, 0.75, 0.3, 1);
 }
 
+.collection-folder-card .collection-folder-sheet,
+.collection-folder-card .collection-folder-glass,
+.collection-folder-card .collection-folder-action span {
+  transition-duration: var(--shelf-motion-duration, 320ms);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .collection-folder-card:hover .collection-folder-sheet:nth-child(1) {
     transform: translateY(-3%) rotate(-4.6deg);
@@ -466,11 +537,18 @@
   transform: none !important;
 }
 
+:root[data-reduced-motion="true"] .collection-folder-card::after,
+:root[data-animation="none"] .collection-folder-card::after {
+  transform: none !important;
+  opacity: 0 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .collection-folder-card,
   .collection-folder-sheet,
   .collection-folder-glass,
-  .collection-folder-action span {
+  .collection-folder-action span,
+  .collection-folder-card::after {
     transition-duration: 0.01ms !important;
   }
 
@@ -480,6 +558,13 @@
   .collection-folder-card:hover .collection-folder-sheet:nth-child(1),
   .collection-folder-card:hover .collection-folder-sheet:nth-child(2),
   .collection-folder-card:hover .collection-folder-sheet:nth-child(3) {
+    transform: none;
+  }
+
+  .collection-folder-card::after,
+  .collection-folder-card:hover::after,
+  .collection-folder-card:focus-visible::after {
+    opacity: 0;
     transform: none;
   }
 
