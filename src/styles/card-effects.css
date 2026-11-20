@@ -752,6 +752,19 @@
   --portfolio-card-image-height-mobile: 140px;
 }
 
+@media (max-width: 799.98px) {
+  .fx-studio-stage {
+    display: grid;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .fx-studio-sample {
+    width: 100%;
+    flex-basis: auto;
+  }
+}
+
 .fx-studio-sample-label {
   display: flex;
   align-items: baseline;

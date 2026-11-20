@@ -1555,6 +1555,13 @@ select:focus-visible {
   .card-studio-action.is-apply { margin-left: auto; }
 }
 
+@media (max-width: 799.98px) {
+  .card-studio-actions {
+    position: static;
+    bottom: auto;
+  }
+}
+
 .card-studio-loader-block .card-studio-block-head {
   align-items: center;
 }
