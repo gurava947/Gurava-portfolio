@@ -101,7 +101,6 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
           className="lab-certificate-link"
           href={certificate.route}
           onClick={(event) => onNavigate?.(event, certificate.route)}
-          aria-label={`${copy.openLabel}: ${certificate.courseTitle}`}
           aria-describedby={hoverPreview.isOpen ? hoverPreview.tooltipId : undefined}
         >
           {body}

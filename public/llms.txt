@@ -1,0 +1,17 @@
+# Practice.folio
+
+> Gurava's portfolio of 463 Python, static web, and responsive web practice projects, plus professional certificates and resume information.
+
+Practice.folio provides a searchable project catalog, live project previews, certificate details, downloadable resume information, and a Python playground running through Pyodide.
+
+## Core pages
+
+- [Home](https://guravaportfolio.vercel.app/): Portfolio overview and featured project shelves.
+- [Projects](https://guravaportfolio.vercel.app/projects): Searchable catalog of Python, static web, and responsive web builds.
+- [Certificates](https://guravaportfolio.vercel.app/certificates): Course certificates and performance details.
+- [Resume](https://guravaportfolio.vercel.app/resume): Professional profile and resume content.
+
+## Project resources
+
+- [Python Playground](https://guravaportfolio.vercel.app/projects/python-playground): Run Python examples in the browser.
+- [Programming Foundations with Python Certificate](https://guravaportfolio.vercel.app/certificates/programming-foundations-with-python): Certificate details and performance metrics.

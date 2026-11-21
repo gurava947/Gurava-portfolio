@@ -1678,7 +1678,7 @@ function SiteNav({
               className={`nav-link portfolio-nav-link navbar-text-control${activeNav === "projects" ? " is-active" : ""}`}
               href={projectsHref}
               onClick={(event) => onNavigate(event, projectsHref)}
-              aria-label={copy.projectsAria}
+              aria-label={`Projects — ${copy.projectsAria}`}
               title={copy.projectsAria}
               aria-current={activeNav === "projects" ? "page" : undefined}
             >

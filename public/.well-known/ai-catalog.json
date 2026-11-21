@@ -1,0 +1,40 @@
+{
+  "specVersion": "1.0",
+  "entries": [
+    {
+      "identifier": "urn:air:guravaportfolio:home",
+      "displayName": "Practice.folio Home",
+      "type": "application/ai-catalog+json",
+      "url": "https://guravaportfolio.vercel.app/",
+      "representativeQueries": ["show Gurava's portfolio", "view featured practice projects"]
+    },
+    {
+      "identifier": "urn:air:guravaportfolio:projects",
+      "displayName": "Practice.folio Project Catalog",
+      "type": "application/ai-catalog+json",
+      "url": "https://guravaportfolio.vercel.app/projects",
+      "representativeQueries": ["search Python projects", "browse responsive web projects", "find static web practice builds"]
+    },
+    {
+      "identifier": "urn:air:guravaportfolio:python-playground",
+      "displayName": "Python Playground",
+      "type": "application/ai-catalog+json",
+      "url": "https://guravaportfolio.vercel.app/projects/python-playground",
+      "representativeQueries": ["run Python code", "open the Python playground"]
+    },
+    {
+      "identifier": "urn:air:guravaportfolio:certificates",
+      "displayName": "Practice.folio Certificates",
+      "type": "application/ai-catalog+json",
+      "url": "https://guravaportfolio.vercel.app/certificates",
+      "representativeQueries": ["view course certificates", "check programming and web development certificates"]
+    },
+    {
+      "identifier": "urn:air:guravaportfolio:resume",
+      "displayName": "Practice.folio Resume",
+      "type": "application/ai-catalog+json",
+      "url": "https://guravaportfolio.vercel.app/resume",
+      "representativeQueries": ["view Gurava's resume", "download the portfolio resume"]
+    }
+  ]
+}
