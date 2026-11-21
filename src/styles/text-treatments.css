@@ -275,7 +275,6 @@
 [data-look-text-fx="true"] :is(
   .section-note,
   .lab-section-note,
-  .home-hero-description,
   .lab-hero-summary,
   .lab-lead,
   .collection-folder-copy p
@@ -283,7 +282,7 @@
   animation: text-block-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-[data-look-text-fx="true"] :is(.home-hero-description, .lab-hero-summary) {
+[data-look-text-fx="true"] .lab-hero-summary {
   animation-delay: 180ms;
 }
 

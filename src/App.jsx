@@ -17,21 +17,21 @@ import { useCatalog } from "./hooks/useCatalog";
 import { useProjectDetail } from "./hooks/useProjectDetail";
 import { attachImageFallbacks } from "./utils/imageFallback";
 import CardPreviewDialog from "./components/CardPreviewDialog";
-import CardEffectsStudio from "./components/CardEffectsStudio";
-import CardMotionStudio from "./components/CardMotionStudio";
+const CardEffectsStudio = lazy(() => import("./components/CardEffectsStudio"));
+const CardMotionStudio = lazy(() => import("./components/CardMotionStudio"));
 import CertificateCard from "./components/CertificateCard";
 import { LoadSpinner } from "./components/LoadSpinner";
 import ProjectCard from "./components/ProjectCard";
 import GlassFolderCard from "./components/ui/GlassFolderCard";
 import CollectionCredits from "./components/ui/CollectionCredits";
-import LayoutStudio from "./components/LayoutStudio";
-import StudioSelect from "./components/ui/StudioSelect";
+const LayoutStudio = lazy(() => import("./components/LayoutStudio"));
+const StudioSelect = lazy(() => import("./components/ui/StudioSelect"));
 import MaterialSymbol from "./components/MaterialSymbol";
 import FooterContactWindows from "./components/FooterContactWindows";
-import SiteLookStudio from "./components/SiteLookStudio";
-import Shelf3DStudio from "./components/Shelf3DStudio";
-import FeatureRailStudio from "./components/FeatureRailStudio";
-import Three3DStudio from "./components/Three3DStudio";
+const SiteLookStudio = lazy(() => import("./components/SiteLookStudio"));
+const Shelf3DStudio = lazy(() => import("./components/Shelf3DStudio"));
+const FeatureRailStudio = lazy(() => import("./components/FeatureRailStudio"));
+const Three3DStudio = lazy(() => import("./components/Three3DStudio"));
 import Three3DStage from "./components/Three3DStage";
 import FeatureRail from "./components/FeatureRail";
 import HeroWords from "./components/HeroWords";
@@ -2189,37 +2189,6 @@ function App() {
     return attachImageFallbacks(site.imageFallback);
   }, [site?.imageFallback]);
 
-  // Warm the code-split route chunks after the first load so navigating still feels instant
-  // without paying for them in the initial bundle. Skipped when the user is saving data or is
-  // on a 2G-class connection, where ~60 kB of speculative chunks is not worth the wait.
-  useEffect(() => {
-    const connection = navigator.connection;
-    if (connection?.saveData) return undefined;
-    if (/(?:^|\s)(?:slow-2g|2g)$/.test(connection?.effectiveType || "")) return undefined;
-    let idleId = 0;
-    let timeoutId = 0;
-    const prefetchRoutes = () => {
-      Promise.allSettled([
-        import("./components/ProjectsCatalog"),
-        import("./components/ProjectDetail"),
-        import("./components/CertificatesIndex"),
-        import("./components/CertificateShowcase"),
-        import("./components/ResumePage"),
-      ]);
-    };
-    const schedule = () => {
-      if ("requestIdleCallback" in window) idleId = window.requestIdleCallback(prefetchRoutes, { timeout: 3000 });
-      else timeoutId = window.setTimeout(prefetchRoutes, 1200);
-    };
-    if (document.readyState === "complete") schedule();
-    else window.addEventListener("load", schedule, { once: true });
-    return () => {
-      window.removeEventListener("load", schedule);
-      if (idleId) window.cancelIdleCallback(idleId);
-      if (timeoutId) window.clearTimeout(timeoutId);
-    };
-  }, []);
-
   useEffect(() => {
     if (isHome) document.title = HOME_TITLE;
     else if (isCatalog) document.title = "Projects · Practice.folio";
@@ -2392,45 +2361,47 @@ function App() {
             <p>Preview and tune the portfolio’s cards, layouts, motion, and visual effects.</p>
           </header>
           <div className="settings-workbench">
-            <CardStudio
-              settings={settings.cardUI}
-              onApply={(cardUI, loader) => {
-                updateCardUISettings(cardUI);
-                updateLoaderSettings(loader);
-              }}
-              themeMode={settings.mode}
-              previewProject={cardPreviewProject}
-              previewProjects={cardPreviewProjects}
-              previewCertificates={catalog.certificates}
-              copy={site.profile.cardStudio}
-              loaderSettings={settings.loader}
-              layoutSettings={settings.layout}
-              onLayoutApply={updateLayoutSettings}
-              effectsSettings={settings.effects}
-              onEffectsApply={updateCardEffectsSettings}
-              motionSettings={settings.motion}
-              onMotionApply={updateShelfMotionSettings}
-              shelf3dSettings={settings.shelf3d}
-              onShelf3dApply={updateShelf3dSettings}
-              featureRailSettings={settings.featureRail}
-              onFeatureRailChange={updateFeatureRailSettings}
-              three3dSettings={settings.three3d}
-              onThree3dApply={updateThree3dSettings}
-              three3dPalette={three3dPalette}
-              reducedMotion={settings.reducedMotion}
-              lookSettings={settings.look}
-              onLookApply={updateSiteLookSettings}
-              shelfCollections={catalog.collections}
-              shelfProjects={sortedProjects}
-              resumeProjectLayout={resumeProjectLayout}
-              onResumeProjectLayoutChange={setResumeProjectLayout}
-              resumeProjectDensity={resumeProjectDensity}
-              onResumeProjectDensityChange={setResumeProjectDensity}
-              resumeLayoutMode={resumeLayoutMode}
-              onResumeLayoutModeChange={setResumeLayoutMode}
-              resumeSurface={resumeSurface}
-              onResumeSurfaceChange={setResumeSurface}
-            />
+            <Suspense fallback={<RouteFallback loader={settings.loader} />}>
+              <CardStudio
+                settings={settings.cardUI}
+                onApply={(cardUI, loader) => {
+                  updateCardUISettings(cardUI);
+                  updateLoaderSettings(loader);
+                }}
+                themeMode={settings.mode}
+                previewProject={cardPreviewProject}
+                previewProjects={cardPreviewProjects}
+                previewCertificates={catalog.certificates}
+                copy={site.profile.cardStudio}
+                loaderSettings={settings.loader}
+                layoutSettings={settings.layout}
+                onLayoutApply={updateLayoutSettings}
+                effectsSettings={settings.effects}
+                onEffectsApply={updateCardEffectsSettings}
+                motionSettings={settings.motion}
+                onMotionApply={updateShelfMotionSettings}
+                shelf3dSettings={settings.shelf3d}
+                onShelf3dApply={updateShelf3dSettings}
+                featureRailSettings={settings.featureRail}
+                onFeatureRailChange={updateFeatureRailSettings}
+                three3dSettings={settings.three3d}
+                onThree3dApply={updateThree3dSettings}
+                three3dPalette={three3dPalette}
+                reducedMotion={settings.reducedMotion}
+                lookSettings={settings.look}
+                onLookApply={updateSiteLookSettings}
+                shelfCollections={catalog.collections}
+                shelfProjects={sortedProjects}
+                resumeProjectLayout={resumeProjectLayout}
+                onResumeProjectLayoutChange={setResumeProjectLayout}
+                resumeProjectDensity={resumeProjectDensity}
+                onResumeProjectDensityChange={setResumeProjectDensity}
+                resumeLayoutMode={resumeLayoutMode}
+                onResumeLayoutModeChange={setResumeLayoutMode}
+                resumeSurface={resumeSurface}
+                onResumeSurfaceChange={setResumeSurface}
+              />
+            </Suspense>
           </div>
         </main>
         <SiteFooter site={site} onNavigate={navigate} />

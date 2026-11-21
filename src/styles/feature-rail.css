@@ -296,7 +296,9 @@
    makes the panel wide enough to scroll sideways. */
 .rail-studio-preview .feature-rail,
 .rail-studio-preview .feature-rail-scroller {
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
 }
 
 .rail-studio-foot {

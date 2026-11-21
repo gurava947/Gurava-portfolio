@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { getEffectVariables, normalizeCardEffects } from "../config/cardEffects";
 import { useCardPointerFx } from "../hooks/useCardPointerFx";
+import useCardHoverPreview from "../hooks/useCardHoverPreview.js";
 
 function metricValue(value) {
   return String(value || "").replace(/\//g, " / ");
@@ -18,6 +19,22 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
   const effectVariables = getEffectVariables(effectSettings);
   const cardRef = useRef(null);
   const pointer = useCardPointerFx({ ref: cardRef, effect: cardEffect, effects: effectSettings });
+  const hoverPreviewContent = useMemo(() => ({
+    kind: "certificate",
+    title: certificate.courseTitle,
+    image: image?.url || "",
+    imageAlt: image?.alt_text || `${certificate.courseTitle} certificate`,
+    eyebrow: certificate.issuer || certificate.eyebrow || "Certificate",
+    secondary: [certificate.issueDate, certificate.certificateId ? `ID ${certificate.certificateId}` : ""].filter(Boolean).join(" · "),
+    description: certificate.description || "",
+    tags: (certificate.topics || []).map((topic) => typeof topic === "string" ? topic : topic?.label).filter(Boolean),
+    metrics: performance
+      .filter((metric) => ["grade", "percentage", "score"].includes(metric.key))
+      .slice(0, 3)
+      .map((metric) => ({ label: metric.label, value: metricValue(metric.value) })),
+    hint: "Click the card to open the certificate details",
+  }), [certificate, image, performance]);
+  const hoverPreview = useCardHoverPreview(hoverPreviewContent, !preview);
 
   const body = (
     <>
@@ -60,8 +77,22 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
       className={`lab-certificate-card${preview ? " is-preview" : ""}`}
       style={effectVariables}
       data-card-fx={cardEffect}
-      onPointerMove={pointer.onPointerMove}
-      onPointerLeave={pointer.onPointerLeave}
+      onPointerEnter={hoverPreview.triggerProps.onPointerEnter}
+      onPointerMove={(event) => {
+        pointer.onPointerMove?.(event);
+        hoverPreview.triggerProps.onPointerMove(event);
+      }}
+      onPointerLeave={(event) => {
+        pointer.onPointerLeave?.(event);
+        hoverPreview.triggerProps.onPointerLeave(event);
+      }}
+      onPointerDown={hoverPreview.triggerProps.onPointerDown}
+      onPointerUp={hoverPreview.triggerProps.onPointerUp}
+      onPointerCancel={hoverPreview.triggerProps.onPointerCancel}
+      onFocusCapture={hoverPreview.triggerProps.onFocusCapture}
+      onBlurCapture={hoverPreview.triggerProps.onBlurCapture}
+      onClickCapture={hoverPreview.triggerProps.onClickCapture}
+      onContextMenu={hoverPreview.triggerProps.onContextMenu}
     >
       {preview ? (
         <div className="lab-certificate-link">{body}</div>
@@ -71,10 +102,12 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
           href={certificate.route}
           onClick={(event) => onNavigate?.(event, certificate.route)}
           aria-label={`${copy.openLabel}: ${certificate.courseTitle}`}
+          aria-describedby={hoverPreview.isOpen ? hoverPreview.tooltipId : undefined}
         >
           {body}
         </a>
       )}
+      {hoverPreview.preview}
     </article>
   );
 }

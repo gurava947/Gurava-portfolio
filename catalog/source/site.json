@@ -47,12 +47,12 @@
     "eyebrow": "Profile",
     "tabs": {
       "profile": "Profile",
-      "cards": "Card studio"
+      "cards": "Design studio"
     },
     "cardStudio": {
-      "eyebrow": "Card studio",
-      "title": "Design your cards",
-      "description": "Five distinct layouts with their own motion. Preview on real projects, then Apply to keep the look everywhere. Cancel discards the draft; the live portfolio only changes when you apply.",
+      "eyebrow": "Design studio",
+      "title": "Tune your portfolio",
+      "description": "Tune page layouts, card appearance, motion, and 3D stage settings. Preview each change, then Apply to update the live portfolio.",
       "presetsLabel": "Five card layouts",
       "presetsHint": "One global style · real project content",
       "previewLabel": "Live sample",
@@ -61,7 +61,7 @@
       "previewClean": "Applied design",
       "quickLabel": "Quick style",
       "quickHint": "Common adjustments, one tap away",
-      "scope": "Global · all project cards",
+      "scope": "Global · site settings",
       "applied": "{name} style previewed",
       "applyHint": "Choose Apply to keep it.",
       "apply": "Apply",

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getEffectVariables, normalizeCardEffects } from "../config/cardEffects";
 import { useCardPointerFx } from "../hooks/useCardPointerFx";
 import { CARD_LAYOUTS } from "../utils/cardStyle";
 import { prefersReducedMotion } from "../utils/motion";
+import useCardHoverPreview from "../hooks/useCardHoverPreview.js";
 
 function monogram(title) {
   return String(title || "")
@@ -30,6 +31,22 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, fx = {},
   const imageLoaded = Boolean(thumbnail) && loadedThumb === thumbnail;
   const cardRef = useRef(null);
   const effectPointer = useCardPointerFx({ ref: cardRef, effect: cardEffect, effects: effectSettings });
+  const hoverPreviewContent = useMemo(() => ({
+    kind: "project",
+    title: project.title,
+    image: thumbnail,
+    imageAlt: project.imageAlt || `${project.title} project preview`,
+    eyebrow: project.collectionLabel,
+    secondary: project.category,
+    description: project.description,
+    tags: project.technologies || [],
+    metrics: [
+      { label: "Language", value: project.language },
+      { label: "Preview", value: project.previewType === "python" ? "Pyodide" : "Live build" },
+    ].filter((metric) => metric.value),
+    hint: "Click the card to open the full project",
+  }), [project, thumbnail]);
+  const hoverPreview = useCardHoverPreview(hoverPreviewContent, !preview);
   const navigate = (event, destination) => {
     if (onNavigate) onNavigate(event, destination);
   };
@@ -53,12 +70,13 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, fx = {},
   const handlePointerMove = (event) => {
     if (tiltEnabled) handleTilt(event);
     effectPointer.onPointerMove?.(event);
+    hoverPreview.triggerProps.onPointerMove(event);
   };
-  const handlePointerLeave = () => {
+  const handlePointerLeave = (event) => {
     if (tiltEnabled) resetTilt();
     effectPointer.onPointerLeave?.();
+    hoverPreview.triggerProps.onPointerLeave(event);
   };
-  const tracksPointer = tiltEnabled || Boolean(effectPointer.onPointerMove);
 
   useEffect(() => {
     const node = cardRef.current;
@@ -93,8 +111,16 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, fx = {},
       data-image-fit={imageFit}
       data-card-layout={cardLayout}
       data-card-fx={cardEffect}
-      onPointerMove={tracksPointer ? handlePointerMove : undefined}
-      onPointerLeave={tracksPointer ? handlePointerLeave : undefined}
+      onPointerEnter={hoverPreview.triggerProps.onPointerEnter}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      onPointerDown={hoverPreview.triggerProps.onPointerDown}
+      onPointerUp={hoverPreview.triggerProps.onPointerUp}
+      onPointerCancel={hoverPreview.triggerProps.onPointerCancel}
+      onFocusCapture={hoverPreview.triggerProps.onFocusCapture}
+      onBlurCapture={hoverPreview.triggerProps.onBlurCapture}
+      onClickCapture={hoverPreview.triggerProps.onClickCapture}
+      onContextMenu={hoverPreview.triggerProps.onContextMenu}
     >
       <div className={`lab-card-media${thumbnail ? " has-image" : ""}${imageLoaded ? " is-loaded" : ""}`}>
         {thumbnail ? (
@@ -147,7 +173,7 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, fx = {},
         <div className="lab-card-heading">
           <h3>
             {preview ? project.title : (
-              <a className="lab-card-link" href={project.route} onClick={(event) => navigate(event, project.route)}>
+              <a className="lab-card-link" href={project.route} onClick={(event) => navigate(event, project.route)} aria-describedby={hoverPreview.isOpen ? hoverPreview.tooltipId : undefined}>
                 {project.title}
               </a>
             )}
@@ -191,6 +217,7 @@ export default function ProjectCard({ project, onNavigate, cardUI = {}, fx = {},
           </div>
         </details>
       )}
+      {hoverPreview.preview}
     </article>
   );
 }
