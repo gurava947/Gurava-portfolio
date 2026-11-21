@@ -4622,12 +4622,7 @@ select:focus-visible {
   }
 }
 
-@media (max-width: 767.98px) {
-  .navbar.portfolio-nav {
-    min-height: 0;
-    padding: 8px 8px 4px;
-  }
-
+@media (min-width: 768px) and (max-width: 991.98px) {
   .navbar.portfolio-nav > .container.portfolio-nav-inner {
     flex-wrap: wrap;
     row-gap: 8px;
@@ -4641,14 +4636,6 @@ select:focus-visible {
     flex: 1 1 auto;
     gap: 9px;
     font-size: 1.06rem;
-  }
-
-  .brand-mark {
-    width: 40px;
-    height: 40px;
-    flex-basis: 40px;
-    border-radius: 13px;
-    font-size: 0.98rem;
   }
 
   .nav-controls {
@@ -4669,6 +4656,81 @@ select:focus-visible {
     gap: 7px;
     padding: 0 10px;
     font-size: 0.8rem;
+  }
+
+  .portfolio-nav .nav-contact {
+    order: 2;
+    min-height: 40px;
+    margin-left: auto;
+    gap: 8px;
+    padding: 0 5px 0 16px;
+    font-size: 0.8rem;
+  }
+
+  .portfolio-nav .theme-toggle-icon {
+    order: 2;
+    height: 42px;
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .navbar.portfolio-nav {
+    min-height: 0;
+    padding: 8px 8px 4px;
+  }
+
+  .navbar.portfolio-nav > .container.portfolio-nav-inner {
+    min-width: 0;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    column-gap: 10px;
+    padding: 8px 10px;
+    border-radius: 24px;
+  }
+
+  .portfolio-brand {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 9px;
+    font-size: 1.06rem;
+  }
+
+  .portfolio-brand-link {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+    border-radius: 13px;
+    font-size: 0.98rem;
+  }
+
+  .nav-controls {
+    display: contents;
+  }
+
+  .navbar-text-controls {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+    gap: 3px;
+    padding: 4px;
+  }
+
+  .portfolio-nav .navbar-text-control {
+    min-width: 0;
+    min-height: 40px;
+    flex: 1 1 0;
+    gap: 5px;
+    padding: 0 6px;
+    font-size: 0.76rem;
   }
 
   .portfolio-nav .nav-contact {
@@ -5085,6 +5147,16 @@ select:focus-visible {
     width: 17px;
     height: 17px;
     flex-basis: 17px;
+  }
+}
+
+@media (max-width: 420px) {
+  .portfolio-nav-link-label {
+    display: none;
+  }
+
+  .portfolio-nav .navbar-text-control {
+    gap: 0;
   }
 }
 

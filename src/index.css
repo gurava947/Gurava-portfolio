@@ -11,6 +11,7 @@ body,
   max-width: 100%;
   min-height: 100%;
   margin: 0;
+  overflow-x: clip;
 }
 
 /* Keep native scrolling while hiding scrollbar tracks/thumbs at every viewport size. */
