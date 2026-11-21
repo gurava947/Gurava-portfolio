@@ -26,10 +26,12 @@ before(async () => {
   staticRoot = join(tmpdir(), `portfolio-static-${process.pid}-${Date.now()}`);
   await mkdir(join(staticRoot, "data", "projects"), { recursive: true });
   await mkdir(join(staticRoot, "assets"), { recursive: true });
+  await mkdir(join(staticRoot, ".well-known"), { recursive: true });
   await writeFile(join(staticRoot, "index.html"), "<!doctype html><title>Practice.folio</title>");
   await writeFile(join(staticRoot, "data", "catalog.json"), JSON.stringify({ version: 2, hello: "new" }));
   await writeFile(join(staticRoot, "data", "projects", "p-1.json"), JSON.stringify({ id: "p-1" }));
   await writeFile(join(staticRoot, "assets", "index-abcd1234.js"), "console.log(1)");
+  await writeFile(join(staticRoot, ".well-known", "ard.json"), JSON.stringify({ specVersion: "1.0" }));
 
   database = openDatabase(":memory:");
   migrateDatabase(database);
@@ -76,4 +78,12 @@ test("revalidates the HTML shell so a deploy stops serving the previous build", 
 
 test("keeps content-hashed bundles immutable", async () => {
   assert.equal(await cacheControl("/assets/index-abcd1234.js"), "public, max-age=31536000, immutable");
+});
+
+test("serves and revalidates dot-prefixed discovery manifests", async () => {
+  const response = await fetch(`${baseUrl}/.well-known/ard.json`);
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /application\/json/);
+  assert.equal(response.headers.get("cache-control"), "public, max-age=0, must-revalidate");
+  assert.deepEqual(await response.json(), { specVersion: "1.0" });
 });

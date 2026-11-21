@@ -7,7 +7,7 @@ function metricValue(value) {
   return String(value || "").replace(/\//g, " / ");
 }
 
-export default function CertificateCard({ certificate, copy = { openLabel: "Open certificate" }, index = 0, onNavigate, fx = {}, preview = false }) {
+export default function CertificateCard({ certificate, copy = { openLabel: "Open certificate" }, index = 0, onNavigate, fx = {}, preview = false, headingLevel = 3 }) {
   const image = (certificate.assets || []).find(({ role }) => role === "certificate");
   const performance = Array.isArray(certificate.performance) ? certificate.performance : [];
   const metrics = ["grade", "percentage", "score"]
@@ -18,6 +18,7 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
   const cardEffect = effectSettings.enabled ? effectSettings.certificates : "none";
   const effectVariables = getEffectVariables(effectSettings);
   const cardRef = useRef(null);
+  const TitleHeading = headingLevel === 2 ? "h2" : "h3";
   const pointer = useCardPointerFx({ ref: cardRef, effect: cardEffect, effects: effectSettings });
   const hoverPreviewContent = useMemo(() => ({
     kind: "certificate",
@@ -40,7 +41,7 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
     <>
       <div className="lab-certificate-media">
         {image ? (
-          <img src={image.url} alt={image.alt_text || `${certificate.courseTitle} certificate`} loading="lazy" decoding="async" />
+          <img src={image.thumbnail_url || image.url} alt={image.alt_text || `${certificate.courseTitle} certificate`} loading="lazy" decoding="async" />
         ) : (
           <span className="lab-certificate-media-fallback" aria-hidden="true">{certificate.courseTitle.slice(0, 1)}</span>
         )}
@@ -54,7 +55,7 @@ export default function CertificateCard({ certificate, copy = { openLabel: "Open
       </div>
       <div className="lab-certificate-body">
         <p className="lab-card-category">{certificate.eyebrow || "Certificate"} · {certificate.certificateId}</p>
-        <h3>{certificate.courseTitle}</h3>
+        <TitleHeading>{certificate.courseTitle}</TitleHeading>
         <dl className="lab-certificate-metrics">
           {metrics.map((metric) => (
             <div key={metric.key}>

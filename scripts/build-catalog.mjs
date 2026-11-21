@@ -24,12 +24,11 @@ const REMOTE_ASSET_PATTERN = /^https?:\/\/(d2clawv67efefq\.cloudfront\.net|asset
 const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif", ".svg"]);
 const RESIZABLE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif"]);
 const MAX_FULL_WIDTH = 1680;
-// Posters are the heaviest thing the home page ships: at 1080px the rails downloaded 645 kB of
-// images on a cold visit, which was 75% of the whole page once gzip was in place. Nothing ever
-// draws them that big — a rail card media box is ~420px and the detail poster is capped at
-// `max-height: 300px` with `aspect-ratio: 16/9`, so ~533px wide. 720 keeps headroom for
-// hi-DPI without shipping a full-page screenshot for a thumbnail.
-const MAX_THUMB_WIDTH = 720;
+// Catalog cards are at most ~420px wide; 480px keeps useful hi-DPI detail without downloading
+// the original screenshot dimensions for small shelf and card previews.
+const MAX_THUMB_WIDTH = 480;
+const CERTIFICATE_THUMB_WIDTH = 320;
+const CERTIFICATE_THUMB_QUALITY = 76;
 
 const staticProjects = JSON.parse(readFileSync(join(SOURCE, "projects-static.json"), "utf8"));
 const responsiveProjects = JSON.parse(readFileSync(join(SOURCE, "projects-responsive.json"), "utf8"));
@@ -396,14 +395,20 @@ async function main() {
     "introduction-to-databases-certificate",
   ];
   for (const name of certificatePapers) {
-    await writeOptimizedImage(join(SOURCE, "assets", "certificates", `${name}.png`), join(certificateDirectory, `${name}.webp`), 1400, 88);
+    const sourcePath = join(SOURCE, "assets", "certificates", `${name}.png`);
+    await writeOptimizedImage(sourcePath, join(certificateDirectory, `${name}.webp`), 1400, 88);
+    await writeOptimizedImage(sourcePath, join(certificateDirectory, `${name}-thumb.webp`), CERTIFICATE_THUMB_WIDTH, CERTIFICATE_THUMB_QUALITY);
     copyFileSync(join(SOURCE, "assets", "certificates", `${name}.pdf`), join(certificateDirectory, `${name}.pdf`));
   }
-  await writeOptimizedImage(join(SOURCE, "assets", "certificates", "alumni.png"), join(certificateDirectory, "alumni.webp"), 1200, 84);
+  const alumniPath = join(SOURCE, "assets", "certificates", "alumni.png");
+  await writeOptimizedImage(alumniPath, join(certificateDirectory, "alumni.webp"), 1200, 84);
+  await writeOptimizedImage(alumniPath, join(certificateDirectory, "alumni-thumb.webp"), CERTIFICATE_THUMB_WIDTH, CERTIFICATE_THUMB_QUALITY);
   const pythonCertificate = join(PUBLIC, "programming-foundations-with-python-certificate.png");
   if (existsSync(pythonCertificate)) {
     // The PNG stays for print/download links; pages render the much smaller WebP.
-    await writeOptimizedImage(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.webp"), 1800, 90);
+    const webpPath = join(certificateDirectory, "programming-foundations-with-python-certificate.webp");
+    await writeOptimizedImage(pythonCertificate, webpPath, 1800, 90);
+    await writeOptimizedImage(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate-thumb.webp"), CERTIFICATE_THUMB_WIDTH, CERTIFICATE_THUMB_QUALITY);
     copyFileSync(pythonCertificate, join(certificateDirectory, "programming-foundations-with-python-certificate.png"));
   }
 
@@ -482,10 +487,14 @@ async function main() {
 
   const normalizedCertificates = certificates.map((certificate) => ({
     ...certificate,
-    assets: certificate.assets.map((asset) => ({
-      ...asset,
-      url: replacementMap.get(asset.url) || asset.url,
-    })),
+    assets: certificate.assets.map((asset) => {
+      const url = replacementMap.get(asset.url) || asset.url;
+      return {
+        ...asset,
+        url,
+        ...(asset.role === "certificate" ? { thumbnail_url: url.replace(/\.webp$/, "-thumb.webp") } : {}),
+      };
+    }),
     pdfUrl: certificate.certificatePdfUrl,
   }));
 

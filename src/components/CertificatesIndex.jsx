@@ -35,6 +35,7 @@ export default function CertificatesIndex({ certificates, copy, onNavigate, card
                 index={index}
                 onNavigate={onNavigate}
                 fx={cardEffects}
+                headingLevel={2}
               />
             ))}
           </div>

@@ -88,19 +88,17 @@ module.exports = {
           },
         },
         {
-          // Eight certificate posters at 1400-1800px are deliberately large, because the cards and
-          // the detail hero are where a certificate has to be readable. Measured 2026-10-29: images
-          // 616KB, total 931KB, LCP 4.1-4.7s (the poster is the LCP element). Cutting the posters to
-          // a card-sized derivative would move both, and is the next lever if this route ever needs
-          // it; the budget here only guards against the artwork growing again unnoticed.
+          // Cards use 480px derivatives; certificate detail pages retain the full-resolution image.
+          // Keep this budget above the current card-image transfer while catching accidental use of
+          // the full-resolution originals on the listing route.
           matchingUrlPattern: "^https?://[^/]+/certificates$",
           assertions: {
             ...shared,
             "first-contentful-paint": ["error", { maxNumericValue: 4000 }],
             "largest-contentful-paint": ["error", { maxNumericValue: 5200 }],
             "total-blocking-time": ["error", { maxNumericValue: 400 }],
-            "resource-summary:image:size": ["error", { maxNumericValue: 700 * 1024 }],
-            "resource-summary:total:size": ["error", { maxNumericValue: 1000 * 1024 }],
+            "resource-summary:image:size": ["error", { maxNumericValue: 220 * 1024 }],
+            "resource-summary:total:size": ["error", { maxNumericValue: 700 * 1024 }],
             "categories:performance": ["warn", { minScore: 0.75 }],
           },
         },

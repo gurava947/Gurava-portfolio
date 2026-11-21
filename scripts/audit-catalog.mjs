@@ -104,6 +104,18 @@ for (const collection of catalog.collections) {
   if (catalog.counts.collections[collection.id] !== actual) add("error", collection.id, "counts.collections", "Collection counts mismatch");
 }
 
+for (const certificate of catalog.certificates || []) {
+  for (const asset of certificate.assets || []) {
+    if (asset.role !== "certificate") continue;
+    if (!asset.thumbnail_url) {
+      add("error", certificate.slug, "thumbnail_url", "Certificate card image derivative is missing");
+      continue;
+    }
+    const file = join(ROOT, "public", asset.thumbnail_url.replace(/^\//, ""));
+    if (!existsSync(file)) add("error", certificate.slug, "thumbnail_url", `Certificate thumbnail missing: ${asset.thumbnail_url}`);
+  }
+}
+
 for (const category of catalog.categories) {
   const actual = catalog.projects.filter((project) => project.category === category.label).length;
   if (category.count !== actual) add("error", category.slug, "count", `Category count ${category.count} vs actual ${actual}`);

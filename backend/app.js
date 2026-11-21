@@ -140,6 +140,14 @@ export function createApp({
   app.use("/api", notFoundHandler);
 
   if (staticDirectory !== false && existsSync(staticDirectory)) {
+    app.use("/.well-known", express.static(resolve(staticDirectory, ".well-known"), {
+      index: false,
+      fallthrough: true,
+      maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
+      setHeaders(response) {
+        response.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+      },
+    }));
     app.use(express.static(staticDirectory, {
       index: false,
       fallthrough: true,
