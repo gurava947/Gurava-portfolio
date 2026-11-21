@@ -4,7 +4,6 @@ import CodePlate from "./ui/CodePlate";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import HeroWords from "./HeroWords";
 import FeatureRail from "./FeatureRail";
-import MaterialSymbol from "./MaterialSymbol";
 import { PLAYGROUND_THEME_OPTIONS } from "../config/themeSync";
 import "../styles/project-detail-look.css";
 
@@ -452,7 +451,12 @@ export default function ProjectDetail({
         <span className="lab-hero-glow" aria-hidden="true" />
         <div className="lab-workspace-wide">
           <a className="lab-back-link" href={backHref} onClick={(event) => (onBack ? onBack(event) : navigate(event, backHref))}>
-            <MaterialSymbol name="arrow_back" /> {backLabel || copy.backToCatalog}
+            <span aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5m7 7-7-7 7-7" />
+              </svg>
+            </span>
+            {backLabel || copy.backToCatalog}
           </a>
           <div className="lab-hero-grid">
             <div className="lab-hero-copy">
